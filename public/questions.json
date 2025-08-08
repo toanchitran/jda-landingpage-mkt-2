@@ -1,0 +1,75 @@
+{
+  "Question 1": {
+    "type": "radio",
+    "label": "What best describes your startup today?",
+    "required": true,
+    "options": [
+      "R&D / pre-revenue",
+      "Pre-seed or Seed (building MVP)",
+      "Series A+ (raised ≥ $2 M)",
+      "Revenue-generating & scaling"
+    ]
+  },
+  "Question 2": {
+    "type": "radio",
+    "label": "How are you currently handling founder thought-leadership content?",
+    "required": true,
+    "options": [
+      "In-house (you or team write posts)",
+      "Outsourced Agency or PR specialist",
+      "Generic AI/content tool (e.g. ChatGPT)",
+      "No formal process"
+    ]
+  },
+  "Question 3": {
+    "type": "checkbox",
+    "label": "What's your biggest obstacle to turning thought-leadership into real business traction?",
+    "required": true,
+    "options": [
+      "Generating investor-relevant story ideas",
+      "Translating tech into compelling narratives",
+      "Measuring content ROI/attribution",
+      "Scaling consistent posts across channels",
+      "Aligning messages with fundraising goals"
+    ],
+    "allowOther": true,
+    "otherPlaceholder": "Please specify other obstacles"
+  },
+  "Question 4": {
+    "type": "radio",
+    "label": "Are you aware that our solution will cost at a minimum $500?",
+    "required": true,
+    "options": [
+      "Yes",
+      "No"
+    ]
+  },
+  "Question 5": {
+    "type": "radio",
+    "label": "Which range best fits your monthly content/PR budget?",
+    "required": true,
+    "options": [
+      "< $2,000",
+      "$2,000 - 5,000",
+      "$5,000 - 10,000",
+      "> $10,000"
+    ]
+  },
+  "Question 6": {
+    "type": "radio",
+    "label": "Which milestone are you targeting in the next 6 months?",
+    "required": true,
+    "options": [
+      "Preparing first external raise",
+      "Closing Seed / Series A",
+      "Expanding Series A / B",
+      "Not fundraising soon"
+    ]
+  },
+  "Question 7": {
+    "type": "checkbox",
+    "label": "I Consent to Receive Notifications, Alerts & Occasional Marketing Communication from JDAlchemy.",
+    "required": true,
+    "standalone": true
+  }
+} 

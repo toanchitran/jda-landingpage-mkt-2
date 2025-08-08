@@ -1,0 +1,844 @@
+"use client";
+
+import Image from "next/image";
+import { useEffect, useState, useRef, useMemo } from "react";
+// import ContactForm from "@/components/ContactForm";
+import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
+
+
+
+// Interactive Workflow Component
+function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) => void }) {
+  const [activeFeature, setActiveFeature] = useState('share');
+
+  const features = {
+    share: {
+      title: 'You Share Your Vision',
+      description: 'The easy part. You simply provide the raw material—your company updates, insights, and technical achievements.',
+      imageText: 'You Share Your Vision',
+      image:'/Share.png'
+    },
+    refine: {
+      title: 'We Forge Your Narrative',
+      description: 'We turn that raw material into a powerful, investor-grade story, aligning every word with your fundraising goals.',
+      imageText: 'We Forge Your Narrative',
+      image:'/Strategize.png'
+    },
+    tailor: {
+      title: 'You Command the Conversation',
+      description: 'You deploy the content, building authority and drawing investors into your orbit, all guided by our insights.',
+      imageText: 'You Command the Conversation',
+      image:'/Create.png'
+    },
+    // amplify: {
+    //   title: 'Amplify',
+    //   description: 'Strategic posting, engagement monitoring, and real-time optimization keep your message reaching the right people',
+    //   imageText: 'Amplify - Product UI',
+    //   image:'/Amplify.png'
+    // }
+  };
+
+  return (
+    <div className="rounded-3xl p-8 text-primary-text" style={{backgroundColor: 'var(--lighter-deep-blue)'}}>
+      <div className="text-left mb-8">
+        <h3 className="text-4xl font-bold mb-3">Your Simple 3-Step Plan to a Compelling Story</h3>
+        <p className="text-secondary-text-80 mb-6"> Stop scrambling for content and start commanding investor attention.</p>
+        <button 
+          onClick={() => onBookCall('workflow_section')}
+          className="button hover:!bg-yellow-400 hover:!text-black transition-colors"
+        >
+          Book a call
+        </button>
+      </div>
+      
+      {/* Desktop Layout - Grid with Product UI Screenshot */}
+      <div className="hidden md:block">
+        {/* Product UI Screenshot */}
+        <div className="w-full mb-8">
+          <div className="aspect-video bg-card-accent-2 rounded-lg flex items-center justify-center overflow-hidden">
+            <Image
+              src={features[activeFeature as keyof typeof features].image}
+              alt={features[activeFeature as keyof typeof features].imageText}
+              width={800}
+              height={450}
+              className="w-full h-full object-cover"
+              unoptimized={true}
+            />
+          </div>
+        </div>
+        
+        {/* Feature Columns */}
+        <div className="grid md:grid-cols-3 gap-12">
+          {Object.entries(features).map(([key, feature]) => (
+            <div 
+              key={key}
+              className={`p-6 cursor-pointer transition-all duration-300 ${
+                activeFeature === key ? 'opacity-100' : 'opacity-50'
+              }`}
+              onClick={() => setActiveFeature(key)}
+            >
+              <div className="w-full h-0.5 bg-black mb-3"></div>
+              <h4 className="text-xl font-bold mb-2 text-left">{feature.title}</h4>
+              <p className="text-sm text-left" style={{color: 'var(--secondary-text-80)'}}>
+                {feature.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Mobile/Tablet Layout - Single Column with Image and Text */}
+      <div className="md:hidden space-y-8">
+        {Object.entries(features).map(([key, feature]) => (
+          <div 
+            key={key}
+            className={`cursor-pointer transition-all duration-300 ${
+              activeFeature === key ? 'opacity-100' : 'opacity-50'
+            }`}
+            onClick={() => setActiveFeature(key)}
+          >
+            {/* Feature Image */}
+            <div className="w-full mb-4">
+              <div className="aspect-video bg-card-accent-2 rounded-lg flex items-center justify-center overflow-hidden">
+                <Image
+                  src={feature.image}
+                  alt={feature.imageText}
+                  width={600}
+                  height={340}
+                  className="w-full h-full object-cover"
+                  unoptimized={true}
+                />
+              </div>
+            </div>
+            
+            {/* Feature Content */}
+            <div className="p-4">
+              <div className="w-full h-0.5 bg-black mb-3"></div>
+              <h4 className="text-xl font-bold mb-2 text-left">{feature.title}</h4>
+              <p className="text-sm text-left" style={{color: 'var(--secondary-text-80)'}}>
+                {feature.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+        </div>
+  );
+}
+
+export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Carousel state variables
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [cardWidth, setCardWidth] = useState(500); // Default width
+  const [gapSize, setGapSize] = useState(6); // Default gap (0.375rem = 6px)
+  const [isMobile, setIsMobile] = useState(false);
+  // Marquee tags source
+  const marqueeTags: string[] = [
+    'Cut PR costs 80%',
+    'Build authority faster',
+    'Never miss deadlines',
+    'Attract investors',
+    'Scale without hiring',
+    'Always improving',
+    'Real-time insights',
+    'Strategic narratives',
+    '24/7 monitoring',
+  ];
+
+  const shuffle = (items: string[]): string[] => {
+    const a = [...items];
+    for (let i = a.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  const repeat = (items: string[], times: number): string[] => {
+    return Array.from({ length: times }).flatMap(() => items);
+  };
+
+  const row1 = useMemo(() => repeat(shuffle(marqueeTags), 3), []);
+  const row2 = useMemo(() => repeat(shuffle(marqueeTags), 3), []);
+  const row3 = useMemo(() => repeat(shuffle(marqueeTags), 3), []);
+  const carouselCards: { key: string; title: string; description: string; videoSrc: string }[] = [
+    {
+      key: 'Investor_Magnet',
+      title: 'Investor Magnet',
+      description:
+        "Your strategic narrative consistently draws potential investors to you, so you don’t have to constantly seek them out.",
+      videoSrc: '/always_improving.mp4',
+    },
+    {
+      key: 'Funding_Advantage',
+      title: 'Funding Advantage',
+      description:
+        "A clear story helps investors instantly understand your vision and market potential, turning a technical achievement into a compelling commercial story.",
+      videoSrc: '/knows_your_story.mp4',
+    },
+    {
+      key: 'Brand_Power',
+      title: 'Brand Power',
+      description:
+        'A well-articulated narrative builds a memorable brand identity that makes your company stand out and stick in the minds of decision-makers.',
+      videoSrc: '/works_with_your_tools.mp4',
+    },
+    {
+      key: 'Competitive_Edge',
+      title: 'Competitive Edge',
+      description:
+        'Your unique story differentiates you from the competition, ensuring yours is the one investors remember and discuss.',
+      videoSrc: '/thinks_strategically.mp4',
+    },
+    // {
+    //   key: 'always_available',
+    //   title: 'Always Available',
+    //   description:
+    //     '24/7 content creation and engagement monitoring, so you never miss an opportunity to connect with potential investors.',
+    //   videoSrc: '/always_available.mp4',
+    // },
+  ];
+  const totalSlides = carouselCards.length;
+
+  // Google Analytics tracking
+  const {
+    trackBookCallClick,
+    trackSiteDeckClick,
+    trackLogoClick,
+    trackPageView,
+    trackUTMParameters,
+  } = useGoogleAnalytics();
+
+  // Track page view and UTM parameters on component mount
+  useEffect(() => {
+    trackPageView('JD Alchemy - Digital PR Specialists', window.location.pathname);
+    trackUTMParameters();
+  }, [trackPageView, trackUTMParameters]);
+
+  const handleBookCall = (location: string = 'hero_section') => {
+    trackBookCallClick(location);
+    window.location.href = '/book-a-call';
+  };
+
+  const handleBookCallHero = () => handleBookCall('hero_section');
+  const handleBookCallWorkflow = () => handleBookCall('workflow_section');
+  const handleBookCallCarousel = () => handleBookCall('carousel_section');
+  const handleBookCallConsider = () => handleBookCall('consider_section');
+  const handleBookCallBottom = () => handleBookCall('bottom_cta_section');
+
+ 
+
+  // Carousel navigation function - currently unused but kept for future use
+  // const scrollCarousel = (direction: 'prev' | 'next') => {
+  //   if (direction === 'prev') {
+  //     setCurrentSlide(current => current === 0 ? 4 : current - 1);
+  //   } else {
+  //     setCurrentSlide(current => current === 4 ? 0 : current + 1);
+  //   }
+  // };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
+  const handleCardClick = (index: number) => {
+    setCurrentSlide(index);
+  };
+
+  // Handle seamless loop when reaching the end
+  useEffect(() => {
+    const carousel = document.querySelector('.carousel-container') as HTMLElement;
+    if (carousel) {
+      carousel.addEventListener('transitionend', () => {
+        if (currentSlide === totalSlides) {
+          // When we reach the duplicate card, instantly jump back to the first card
+          carousel.style.transition = 'none';
+          setCurrentSlide(0);
+          // Force a reflow
+          void carousel.offsetHeight;
+          carousel.style.transition = 'transform 700ms ease-in-out';
+        }
+      });
+    }
+  }, [currentSlide, totalSlides]);
+
+
+
+               // Calculate card width and gap size for responsive carousel
+  useEffect(() => {
+    const updateCardDimensions = () => {
+      if (cardRef.current && cardRef.current.parentElement) {
+        const gapStyle = window.getComputedStyle(cardRef.current.parentElement);
+        setCardWidth(cardRef.current.offsetWidth);
+        setGapSize(parseInt(gapStyle.gap));
+      }
+    };
+
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    updateCardDimensions();
+    checkMobile();
+    
+    // Update on window resize for better mobile responsiveness
+    window.addEventListener('resize', () => {
+      updateCardDimensions();
+      checkMobile();
+    });
+    
+    return () => window.removeEventListener('resize', () => {
+      updateCardDimensions();
+      checkMobile();
+    });
+  }, []);
+
+  return (
+    <div className="font-sans text-primary-text">
+
+      <section className="relative min-h-screen overflow-hidden px-4 sm:px-6 lg:px-8" style={{backgroundColor: 'var(--primary-bg)'}}>
+        {/* Background Video */}
+        <div className="absolute inset-0">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/Hero_video.mp4" type="video/mp4" />
+          </video>
+          {/* <div className="absolute" style={{backgroundColor: 'var(--primary-bg)'}}></div> */}
+        </div>
+        
+        {/* Navigation */}
+        <nav className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-8 py-4 sm:py-6">
+          <div className="max-w-6xl mx-auto flex justify-between items-center">
+            <div className="text-white font-bold text-xl">
+              <button 
+                onClick={() => {
+                  trackLogoClick();
+                  window.open('https://jdalchemy.com', '_blank');
+                }}
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                <Image
+                  src="/jda-logo-horizontal.png"
+                  alt="JD Alchemy"
+                  width={180}
+                  height={60}
+                  className="h-8 sm:h-12 w-auto"
+                />
+              </button>
+            </div>
+            <div className="flex space-x-2 sm:space-x-4">
+              {/* <button 
+                onClick={handleBookCall}
+                className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors"
+              >
+                Book a call
+              </button> */}
+              <button 
+                onClick={() => {
+                  trackSiteDeckClick();
+                  window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
+                }}
+                className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors text-sm sm:text-base px-3 sm:px-4 py-2 sm:py-3"
+              >
+                Free Assessment
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Hero Content */}
+        <div className="relative max-w-6xl mx-auto pt-16 sm:pt-20 pb-16 sm:pb-24 flex items-center min-h-screen z-10 px-4 sm:px-8">
+          <div className="text-primary-text">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 leading-tight">
+              Triple Your<br/>Investor Engagement Without Becoming a Content Slave
+            </h1>
+            {/* <div className="w-80 h-0.5 bg-accent-elements mb-6"></div> */}
+            <p className="text-lg sm:text-xl md:text-2xl leading-relaxed mb-6 sm:mb-8 text-secondary-text-80">
+            Attract the funding you deserve by shaping your company&apos;s narrative,<br/>not just creating more content.
+            </p>
+            <button onClick={handleBookCallHero} className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors text-sm sm:text-base px-4 sm:px-6 py-3 sm:py-4">
+              Book a call
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Narrative Value Section - Secondary BG */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8" style={{backgroundColor: 'var(--secondary-bg)'}}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-primary-text">Is Your Genius Getting Lost in the Noise?</h2>
+            <p className="text-secondary-text-80 max-w-3xl mx-auto">
+            You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
+            </p>
+          </div>
+          <div className="max-w-5xl mx-auto">
+            <div className="rounded-2xl overflow-hidden bg-black aspect-video flex items-center justify-center">
+              <video
+                controls
+                playsInline
+                className="w-full h-full object-cover"
+              >
+                <source src="/Alex.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet Your Digital PR Team Section - Deep Blue */}
+      <section className="py-16 padding-global" style={{backgroundColor: 'var(--primary-bg)'}}>
+        <div className="max-w-6xl mx-auto px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-6xl font-bold mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
+            <p className="text-secondary-text-80 max-w-4xl mx-auto">
+            You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat. What you need isn&apos;t another consultant; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-4 items-start">
+            {/* JayJin - Narrative Architect */}
+            <div className="bg-transparent rounded-2xl p-8">
+              {/* Agent Image with Overlay */}
+              <div className="flex justify-center mb-8">
+                <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
+                                                                                <Image
+                        src="/Alex.webp"
+                        alt="Jay Jin - Narrative Architect"
+                        fill
+                        className="object-cover"
+                        unoptimized={true}
+                      />
+                      
+                      {/* Overlay Tags */}
+                      <div className="absolute inset-0">
+                        {/* Top Tag */}
+                        <div className="absolute top-4 left-4">
+                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
+                          Jay Jin, Narrative Architect
+                          </div>
+                        </div>
+                        
+                        {/* Bottom Tag */}
+                        {/* <div className="absolute top-16 left-4">
+                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center">
+                            <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                            </svg>
+                            Autopilot activated
+                          </div>
+                        </div> */}
+                      </div>
+                  
+
+                </div>
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Narrative Architect</h3>
+              <p className="text-white mb-6 leading-relaxed">
+              Jay is your systems-minded narrative architect. He helps you identify and engineer the authentic story that investors need to hear, turning your lived experience into a capital-attracting force.<br/>
+              </p>
+              {/* <button onClick={handleBookCallWorkflow} className="text-white font-semibold hover:text-gray-200 transition-colors">
+                Meet Jay Jin →
+              </button> */}
+            </div>
+            
+            {/* David Yi, Investment Strategist */}
+            <div className="bg-transparent rounded-2xl p-8">
+              {/* Agent Image with Overlay */}
+              <div className="flex justify-center mb-8">
+                <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
+                
+                      <Image
+                        src="/Alex.webp"
+                        alt="David Yi, Investment Strategist"
+                        fill
+                        className="object-cover"
+                        unoptimized={true}
+                      />
+                      
+                      {/* Overlay Tags */}
+                      <div className="absolute inset-0">
+                        {/* Top Tag */}
+                        <div className="absolute top-4 left-4">
+                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
+                          David Yi, Investment Strategist
+                          </div>
+                        </div>
+                        
+                        {/* Bottom Tag */}
+                        {/* <div className="absolute top-16 left-4">
+                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center">
+                            <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                            </svg>
+                            Active
+                          </div>
+                        </div> */}
+                      </div>
+                  
+
+                </div>
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-3 text-white">David Yi, Investment Strategist</h3>
+              <p className="text-white mb-6 leading-relaxed">
+              David is your cross-border investment strategist. He provides the critical lens of an investor, ensuring every piece of your story is calibrated with discernment to attract the right conversations and secure funding.
+              </p>
+              {/* <button onClick={handleBookCallWorkflow} className="text-white font-semibold hover:text-gray-200 transition-colors">
+                Meet David →
+              </button> */}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Carousel Section */}
+      <section className="py-12 sm:py-20" style={{backgroundColor: 'var(--lighter-deep-blue)'}}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-accent-elements">The Unfair Advantage of a Strategic Story</h1>
+            <p className="max-w-4xl mx-auto mb-6 text-secondary-text-80 text-sm sm:text-base">
+            In a crowded market, your story is your most powerful asset. It&apos;s the key to building credibility and earning the trust of investors. It&apos;s not just about what you say, but how you say it—and when. 
+            </p>
+            <button
+              onClick={handleBookCallCarousel}
+              className="button hover:!bg-yellow-400 hover:!text-black transition-colors"
+            >
+              Book a call
+            </button>
+          </div>
+
+          {/* Carousel Container */}
+            <div className="relative overflow-hidden max-w-[1088px] mx-auto">
+            <div
+              className="flex gap-1.5 transition-transform duration-700 ease-in-out"
+              style={{ 
+                transform: isMobile 
+                  ? `translateX(-${currentSlide * 100}%)` 
+                  : `translateX(calc(50% - (${cardWidth}px / 2) - ${currentSlide} * (${cardWidth}px + ${gapSize}px)))`
+              }}
+            >
+              {carouselCards.map((card, index) => (
+                <div 
+                  key={card.key}
+                  ref={index === 0 ? cardRef : undefined}
+                  className={`aspect-[4/3] flex-shrink-0 w-full sm:w-11/12 md:w-96 lg:w-[500px] xl:w-[500px] cursor-pointer transition-all duration-300 hover:scale-105 ${
+                    currentSlide === index ? 'opacity-100 scale-100' : 'opacity-60 scale-95'
+                  }`}
+                  onClick={() => handleCardClick(index)}
+                >
+                  <div className="p-6 md:p-10 rounded-2xl">
+                    <div className="aspect-[4/3] rounded-xl mb-6 flex items-center justify-center overflow-hidden" style={{backgroundColor: '#f5f5f5'}}>
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover"
+                      >
+                        <source src={card.videoSrc} type="video/mp4" />
+                      </video>
+                    </div>
+                    <p className="text-base font-bold mb-2 text-left" style={{color: '#ffffff'}}>{card.title}</p>
+                    <p className="text-base text-left leading-relaxed" style={{color: '#ffffff'}}>
+                      {card.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Carousel Navigation */}
+            <div className="flex justify-center mt-6 sm:mt-8 space-x-2">
+              {[...Array(totalSlides).keys()].map((index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-colors"
+                  style={{backgroundColor: index === currentSlide ? 'var(--accent-elements)' : 'var(--dividers-borders)'}}
+                ></button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/*  Before You Hire Another PR Agency, Consider This - Deep Blue */}
+      <section className="py-20 padding-global" style={{backgroundColor: 'var(--deep-blue)'}}>
+        <div className="w-full padding-global">
+          <div className="text-center mb-8 padding-global">
+            <h1 className="text-6xl font-bold mb-4 text-primary-text"> Before You Hire Another PR Agency...</h1>
+            <p className="text-secondary-text-80 max-w-4xl mx-auto mb-6">
+            Smart founders are choosing our Narrative Engine and experts who work without the agency fees or hiring headaches. We deliver better outcomes at a fraction of the cost.
+            </p>
+            <button 
+              onClick={handleBookCallConsider}
+              className="button mb-8 hover:!bg-yellow-400 hover:!text-black transition-colors"
+            >
+              Book a call
+            </button>
+          </div>
+          
+                         {/* Tags with marquee effect - 3 rows */}
+               <div className="relative mb-12 overflow-hidden w-full padding-global">
+                 {/* Blur overlay for left edge */}
+                 <div 
+                   className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+                   style={{
+                     width: 'calc(var(--border-radius--padding--global--regular) * 2)',
+                     background: 'linear-gradient(to right, var(--primary-bg), transparent)',
+                    //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
+                   }}
+                 ></div>
+                 
+                 {/* Blur overlay for right edge */}
+                 <div 
+                   className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+                   style={{
+                     width: 'calc(var(--border-radius--padding--global--regular) * 2)',
+                     background: 'linear-gradient(to left, var(--primary-bg), transparent)',
+                    //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
+                   }}
+                 ></div>
+                             {/* First row - scroll from right to left */}
+                 <div className="flex gap-2 mb-2 animate-marquee-left">
+                   {row1.map((tag, idx) => (
+                     <span key={`row1-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+                   ))}
+                 </div>
+            
+            {/* Second row - scroll from left to right */}
+            <div className="flex gap-2 mb-2 animate-marquee-right">
+              {row2.map((tag, idx) => (
+                <span key={`row2-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+              ))}
+            </div>
+            
+                             {/* Third row - scroll from right to left */}
+                 <div className="flex gap-2 animate-marquee-left">
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Cut PR costs 80%</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Build authority faster</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Never miss deadlines</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Scale without hiring</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Always improving</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Real-time insights</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Build authority faster</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Strategic narratives</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>24/7 monitoring</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Never miss deadlines</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Cut PR costs 80%</span>
+              {/* Duplicate for seamless loop */}
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Attract investors</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Scale without hiring</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Always improving</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Real-time insights</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Build authority faster</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Strategic narratives</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>24/7 monitoring</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Never miss deadlines</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Cut PR costs 80%</span>
+              {/* Duplicate for seamless loop */}
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Attract investors</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Scale without hiring</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Always improving</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Real-time insights</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Build authority faster</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Strategic narratives</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>24/7 monitoring</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Never miss deadlines</span>
+              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Cut PR costs 80%</span>
+            </div>
+          </div>
+          
+          {/* Interactive Workflow */}
+          <div>
+            <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Lead Magnet Section - Deep Purple */}
+      <section className="relative min-h-screen flex items-center justify-center">
+        <div className="absolute inset-0">
+          <Image
+            src="/Lead_magnet_BG.jpeg"
+            alt="Lead Magnet Background"
+            fill
+            className="object-cover"
+            priority
+            unoptimized={true}
+          />
+          {/* <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.7)'}}></div> */}
+        </div>
+        
+                {/* Modal Card - Top Right */}
+        <div className="relative z-10 w-full max-w-3xl ml-auto" style={{marginRight: 'var(--border-radius--padding--global--regular)'}}>
+          <div className="rounded-3xl p-10 shadow-2xl text-center bg-white border border-gray-200">
+            <h2 className="text-4xl font-bold mb-6 text-black">
+              Does Your Pitch Deck Tell a Story Worth Funding?
+            </h2>
+            <p className="text-gray-600 text-lg leading-relaxed">
+            Get a free, instant analysis of your pitch deck&apos;s narrative strength. Our exclusive report uncovers the hidden signals—and silent gaps—that investors see. You&apos;ll get a clear scorecard on how your story is performing on credibility, market traction, and more. This is the first step to building a narrative that gets funded.
+            </p>
+            <div className="flex justify-center z-10">
+                              <Image
+                  src="/lead_magnet_previw.png"
+                  alt="Lead Magnet Preview"
+                  width={800}
+                  height={150}
+                  className="rounded-lg"
+                  unoptimized={true}
+                />
+            </div>
+            <div onClick={() => {
+              trackSiteDeckClick();
+              window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
+            }} className="text-blue-600 font-semibold text-lg flex items-center justify-center cursor-pointer hover:text-blue-700 transition-colors">
+              Analyze My Deck Now
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      {/* Testimonials Section - Deep Blue */}
+      <section className="py-20 padding-global" style={{backgroundColor: '#03032e'}}>
+        <div className="w-full">
+          <div className="text-center mb-12 padding-global">
+            <h1 className="text-6xl font-bold mb-4 text-primary-text">Trusted by Smart Founders</h1>
+          </div>
+          
+                    {/* Masonry Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6 padding-global">
+            {/* Top Left Card - Metric */}
+            <div className="rounded-2xl p-6 text-center border lg:col-span-2" style={{backgroundColor: '#fabf0133', borderColor: '#fabf01', height: '400px'}}>
+              <div className="text-6xl font-bold mb-2" style={{color: '#fabf01'}}>80%</div>
+              <p className="text-base font-bold text-center" style={{color: '#ffffff'}}>
+              Less time on PR tasks
+              </p>
+            </div>
+            
+            {/* Top Center Card - Metric */}
+            <div className="rounded-2xl p-6 text-center border lg:col-span-2" style={{backgroundColor: '#F6F5F5', borderColor: '#c0a876', height: '400px'}}>
+              <div className="text-6xl font-bold mb-2" style={{color: '#c0a876'}}>5X</div>
+              <p className="text-base font-bold text-center" style={{color: '#03032e'}}>
+              Faster Content Creation
+              </p>
+            </div>
+            
+            {/* Top Right Card - Testimonial */}
+            <div className="rounded-2xl p-6 border lg:col-span-4 relative" style={{backgroundColor: '#09093e66', borderColor: '#c0a87680', height: '400px'}}>
+              <p className="mb-4 text-2xl leading-relaxed font-bold" style={{color: '#ffffff'}}>
+                &ldquo;This isn&apos;t just AI; it&apos;s like having a dedicated PR team working 24/7. Our communication with stakeholders has never been more precise.&rdquo;
+              </p>
+              <p className="text-sm absolute bottom-6 left-6" style={{color: 'rgba(255, 255, 255, 0.6)'}}>
+                — Minh Chau, Pascal Studio
+              </p>
+            </div>
+            
+            {/* Bottom Left Card - Testimonial */}
+            <div className="rounded-2xl p-6 border lg:col-span-4 relative" style={{backgroundColor: '#fabf0133', borderColor: '#fabf01', height: '400px'}}>
+              <p className="mb-4 text-2xl leading-relaxed font-bold" style={{color: '#ffffff'}}>
+                &ldquo;We were struggling to articulate our vision to potential investors. This engine helped us clarify our message and get noticed. It&apos;s truly a game-changer for fundraising!&rdquo;
+              </p>
+              <p className="text-sm absolute bottom-6 left-6" style={{color: 'rgba(255, 255, 255, 0.8)'}}>
+                — Ryan Ettridge, Cybercert
+              </p>
+            </div>
+            
+            {/* Bottom Center Card - Metric */}
+            <div className="rounded-2xl p-6 text-center border lg:col-span-2" style={{backgroundColor: '#F6F5F5', borderColor: '#c0a876', height: '400px'}}>
+              <div className="text-6xl font-bold mb-2" style={{color: '#c0a876'}}>30%</div>
+              <p className="text-base font-bold text-center" style={{color: '#03032e'}}>
+                Increase in investor engagement
+              </p>
+            </div>
+            
+            {/* Bottom Right Card - Testimonial */}
+            <div className="rounded-2xl p-6 border lg:col-span-2 relative" style={{backgroundColor: '#09093e66', borderColor: '#c0a87680', height: '400px'}}>
+              <p className="mb-4 text-2xl leading-relaxed font-bold" style={{color: '#ffffff'}}>
+                &ldquo;The insights we get are invaluable. We can quickly see what resonates and adjust our strategy in real-time.&rdquo;
+              </p>
+              <p className="text-sm absolute bottom-6 left-6" style={{color: 'rgba(255, 255, 255, 0.6)'}}>
+                — Johnny Le, DigiEx
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom CTA Section - Deep Purple */}
+      <section className="py-20 relative">
+        <div className="absolute inset-0">
+          <Image
+            src="/bottom_cta_bg.jpeg"
+            alt="Bottom CTA Background"
+            fill
+            className="object-cover"
+            priority
+            unoptimized={true}
+          />
+        </div>
+        <div className="max-w-6xl mx-auto px-8 relative z-10">
+          <div className="rounded-3xl p-12 bg-card-elevated border border-dividers-borders">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h1 className="text-6xl font-bold mb-4 text-primary-text">Hire your digital PR specialists</h1>
+                <p className="text-secondary-text-80 mb-6 leading-relaxed">
+                Replace the need for expensive PR agencies with digital specialists who work around the clock to build your authority and attract investors.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button 
+                    onClick={handleBookCallBottom}
+                    className="button hover:!bg-yellow-400 hover:!text-black transition-colors"
+                  >
+                    Book a call
+                  </button>
+                </div>
+              </div>
+              
+              <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden">
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                >
+                  <source src="/bottom_cta.mp4" type="video/mp4" />
+                </video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer - Deep Blue */}
+      {/* <footer className="py-12" style={{backgroundColor: 'var(--deep-blue)'}}>
+        <div className="max-w-6xl mx-auto px-8">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="border-t border-dividers-borders mt-8 pt-8 text-center text-sm text-secondary-text-60">
+              <p>© 2025 JD Alchemy. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      </footer> */}
+
+          
+
+      {/* Contact Form Modal removed; now routing to /book-a-call */}
+    </div>
+  );
+}

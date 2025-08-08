@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Your Personalized Discovery Call</title>
+    <script type="text/javascript" nonce="083ff37a41b64b85ae5c7fc7bdd" src="//local.adguard.org?ts=1754637471835&amp;type=content-script&amp;dmn=bj0fqj77ffy1jsds.canva-hosted-embed.com&amp;url=https%3A%2F%2Fbj0fqj77ffy1jsds.canva-hosted-embed.com%2Fcodelet%2FAAEAEGJqMGZxajc3ZmZ5MWpzZHMAAAAAAZiNs155_YMBlrO9FvQNHiKsE64lGHSzmf4wYkjYe3312ypne-o%2F&amp;app=msedge.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script>
+<script type="text/javascript" nonce="083ff37a41b64b85ae5c7fc7bdd" src="//local.adguard.org?ts=1754637471835&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;name=Web%20of%20Trust&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-bg': '#0a0a0a',
+                        'primary-text': '#ffffff',
+                        'secondary-text-80': 'rgba(255, 255, 255, 0.8)',
+                        'deep-blue': '#1a1a2e'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .button {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #000;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background: #1a1a2e;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: rgba(251, 191, 36, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .play-button:hover {
+            background: rgba(251, 191, 36, 1);
+            transform: scale(1.1);
+        }
+        
+        .calendly-container {
+            min-height: 600px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body class="antialiased bg-primary-bg text-primary-text">
+    <!-- Navigation -->
+    <nav class="absolute top-0 left-0 right-0 z-50 px-4 sm:px-8 py-4 sm:py-6">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="text-white font-bold text-xl">
+                <img alt="JD Alchemy" class="h-8 sm:h-12 w-auto" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='60' viewBox='0 0 180 60'%3E%3Crect width='180' height='60' fill='%23fbbf24'/%3E%3Ctext x='90' y='35' text-anchor='middle' fill='%23000' font-family='Arial, sans-serif' font-size='16' font-weight='bold'%3EJD Alchemy%3C/text%3E%3C/svg%3E">
+            </div>
+            <div class="flex space-x-2 sm:space-x-4">
+                <button class="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors text-sm sm:text-base px-3 sm:px-4 py-2 sm:py-3" onclick="window.history.back()">← Back</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero + Video Section -->
+    <section class="relative min-h-screen overflow-hidden px-4 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);">
+        <div class="relative max-w-6xl mx-auto pt-32 pb-16 z-10">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                    Schedule Your Personalized<br>
+                    <span class="text-yellow-400">Discovery Call</span>
+                </h1>
+                <p class="text-xl md:text-2xl leading-relaxed mb-12 text-secondary-text-80 max-w-4xl mx-auto">
+                    If you're a startup founder struggling to get investor attention, you might just be one strategic narrative away from transforming from "unrecognized" to "industry authority that investors seek out."
+                </p>
+            </div>
+            
+            <!-- Video Section -->
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold mb-6">Watch This Quick Video</h2>
+                    <p class="text-lg text-secondary-text-80 mb-8">
+                        To book your discovery call: <strong>1)</strong> Watch this video to completion <strong>2)</strong> Fill out your information <strong>3)</strong> Schedule your call
+                    </p>
+                </div>
+                
+                <div class="video-container mb-8">
+                    <div class="video-placeholder" id="video-placeholder">
+                        <div class="play-button" onclick="playVideo()">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <video id="main-video" style="display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0;" controls>
+                        <source src="demo-video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                
+                <div class="text-center">
+                    <p class="text-secondary-text-80 text-sm">
+                        📹 Video Explanation - 3 minutes that could change your business forever
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lead Qualification Section -->
+    <section id="qualification-section" class="py-16 px-4 sm:px-6 lg:px-8 bg-primary-bg" style="display: block;">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl p-8 shadow-2xl">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-black">
+                        Get Started with JD Alchemy
+                    </h2>
+                    <p class="text-black">Please fill out this quick form to help us prepare for your call</p>
+                </div>
+                
+                <form id="qualification-form" class="space-y-6">
+                    <!-- Basic Info -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
+                            <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent" placeholder="Enter your full name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                            <input type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent" placeholder="name@example.com">
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Your LinkedIn profile *</label>
+                            <input type="url" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent" placeholder="https://linkedin.com/in/yourprofile">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Your Company website *</label>
+                            <input type="url" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent" placeholder="https://yourcompany.com">
+                        </div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">1. What best describes your startup today? *</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center"><input type="radio" name="startup_stage" value="rd_prerevenue" required class="mr-3 text-yellow-400"> R&D / pre-revenue</label>
+                            <label class="flex items-center"><input type="radio" name="startup_stage" value="preseed_seed" required class="mr-3 text-yellow-400"> Pre-seed or Seed (building MVP)</label>
+                            <label class="flex items-center"><input type="radio" name="startup_stage" value="series_a_plus" required class="mr-3 text-yellow-400"> Series A+ (raised ≥ $2 M)</label>
+                            <label class="flex items-center"><input type="radio" name="startup_stage" value="revenue_scaling" required class="mr-3 text-yellow-400"> Revenue-generating & scaling</label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">2. How are you currently handling founder thought-leadership content? *</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center"><input type="radio" name="content_handling" value="inhouse" required class="mr-3 text-yellow-400"> In-house (you or team write posts)</label>
+                            <label class="flex items-center"><input type="radio" name="content_handling" value="outsourced" required class="mr-3 text-yellow-400"> Outsourced Agency or PR specialist</label>
+                            <label class="flex items-center"><input type="radio" name="content_handling" value="ai_tools" required class="mr-3 text-yellow-400"> Generic AI/content tool (e.g. ChatGPT)</label>
+                            <label class="flex items-center"><input type="radio" name="content_handling" value="no_process" required class="mr-3 text-yellow-400"> No formal process</label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">3. What's your biggest obstacle to turning thought-leadership into real business traction? *</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center"><input type="radio" name="biggest_obstacle" value="story_ideas" required class="mr-3 text-yellow-400"> Generating investor-relevant story ideas</label>
+                            <label class="flex items-center"><input type="radio" name="biggest_obstacle" value="tech_narratives" required class="mr-3 text-yellow-400"> Translating tech into compelling narratives</label>
+                            <label class="flex items-center"><input type="radio" name="biggest_obstacle" value="measuring_roi" required class="mr-3 text-yellow-400"> Measuring content ROI/attribution</label>
+                            <label class="flex items-center"><input type="radio" name="biggest_obstacle" value="scaling_posts" required class="mr-3 text-yellow-400"> Scaling consistent posts across channels</label>
+                            <label class="flex items-center"><input type="radio" name="biggest_obstacle" value="fundraising_alignment" required class="mr-3 text-yellow-400"> Aligning messages with fundraising goals</label>
+                            <label class="flex items-center"><input type="radio" name="biggest_obstacle" value="other" required class="mr-3 text-yellow-400"> Other</label>
+                        </div>
+                        <input type="text" id="other_obstacle" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent mt-2" placeholder="Please specify other obstacles" style="display: none;">
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">4. Which range best fits your monthly content/PR budget? *</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center"><input type="radio" name="budget_range" value="under_2k" required class="mr-3 text-yellow-400"> < $2,000</label>
+                            <label class="flex items-center"><input type="radio" name="budget_range" value="2k_5k" required class="mr-3 text-yellow-400"> $2,000 - 5,000</label>
+                            <label class="flex items-center"><input type="radio" name="budget_range" value="5k_10k" required class="mr-3 text-yellow-400"> $5,000 - 10,000</label>
+                            <label class="flex items-center"><input type="radio" name="budget_range" value="over_10k" required class="mr-3 text-yellow-400"> > $10,000</label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">5. Which milestone are you targeting in the next 6 months? *</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center"><input type="radio" name="milestone" value="first_raise" required class="mr-3 text-yellow-400"> Preparing first external raise</label>
+                            <label class="flex items-center"><input type="radio" name="milestone" value="seed_series_a" required class="mr-3 text-yellow-400"> Closing Seed / Series A</label>
+                            <label class="flex items-center"><input type="radio" name="milestone" value="expanding_series" required class="mr-3 text-yellow-400"> Expanding Series A / B</label>
+                            <label class="flex items-center"><input type="radio" name="milestone" value="not_fundraising" required class="mr-3 text-yellow-400"> Not fundraising soon</label>
+                        </div>
+                    </div>
+
+                    <!-- Consent -->
+                    <div>
+                        <label class="flex items-start">
+                            <input type="checkbox" required class="mr-3 mt-1 text-yellow-400">
+                            <span class="text-sm text-gray-700">I Consent to Receive Notifications, Alerts & Occasional Marketing Communication from JDAlchemy. *</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full button py-4 text-lg font-semibold">
+                        Submit & Continue to Booking
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calendly Booking Section -->
+    <section id="calendly-section" class="py-16 px-4 sm:px-6 lg:px-8" style="background-color: var(--deep-blue); display: block;">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-6">
+                    Book Your Discovery Call Now
+                </h2>
+                <p class="text-lg text-secondary-text-80 mb-8">
+                    Choose a time that works best for you. This call is completely free and there's no obligation.
+                </p>
+            </div>
+            
+            <div class="calendly-container">
+                <div class="text-center">
+                    <div class="mb-6">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                        </svg>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Calendly Integration</h3>
+                        <p class="text-gray-600 mb-6">
+                            This is where your Calendly booking widget would be embedded.<br>
+                            Replace this section with your actual Calendly embed code.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-100 p-6 rounded-lg">
+                        <p class="text-sm text-gray-500 mb-4">
+                            <strong>Demo Note:</strong> To integrate Calendly, replace this div with:
+                        </p>
+                        <code class="text-xs bg-gray-200 p-2 rounded block text-left">
+                            &lt;div class="calendly-inline-widget" data-url="https://calendly.com/your-link" style="min-width:320px;height:600px;"&gt;&lt;/div&gt;<br>
+                            &lt;script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"&gt;&lt;/script&gt;
+                        </code>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <p class="text-secondary-text-80 text-sm">
+                    🔒 Your information is secure and will never be shared with third parties
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+
+    <script>
+        let videoWatched = false;
+        let videoProgress = 0;
+        
+        function playVideo() {
+            const placeholder = document.getElementById('video-placeholder');
+            const video = document.getElementById('main-video');
+            
+            // Hide placeholder and show video
+            placeholder.style.display = 'none';
+            video.style.display = 'block';
+            video.play();
+            
+            // Track video progress
+            video.addEventListener('timeupdate', function() {
+                const progress = (video.currentTime / video.duration) * 100;
+                videoProgress = progress;
+                
+                // Show qualification form when video reaches 80% (4 minutes out of 5)
+                if (progress >= 80 && !videoWatched) {
+                    videoWatched = true;
+                    showQualificationForm();
+                }
+            });
+            
+            video.addEventListener('ended', function() {
+                if (!videoWatched) {
+                    videoWatched = true;
+                    showQualificationForm();
+                }
+            });
+        }
+        
+        function showQualificationForm() {
+            const qualificationSection = document.getElementById('qualification-section');
+            qualificationSection.style.display = 'block';
+            
+            // Smooth scroll to qualification form
+            setTimeout(() => {
+                qualificationSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 500);
+        }
+        
+        function showCalendlySection() {
+            const calendlySection = document.getElementById('calendly-section');
+            calendlySection.style.display = 'block';
+            
+            // Smooth scroll to calendly section
+            setTimeout(() => {
+                calendlySection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 500);
+        }
+        
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('qualification-form');
+            
+            // Show "other" text field when "Other" is selected
+            const obstacleRadios = document.querySelectorAll('input[name="biggest_obstacle"]');
+            const otherField = document.getElementById('other_obstacle');
+            
+            obstacleRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'other') {
+                        otherField.style.display = 'block';
+                        otherField.required = true;
+                    } else {
+                        otherField.style.display = 'none';
+                        otherField.required = false;
+                    }
+                });
+            });
+            
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Here you would typically send the form data to your server
+                // For demo purposes, we'll just show the calendly section
+                
+                // Show success message
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Submitted! Loading booking calendar...';
+                submitButton.disabled = true;
+                
+                // Show calendly section after a brief delay
+                setTimeout(() => {
+                    showCalendlySection();
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }, 2000);
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96bd3fb19110d604',t:'MTc1NDYzNzYwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
