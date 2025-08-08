@@ -624,37 +624,9 @@ export default function Home() {
             
                              {/* Third row - scroll from right to left */}
                  <div className="flex gap-2 animate-marquee-left">
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Cut PR costs 80%</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Build authority faster</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Never miss deadlines</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Scale without hiring</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Always improving</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Real-time insights</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Build authority faster</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Strategic narratives</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>24/7 monitoring</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Never miss deadlines</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Cut PR costs 80%</span>
-              {/* Duplicate for seamless loop */}
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Attract investors</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Scale without hiring</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Always improving</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Real-time insights</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Build authority faster</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Strategic narratives</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>24/7 monitoring</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Never miss deadlines</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Cut PR costs 80%</span>
-              {/* Duplicate for seamless loop */}
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Attract investors</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Scale without hiring</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Always improving</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Real-time insights</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Build authority faster</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Strategic narratives</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>24/7 monitoring</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Never miss deadlines</span>
-              <span className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>Cut PR costs 80%</span>
+              {row3.map((tag, idx) => (
+                <span key={`row3-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+              ))}
             </div>
           </div>
           
@@ -686,7 +658,7 @@ export default function Home() {
               Does Your Pitch Deck Tell a Story Worth Funding?
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed">
-            Get a free, instant analysis of your pitch deck&apos;s narrative strength. Our exclusive report uncovers the hidden signals—and silent gaps—that investors see. You&apos;ll get a clear scorecard on how your story is performing on credibility, market traction, and more. This is the first step to building a narrative that gets funded.
+            Get a free, instant analysis of your pitch deck's narrative strength. Our exclusive report uncovers the hidden signals—and silent gaps—that investors see. You’ll get a clear scorecard on how your story is performing on credibility, market traction, and more. This is the first step to building a narrative that gets funded.
             </p>
             <div className="flex justify-center z-10">
                               <Image
