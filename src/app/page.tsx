@@ -160,9 +160,9 @@ export default function Home() {
     return Array.from({ length: times }).flatMap(() => items);
   };
 
-  const row1 = useMemo(() => repeat(shuffle(marqueeTags), 3), []);
-  const row2 = useMemo(() => repeat(shuffle(marqueeTags), 3), []);
-  const row3 = useMemo(() => repeat(shuffle(marqueeTags), 3), []);
+  const row1 = useMemo(() => repeat(shuffle(marqueeTags), 3), [marqueeTags]);
+  const row2 = useMemo(() => repeat(shuffle(marqueeTags), 3), [marqueeTags]);
+  const row3 = useMemo(() => repeat(shuffle(marqueeTags), 3), [marqueeTags]);
   const carouselCards: { key: string; title: string; description: string; videoSrc: string }[] = [
     {
       key: 'Investor_Magnet',
@@ -658,7 +658,7 @@ export default function Home() {
               Does Your Pitch Deck Tell a Story Worth Funding?
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed">
-            Get a free, instant analysis of your pitch deck's narrative strength. Our exclusive report uncovers the hidden signals—and silent gaps—that investors see. You’ll get a clear scorecard on how your story is performing on credibility, market traction, and more. This is the first step to building a narrative that gets funded.
+            Get a free, instant analysis of your pitch deck&apos;s narrative strength. Our exclusive report uncovers the hidden signals—and silent gaps—that investors see. You&apos;ll get a clear scorecard on how your story is performing on credibility, market traction, and more. This is the first step to building a narrative that gets funded.
             </p>
             <div className="flex justify-center z-10">
                               <Image
@@ -767,16 +767,16 @@ export default function Home() {
           <div className="rounded-3xl p-12 bg-card-elevated border border-dividers-borders">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h1 className="text-6xl font-bold mb-4 text-primary-text">Hire your digital PR specialists</h1>
+                <h1 className="text-6xl font-bold mb-4 text-primary-text">We Only Partner With a Limited Number of Founders</h1>
                 <p className="text-secondary-text-80 mb-6 leading-relaxed">
-                Replace the need for expensive PR agencies with digital specialists who work around the clock to build your authority and attract investors.
+                Our approach is highly personalized and our capacity is limited. We work with founders who are ready to stop scrambling and start commanding. We&apos;re not a content factory— we&apos;re your strategic partner in building a funded future. Let&apos;s see if we&apos;re the right fit for your journey.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button 
                     onClick={handleBookCallBottom}
                     className="button hover:!bg-yellow-400 hover:!text-black transition-colors"
                   >
-                    Book a call
+                    Secure My Strategy Call Now
                   </button>
                 </div>
               </div>
