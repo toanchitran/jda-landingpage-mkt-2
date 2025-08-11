@@ -6,6 +6,9 @@ interface CalendlyEvent {
   start_time: string;
   end_time: string;
   status: string;
+  location: {
+    join_url: string;
+  };
   [key: string]: unknown;
 }
 
@@ -56,8 +59,9 @@ export async function GET() {
 
     const first = 'collection' in data ? data.collection?.[0] : null;
     const startTime: string | undefined = first?.start_time;
+    const join_link: string | undefined = first?.location?.join_url;
 
-    return NextResponse.json({ start_time: startTime, event: first ?? null, raw: data });
+    return NextResponse.json({ start_time: startTime, event: first ?? null, join_link: join_link, raw: data });
   } catch (err) {
     return NextResponse.json({ error: 'Failed to fetch Calendly latest event', details: err instanceof Error ? err.message : String(err) }, { status: 500 });
   }

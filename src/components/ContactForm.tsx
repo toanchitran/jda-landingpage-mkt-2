@@ -233,20 +233,9 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
       if (data.event === 'calendly.date_and_time_selected') {
         const when = pickTime(data.payload);
         console.log('Calendly date/time selected:', when, data.payload);
-        // Save selected date/time as text to Airtable (best-effort)
-        if (contactRecordId && when) {
-          try {
-            const res = await fetch('/api/update-contact', {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ recordId: contactRecordId, calendlyDateTimeSelected: String(when) }),
-            });
-            const txt = await res.text();
-            console.log('Airtable update (date_and_time_selected):', res.status, txt);
-          } catch (err) {
-            console.warn('Failed to persist calendly.date_and_time_selected:', err);
-          }
-        }
+        // Note: date_and_time_selected is just when user picks a time slot
+        // We don't need to save anything here since the actual event isn't created yet
+        console.log('Date and time selected, but event not yet scheduled');
       }
       if (data.event === 'calendly.event_scheduled') {
         const scheduledAt = pickTime(data.payload) || data.payload?.scheduled_at;
@@ -254,27 +243,38 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
         if (contactRecordId) {
           try {
             let finalStart = scheduledAt;
-            // If for any reason scheduledAt missing, query Calendly REST for last event
-            if (!finalStart) {
-              try {
-                const lookup = await fetch('/api/calendly-latest-event');
-                const lookupJson = await lookup.json();
-                finalStart = lookupJson?.start_time || finalStart;
-              } catch (e) {
-                console.warn('Calendly lookup failed', e);
-              }
+            let joinLink: string | undefined;
+            
+            // Query Calendly REST API for the latest event to get both start_time and join_link
+            try {
+              const lookup = await fetch('/api/calendly-latest-event');
+              const lookupJson = await lookup.json();
+              finalStart = lookupJson?.start_time || finalStart;
+              joinLink = lookupJson?.join_link;
+              console.log('Calendly lookup result:', { start_time: finalStart, join_link: joinLink });
+            } catch (e) {
+              console.warn('Calendly lookup failed', e);
             }
 
-            if (finalStart) {
+            // Update Airtable with both scheduled time and meeting link
+            if (finalStart || joinLink) {
+              const updateData: { 
+                recordId: string; 
+                calendlyEventScheduledTime?: string; 
+                joinLink?: string; 
+              } = { recordId: contactRecordId };
+              if (finalStart) updateData.calendlyEventScheduledTime = String(finalStart);
+              if (joinLink) updateData.joinLink = String(joinLink);
+              
               const res = await fetch('/api/update-contact', {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ recordId: contactRecordId, calendlyEventScheduledTime: String(finalStart) }),
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateData),
               });
               const txt = await res.text();
               console.log('Airtable update (event_scheduled):', res.status, txt);
             } else {
-              console.warn('No start time found to save');
+              console.warn('No start time or join link found to save');
             }
           } catch (err) {
             console.warn('Failed to persist calendly.event_scheduled:', err);

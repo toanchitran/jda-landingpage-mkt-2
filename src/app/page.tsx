@@ -5,6 +5,127 @@ import { useEffect, useState, useRef, useMemo } from "react";
 // import ContactForm from "@/components/ContactForm";
 import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
 
+// Audio Player Component with Animation
+function AudioPlayer({ src }: { src: string }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [waveHeights, setWaveHeights] = useState<number[]>([]);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const animationRef = useRef<number | null>(null);
+
+  // Initialize wave heights
+  useEffect(() => {
+    const heights = Array.from({ length: 60 }, () => Math.random() * 30 + 20);
+    setWaveHeights(heights);
+  }, []);
+
+  // Animate waveform when playing
+  useEffect(() => {
+    if (isPlaying) {
+      const animate = () => {
+        setWaveHeights(prev => prev.map(() => Math.random() * 60 + 20));
+        animationRef.current = requestAnimationFrame(animate);
+      };
+      animationRef.current = requestAnimationFrame(animate);
+    } else {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    }
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => setDuration(audio.duration);
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('ended', () => setIsPlaying(false));
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('ended', () => setIsPlaying(false));
+    };
+  }, []);
+
+  const togglePlayPause = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  return (
+    <div className="w-full max-w-3xl mx-auto rounded-2xl p-8" style={{backgroundColor: '#E8DDD4'}}>
+      <audio ref={audioRef} src={src} />
+      
+      {/* Waveform with Play Button Overlay */}
+      <div className="relative w-full h-32 flex items-center justify-center">
+        {/* Full Width Waveform */}
+        <div className="absolute inset-0 flex items-end justify-stretch">
+          {waveHeights.map((height, i) => (
+            <div
+              key={i}
+              className="rounded-t transition-all duration-75"
+              style={{
+                backgroundColor: '#A67C5A',
+                height: `${height}%`,
+                opacity: isPlaying ? 1 : 0.7,
+                width: `${100 / waveHeights.length}%`,
+                marginRight: i < waveHeights.length - 1 ? '1px' : '0',
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Play/Pause Button Overlay */}
+        <div className="relative z-10">
+          <button
+            onClick={togglePlayPause}
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+            style={{backgroundColor: '#8B5A3C', color: '#ffffff'}}
+          >
+            {isPlaying ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1"/>
+                <rect x="14" y="4" width="4" height="16" rx="1"/>
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 
 // Interactive Workflow Component
@@ -39,7 +160,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
   };
 
   return (
-    <div className="rounded-3xl p-8 text-primary-text" style={{backgroundColor: 'var(--lighter-deep-blue)'}}>
+    <div className="rounded-3xl p-8 text-primary-text" style={{backgroundColor: 'var(--primary-bg)'}}>
       <div className="text-left mb-8">
         <h3 className="text-4xl font-bold mb-3">Your Simple 3-Step Plan to a Compelling Story</h3>
         <p className="text-secondary-text-80 mb-6"> Stop scrambling for content and start commanding investor attention.</p>
@@ -135,17 +256,15 @@ export default function Home() {
   const [gapSize, setGapSize] = useState(6); // Default gap (0.375rem = 6px)
   const [isMobile, setIsMobile] = useState(false);
   // Marquee tags source
-  const marqueeTags: string[] = [
-    'Cut PR costs 80%',
-    'Build authority faster',
-    'Never miss deadlines',
-    'Attract investors',
+  const marqueeTags = useMemo(() => [
+    'Access Top-Tier Capital',
+    'Higher Valuation Multiples',
+    'Favorable Funding Terms',
+    'Build Authority Faster',
     'Scale without hiring',
-    'Always improving',
-    'Real-time insights',
-    'Strategic narratives',
-    '24/7 monitoring',
-  ];
+    'Never Miss Deadlines',
+
+  ], []);
 
   const shuffle = (items: string[]): string[] => {
     const a = [...items];
@@ -379,15 +498,9 @@ export default function Home() {
             You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
             </p>
           </div>
-          <div className="max-w-5xl mx-auto">
-            <div className="rounded-2xl overflow-hidden bg-black aspect-video flex items-center justify-center">
-              <video
-                controls
-                playsInline
-                className="w-full h-full object-cover"
-              >
-                <source src="/Alex.mp4" type="video/mp4" />
-              </video>
+          <div className="max-w-4xl mx-auto">
+            <div className="rounded-2xl p-4 flex items-center justify-center" style={{backgroundColor: 'var(--card-elevated)'}}>
+              <AudioPlayer src="/sample.wav" />
             </div>
           </div>
         </div>
@@ -500,8 +613,76 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Carousel Section */}
-      <section className="py-12 sm:py-20" style={{backgroundColor: 'var(--lighter-deep-blue)'}}>
+
+
+      {/*  Before You Hire Another PR Agency, Consider This - Deep Blue */}
+      <section className="py-20 padding-global" style={{backgroundColor: 'var(--secondary-bg)'}}>
+        <div className="w-full padding-global">
+          <div className="text-center mb-8 padding-global">
+            <h1 className="text-6xl font-bold mb-4 text-primary-text"> Before You Hire Another PR Agency...</h1>
+            <p className="text-secondary-text-80 max-w-4xl mx-auto mb-6">
+            Smart founders are choosing our Narrative Engine and experts who work without the agency fees or hiring headaches. We deliver better outcomes at a fraction of the cost.
+            </p>
+            <button 
+              onClick={handleBookCallConsider}
+              className="button mb-8 hover:!bg-yellow-400 hover:!text-black transition-colors"
+            >
+              Book a call
+            </button>
+          </div>
+          
+                         {/* Tags with marquee effect - 3 rows */}
+               <div className="relative mb-12 overflow-hidden w-full padding-global">
+                 {/* Blur overlay for left edge */}
+                 <div 
+                   className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+                   style={{
+                     width: 'calc(var(--border-radius--padding--global--regular) * 2)',
+                     background: 'linear-gradient(to right, var(--primary-bg), transparent)',
+                    //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
+                   }}
+                 ></div>
+                 
+                 {/* Blur overlay for right edge */}
+                 <div 
+                   className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+                   style={{
+                     width: 'calc(var(--border-radius--padding--global--regular) * 2)',
+                     background: 'linear-gradient(to left, var(--primary-bg), transparent)',
+                    //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
+                   }}
+                 ></div>
+                             {/* First row - scroll from right to left */}
+                 <div className="flex gap-2 mb-2 animate-marquee-left">
+                   {row1.map((tag, idx) => (
+                     <span key={`row1-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+                   ))}
+                 </div>
+            
+            {/* Second row - scroll from left to right */}
+            <div className="flex gap-2 mb-2 animate-marquee-right">
+              {row2.map((tag, idx) => (
+                <span key={`row2-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+              ))}
+            </div>
+            
+                             {/* Third row - scroll from right to left */}
+                 <div className="flex gap-2 animate-marquee-left">
+              {row3.map((tag, idx) => (
+                <span key={`row3-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+              ))}
+            </div>
+          </div>
+          
+          {/* Interactive Workflow */}
+          <div>
+            <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
+          </div>
+        </div>
+      </section>
+
+            {/* Carousel Section */}
+            <section className="py-12 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-accent-elements">The Unfair Advantage of a Strategic Story</h1>
@@ -571,72 +752,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/*  Before You Hire Another PR Agency, Consider This - Deep Blue */}
-      <section className="py-20 padding-global" style={{backgroundColor: 'var(--deep-blue)'}}>
-        <div className="w-full padding-global">
-          <div className="text-center mb-8 padding-global">
-            <h1 className="text-6xl font-bold mb-4 text-primary-text"> Before You Hire Another PR Agency...</h1>
-            <p className="text-secondary-text-80 max-w-4xl mx-auto mb-6">
-            Smart founders are choosing our Narrative Engine and experts who work without the agency fees or hiring headaches. We deliver better outcomes at a fraction of the cost.
-            </p>
-            <button 
-              onClick={handleBookCallConsider}
-              className="button mb-8 hover:!bg-yellow-400 hover:!text-black transition-colors"
-            >
-              Book a call
-            </button>
-          </div>
-          
-                         {/* Tags with marquee effect - 3 rows */}
-               <div className="relative mb-12 overflow-hidden w-full padding-global">
-                 {/* Blur overlay for left edge */}
-                 <div 
-                   className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
-                   style={{
-                     width: 'calc(var(--border-radius--padding--global--regular) * 2)',
-                     background: 'linear-gradient(to right, var(--primary-bg), transparent)',
-                    //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
-                   }}
-                 ></div>
-                 
-                 {/* Blur overlay for right edge */}
-                 <div 
-                   className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
-                   style={{
-                     width: 'calc(var(--border-radius--padding--global--regular) * 2)',
-                     background: 'linear-gradient(to left, var(--primary-bg), transparent)',
-                    //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
-                   }}
-                 ></div>
-                             {/* First row - scroll from right to left */}
-                 <div className="flex gap-2 mb-2 animate-marquee-left">
-                   {row1.map((tag, idx) => (
-                     <span key={`row1-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
-                   ))}
-                 </div>
-            
-            {/* Second row - scroll from left to right */}
-            <div className="flex gap-2 mb-2 animate-marquee-right">
-              {row2.map((tag, idx) => (
-                <span key={`row2-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
-              ))}
-            </div>
-            
-                             {/* Third row - scroll from right to left */}
-                 <div className="flex gap-2 animate-marquee-left">
-              {row3.map((tag, idx) => (
-                <span key={`row3-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
-              ))}
-            </div>
-          </div>
-          
-          {/* Interactive Workflow */}
-          <div>
-            <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
-          </div>
-        </div>
-      </section>
-
       {/* CTA Lead Magnet Section - Deep Purple */}
       <section className="relative min-h-screen flex items-center justify-center">
         <div className="absolute inset-0">
@@ -657,8 +772,8 @@ export default function Home() {
             <h2 className="text-4xl font-bold mb-6 text-black">
               Does Your Pitch Deck Tell a Story Worth Funding?
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed">
-            Get a free, instant analysis of your pitch deck&apos;s narrative strength. Our exclusive report uncovers the hidden signals—and silent gaps—that investors see. You&apos;ll get a clear scorecard on how your story is performing on credibility, market traction, and more. This is the first step to building a narrative that gets funded.
+            <p className="text-gray-600 text-lg leading-relaxed text-left">
+            This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
             </p>
             <div className="flex justify-center z-10">
                               <Image
@@ -779,6 +894,9 @@ export default function Home() {
                     Secure My Strategy Call Now
                   </button>
                 </div>
+                <p className="text-sm text-secondary-text-80 mt-3 italic">
+                  Only a handful of spots available this month. No commitment, just a conversation.
+                </p>
               </div>
               
               <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden">

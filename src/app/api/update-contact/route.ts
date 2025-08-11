@@ -7,11 +7,12 @@ const AIRTABLE_TABLE_ID = 'tblP52B81ccH8jICa';
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { recordId, pitchDeckUrl, calendlyDateTimeSelected, calendlyEventScheduledTime } = body;
+    const { recordId, pitchDeckUrl, joinLink, calendlyEventScheduledTime } = body;
 
     console.log('=== UPDATE CONTACT API ===');
     console.log('Record ID:', recordId);
     console.log('Pitch Deck URL:', pitchDeckUrl);
+    console.log('Join Link:', joinLink);
     console.log('Base ID:', AIRTABLE_BASE_ID);
     console.log('Table ID:', AIRTABLE_TABLE_ID);
 
@@ -21,7 +22,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // At least one field must be provided
-    if (!pitchDeckUrl && !calendlyDateTimeSelected && !calendlyEventScheduledTime) {
+    if (!pitchDeckUrl && !joinLink && !calendlyEventScheduledTime) {
       console.error('No updatable fields provided');
       return NextResponse.json({ error: 'No fields provided to update' }, { status: 400 });
     }
@@ -43,7 +44,7 @@ export async function PATCH(request: NextRequest) {
 
     const updateFields: Record<string, string> = {};
     if (pitchDeckUrl) updateFields["Pitch Deck URL"] = pitchDeckUrl;
-    if (calendlyDateTimeSelected) updateFields["Calendly Date & Time Selected"] = String(calendlyDateTimeSelected);
+    if (joinLink) updateFields["Meeting link"] = String(joinLink);
     if (calendlyEventScheduledTime) updateFields["Calendly Scheduled Time"] = String(calendlyEventScheduledTime);
 
     const updateData = { fields: updateFields };
