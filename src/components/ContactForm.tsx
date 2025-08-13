@@ -573,7 +573,7 @@ export default function ContactForm({
         
         // Trigger n8n webhook with the record ID
         try {
-          const webhookUrl = `https://n8n.brandbeam.io/webhook-test/35cdd99a-fc8e-42ae-b298-99cf41216b3c?record_id=${result.id}`;
+          const webhookUrl = `https://n8n.brandbeam.io/webhook/35cdd99a-fc8e-42ae-b298-99cf41216b3c?record_id=${result.id}`;
           const webhookResponse = await fetch(webhookUrl, {
             method: 'GET',
           });
