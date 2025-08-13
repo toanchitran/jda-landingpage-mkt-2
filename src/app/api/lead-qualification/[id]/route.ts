@@ -6,7 +6,7 @@ const AIRTABLE_TABLE_ID = 'tblP52B81ccH8jICa';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
@@ -16,7 +16,7 @@ export async function GET(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Fetch the record from Airtable
     const response = await fetch(

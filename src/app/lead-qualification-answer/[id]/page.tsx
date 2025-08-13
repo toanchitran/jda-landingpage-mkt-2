@@ -38,8 +38,9 @@ async function getContactData(id: string): Promise<ContactData | null> {
   }
 }
 
-export default async function LeadQualificationAnswerPage({ params }: { params: { id: string } }) {
-  const contactData = await getContactData(params.id);
+export default async function LeadQualificationAnswerPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const contactData = await getContactData(id);
   
   if (!contactData) {
     notFound();
@@ -285,8 +286,9 @@ export default async function LeadQualificationAnswerPage({ params }: { params: 
   );
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const contactData = await getContactData(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const contactData = await getContactData(id);
   
   if (!contactData) {
     return {
