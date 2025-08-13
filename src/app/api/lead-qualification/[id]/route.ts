@@ -50,25 +50,67 @@ export async function GET(
     }
 
     const { id } = await params;
+    
+    console.log('=== DEBUG INFO ===');
+    console.log('Requested ID:', id);
+    console.log('ID type:', typeof id);
+    console.log('ID length:', id.length);
+    console.log('Base ID:', AIRTABLE_BASE_ID);
+    console.log('Table ID:', AIRTABLE_TABLE_ID);
+    console.log('API Key prefix:', AIRTABLE_API_KEY.substring(0, 10) + '...');
+    
+    // Construct URL exactly like Postman
+    const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}/${id}`;
+    console.log('Full URL:', airtableUrl);
 
-    // Fetch the record from Airtable
-    const response = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${AIRTABLE_API_KEY}`,
-        },
-      }
-    );
+    // Fetch the specific record from Airtable with exact same headers as Postman
+    const response = await fetch(airtableUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+        'Accept': '*/*',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'User-Agent': 'Next.js/15.4.4',
+      },
+    });
 
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Airtable API Error Details:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+        url: airtableUrl,
+        headers: Object.fromEntries(response.headers.entries()),
+        requestHeaders: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY.substring(0, 10)}...`,
+          'Accept': '*/*',
+          'User-Agent': 'Next.js/15.4.4',
+        }
+      });
+      
       if (response.status === 404) {
         return NextResponse.json(
           { error: 'Record not found' },
           { status: 404 }
         );
+      } else if (response.status === 403) {
+        return NextResponse.json(
+          { error: 'Access denied - API key may lack read permissions or has expired' },
+          { status: 403 }
+        );
+      } else if (response.status === 401) {
+        return NextResponse.json(
+          { error: 'Authentication failed - Invalid API key' },
+          { status: 401 }
+        );
       }
-      throw new Error(`Airtable API error: ${response.status}`);
+      
+      throw new Error(`Airtable API error: ${response.status} - ${errorText}`);
     }
 
     const record = await response.json();
