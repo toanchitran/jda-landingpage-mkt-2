@@ -1,43 +1,54 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useGoogleAnalytics } from '@/hooks/useGoogleAnalytics';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics';
 import PitchDeckUpload from './PitchDeckUpload';
 
-type ThemeVars = {
-  '--primary-text'?: string;
-  '--secondary-text'?: string;
-  '--secondary-text-80'?: string;
-  '--dividers-borders'?: string;
-  '--input-fields'?: string;
-  '--card-accent-1'?: string;
-  '--accent-elements'?: string;
-};
-
 interface Question {
-  type: string;
+  id: string;
   label: string;
+  type: string;
   required: boolean;
-  placeholder?: string;
+  airtableField?: string;
   options?: string[];
-  allowOther?: boolean;
-  otherPlaceholder?: string;
-  standalone?: boolean;
+  validation?: {
+    type: string;
+    blockedDomains?: string[];
+    requiredValue?: string;
+    errorMessage?: string;
+    minValue?: number;
+  };
+  conditionalQuestions?: Array<{
+    condition: {
+      field: string;
+      operator?: string;
+      value: string | string[];
+    };
+    question: Question;
+  }>;
+  conditionalDisplay?: {
+    field: string;
+    operator: string;
+    value: string | string[];
+  };
+  placeholder?: string;
+  allowedTypes?: string[];
 }
 
-interface Questions {
-  [key: string]: Question;
+interface Section {
+  id: string;
+  title: string;
+  description: string;
+  airtableMapping: string;
+  questions: Question[];
 }
 
-interface ContactInfo {
-  fullName: string;
-  email: string;
-  linkedinProfile: string;
-  companyWebsite: string;
+interface SectionsData {
+  sections: Section[];
 }
 
-interface FormData extends ContactInfo {
-  [key: string]: string | string[];
+interface FormData {
+  [key: string]: string | string[] | File | null;
 }
 
 interface FormErrors {
@@ -56,104 +67,81 @@ declare global {
   }
 }
 
-type ContactFormProps = {
-  variant?: 'full' | 'calendly';
+interface ContactFormProps {
+  variant?: 'full' | 'minimal';
   prefillName?: string;
   prefillEmail?: string;
-  onCalendlyStart?: (name: string, email: string) => void;
-  onCalendlyShow?: (isShown: boolean) => void;
-  appearance?: 'dark' | 'light';
+  onCalendlyStart?: () => void;
+  onCalendlyShow?: () => void;
+  appearance?: 'light' | 'dark';
   calendlyHeight?: number;
   showFormHeader?: boolean;
-};
+}
 
-export default function ContactForm({ variant = 'full', prefillName = '', prefillEmail = '', onCalendlyStart, onCalendlyShow, appearance = 'dark', calendlyHeight = 900, showFormHeader = false }: ContactFormProps) {
-  const [questions, setQuestions] = useState<Questions>({});
-  const [formData, setFormData] = useState<FormData>({
-    fullName: '',
-    email: '',
-    linkedinProfile: '',
-    companyWebsite: '',
-  });
+export default function ContactForm({ 
+  prefillName = '', 
+  prefillEmail = '', 
+  onCalendlyStart, 
+  calendlyHeight = 900, 
+  showFormHeader = false 
+}: ContactFormProps) {
+  const [sectionsData, setSectionsData] = useState<SectionsData>({ sections: [] });
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [formData, setFormData] = useState<FormData>({});
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
   const [showCalendly, setShowCalendly] = useState(false);
-  const [showPitchDeckPrompt, setShowPitchDeckPrompt] = useState(false);
-  const [showPitchDeckUpload, setShowPitchDeckUpload] = useState(false);
+
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, { url: string; fileName: string }>>({});
   const [contactRecordId, setContactRecordId] = useState<string>('');
-  // Removed local pitch deck URL state (not used elsewhere)
 
-  // const CALENDLY_PERSONAL_ACCESS_TOKEN = "eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzU0NjQzMDkzLCJqdGkiOiI1MTY4YjBiNS05YmI1LTQ4YzctOTg5Yi0wNGNiMWJkMWEzZTgiLCJ1c2VyX3V1aWQiOiI0MmQzNTNjMC0zZjEwLTRiMjAtYjc0Zi0xYWM0NDJmMjlmOTYifQ.pWLAZgFEtv9R9HAxicRb-wNESpgnQDNyQPpBDKX5bBO_Lrxm98WQq_897ZCCjRoo_t6wyw-AKs5ss0FJHh7FyQ"
-  // const CALENDLY_USER_URI ="https://api.calendly.com/users/42d353c0-3f10-4b20-b74f-1ac442f29f96"
-  // URL normalization helpers
-  const ensureHttps = (value: string): string => {
-    const trimmed = value.trim();
-    if (!trimmed) return trimmed;
-    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-  };
 
-  const normalizeLinkedInUrl = (value: string): string => {
-    let url = ensureHttps(value);
-    if (!url) return url;
-    // Standardize linkedin host to include www
-    url = url.replace(/^https?:\/\/linkedin\.com/i, 'https://www.linkedin.com');
-    return url;
-  };
+  const { trackFormFieldInteraction } = useGoogleAnalytics();
 
-  // Google Analytics tracking
-  const {
-    trackContactFormStart,
-    trackContactFormComplete,
-    trackCalendlyStart,
-    trackFormFieldInteraction,
-  } = useGoogleAnalytics();
-
+  // Load sections data
   useEffect(() => {
-    if (variant !== 'full') return;
-    // Track form start when component mounts
-    trackContactFormStart();
-    
-    // Load questions from JSON file
-    const loadQuestions = async () => {
+    const loadSections = async () => {
       try {
-        const response = await fetch('/questions.json');
-        const questionsData = await response.json();
-        setQuestions(questionsData);
+        const response = await fetch('/sections.json');
+        const data = await response.json();
+        setSectionsData(data);
         
-        // Initialize form data for questions
-        const initialData: Partial<FormData> = {
-          fullName: '',
-          email: '',
-          linkedinProfile: '',
-          companyWebsite: '',
-        };
-        
-        Object.keys(questionsData).forEach(key => {
-          const question = questionsData[key];
-          if (question.type === 'checkbox' && !question.standalone) {
-            initialData[key] = [];
+        // Initialize form data
+        const initialData: FormData = {};
+        data.sections.forEach((section: Section) => {
+          section.questions.forEach((question: Question) => {
+            if (question.type === 'checkbox') {
+              initialData[question.id] = [];
           } else {
-            initialData[key] = '';
-          }
-          
-          // Initialize "other" field for checkbox questions with allowOther
-          if (question.type === 'checkbox' && question.allowOther) {
-            initialData[`${key}_other`] = '';
-          }
+              initialData[question.id] = '';
+            }
+            
+            // Initialize conditional questions
+            if (question.conditionalQuestions) {
+              question.conditionalQuestions.forEach(cq => {
+                if (cq.question.type === 'checkbox') {
+                  initialData[cq.question.id] = [];
+                } else {
+                  initialData[cq.question.id] = '';
+                }
+              });
+            }
+          });
         });
-        setFormData(initialData as FormData);
+        
+        // Set prefill data
+        if (prefillName) initialData.fullName = prefillName;
+        if (prefillEmail) initialData.email = prefillEmail;
+        
+        setFormData(initialData);
       } catch (error) {
-        console.error('Failed to load questions:', error);
+        console.error('Error loading sections:', error);
       }
     };
 
-    loadQuestions();
-  }, [trackContactFormStart, variant]);
-
-  useEffect(() => {
-    onCalendlyShow?.(showCalendly);
-  }, [showCalendly, onCalendlyShow]);
+    loadSections();
+  }, [prefillName, prefillEmail]);
 
   // Calendly script loader and inline embed setup
   const calendlyContainerRef = useRef<HTMLDivElement | null>(null);
@@ -164,14 +152,20 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
       resolve();
       return;
     }
+    
     const existing = document.getElementById('calendly-embed-script');
     if (existing) {
       const waitForCalendly = () => {
-        if (window.Calendly) resolve(); else setTimeout(waitForCalendly, 50);
+        if (window.Calendly) {
+          resolve();
+        } else {
+          setTimeout(waitForCalendly, 50);
+        }
       };
       waitForCalendly();
       return;
     }
+    
     const script = document.createElement('script');
     script.id = 'calendly-embed-script';
     script.src = 'https://assets.calendly.com/assets/external/widget.js';
@@ -181,25 +175,47 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
     document.head.appendChild(script);
   });
 
-  const shouldInitCalendly = variant === 'calendly' || showCalendly;
+  // Helper functions to get contact info from form data
+  const getContactName = useCallback((): string => {
+    const contactSection = sectionsData.sections.find(s => s.id === 'contact');
+    const nameQuestion = contactSection?.questions.find(q => q.id === 'fullName');
+    return nameQuestion ? String(formData.fullName || '') : '';
+  }, [sectionsData.sections, formData.fullName]);
+
+  const getContactEmail = useCallback((): string => {
+    const contactSection = sectionsData.sections.find(s => s.id === 'contact');
+    const emailQuestion = contactSection?.questions.find(q => q.id === 'email');
+    return emailQuestion ? String(formData.email || '') : '';
+  }, [sectionsData.sections, formData.email]);
 
   useEffect(() => {
-    if (!shouldInitCalendly) return;
+    if (!showCalendly) return;
     let cancelled = false;
 
     const init = async () => {
-      await loadCalendlyScript();
-      if (cancelled || !calendlyContainerRef.current || !window.Calendly) return;
-      // Clear node to avoid duplicate widgets
-      calendlyContainerRef.current.innerHTML = '';
-      window.Calendly.initInlineWidget({
-        url: calendlyUrl,
-        parentElement: calendlyContainerRef.current,
-        prefill: {
-          name: prefillName || formData.fullName,
-          email: prefillEmail || formData.email,
-        },
-      });
+      try {
+        await loadCalendlyScript();
+        
+        if (cancelled || !calendlyContainerRef.current || !window.Calendly) {
+          return;
+        }
+        
+        // Clear node to avoid duplicate widgets
+        calendlyContainerRef.current.innerHTML = '';
+        
+        const prefillData = {
+          name: prefillName || getContactName(),
+          email: prefillEmail || getContactEmail(),
+        };
+        
+        window.Calendly.initInlineWidget({
+          url: calendlyUrl,
+          parentElement: calendlyContainerRef.current,
+          prefill: prefillData,
+        });
+      } catch (error) {
+        console.error('Error initializing Calendly:', error);
+      }
     };
 
     type CalendlyPayload = {
@@ -234,9 +250,6 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
       if (data.event === 'calendly.date_and_time_selected') {
         const when = pickTime(data.payload);
         console.log('Calendly date/time selected:', when, data.payload);
-        // Note: date_and_time_selected is just when user picks a time slot
-        // We don't need to save anything here since the actual event isn't created yet
-        console.log('Date and time selected, but event not yet scheduled');
       }
       if (data.event === 'calendly.event_scheduled') {
         const scheduledAt = pickTime(data.payload) || data.payload?.scheduled_at;
@@ -282,17 +295,17 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
           }
         }
         // After the event is scheduled, navigate to confirmation page after 5 seconds
-        try {
-          setTimeout(() => {
-            try {
-              window.location.href = '/call-confirmed';
-            } catch {
-              /* no-op */
-            }
-          }, 5000);
-        } catch {
-          /* no-op */
-        }
+        // try {
+        //   setTimeout(() => {
+        //     try {
+        //       window.location.href = '/call-confirmed';
+        //     } catch {
+        //       /* no-op */
+        //     }
+        //   }, 5000);
+        // } catch {
+        //   /* no-op */
+        // }
       }
     };
 
@@ -302,638 +315,660 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
       cancelled = true;
       window.removeEventListener('message', handleCalendlyMessage);
     };
-  }, [shouldInitCalendly, formData.fullName, formData.email, prefillName, prefillEmail, contactRecordId]);
+  }, [showCalendly, prefillName, prefillEmail, contactRecordId, getContactName, getContactEmail]);
 
-  // Helper function to check if a question is a Yes/No question
-  const isYesNoQuestion = (question: Question): boolean => {
-    return question.type === 'radio' && 
-           question.options?.length === 2 && 
-           question.options.includes('Yes') && 
-           question.options.includes('No');
+  const handleFieldFocus = useCallback((fieldId: string) => {
+    trackFormFieldInteraction(fieldId, 'focus');
+  }, [trackFormFieldInteraction]);
+
+  const handleFieldBlur = useCallback((fieldId: string) => {
+    trackFormFieldInteraction(fieldId, 'blur');
+  }, [trackFormFieldInteraction]);
+
+  const handleFieldChange = useCallback((fieldId: string, value: string | string[] | File | null) => {
+    setFormData(prev => ({ ...prev, [fieldId]: value }));
+    trackFormFieldInteraction(fieldId, 'change');
+    
+    // Clear errors for this field
+    if (errors[fieldId]) {
+      setErrors(prev => ({ ...prev, [fieldId]: '' }));
+    }
+  }, [trackFormFieldInteraction, errors]);
+
+  const checkConditionalDisplay = (condition: { field: string; operator?: string; value: string | string[] }, formData: FormData): boolean => {
+    const fieldValue = formData[condition.field];
+    
+    // Don't show conditional questions if the parent field has no value
+    if (!fieldValue || fieldValue === '') {
+      return false;
+    }
+    
+    switch (condition.operator) {
+      case 'equals':
+        return String(fieldValue) === condition.value;
+      case 'not_equals':
+        return String(fieldValue) !== condition.value;
+      case 'in':
+        return Array.isArray(condition.value) && condition.value.includes(String(fieldValue));
+      case 'not_in':
+        return Array.isArray(condition.value) && !condition.value.includes(String(fieldValue));
+      default:
+        return true;
+    }
   };
 
-  const validateForm = () => {
-    const newErrors: FormErrors = {};
+  const getConditionalQuestions = (question: Question): Question[] => {
+    if (!question.conditionalQuestions) return [];
     
-    // Validate contact info with helpful guidance
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Please enter your full name (e.g., John Smith)';
-    }
+    return question.conditionalQuestions
+      .filter(cq => checkConditionalDisplay(cq.condition, formData))
+      .map(cq => cq.question);
+  };
+
+  const validateSection = (section: Section): FormErrors => {
+    const sectionErrors: FormErrors = {};
     
-    if (!formData.email.trim()) {
-      newErrors.email = 'Please enter your email address (e.g., john@company.com)';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email format (e.g., john@company.com)';
-    }
-    
-    if (!formData.linkedinProfile.trim()) {
-      newErrors.linkedinProfile = 'Please enter your LinkedIn profile URL (e.g., https://www.linkedin.com/in/yourname)';
-    } else {
-      // Require linkedin.com/in profile pattern
-      const linkedinUrl = normalizeLinkedInUrl(formData.linkedinProfile);
-      const profilePattern = /^https?:\/\/(www\.)?linkedin\.com\/in\/.+/i;
-      if (!profilePattern.test(linkedinUrl)) {
-        newErrors.linkedinProfile = 'Please enter a valid LinkedIn profile URL like https://www.linkedin.com/in/yourname';
-      } else if (linkedinUrl !== formData.linkedinProfile) {
-        // Sync normalized value back to state to satisfy browser URL validation
-        setFormData(prev => ({ ...prev, linkedinProfile: linkedinUrl }));
+    const validateQuestion = (question: Question) => {
+      const value = formData[question.id];
+      
+      // Check if question should be displayed
+      if (question.conditionalDisplay && !checkConditionalDisplay(question.conditionalDisplay, formData)) {
+        return;
       }
-    }
-    
-    if (!formData.companyWebsite.trim()) {
-      newErrors.companyWebsite = 'Please enter your company website URL (e.g., https://yourcompany.com)';
-    } else if (!/^https?:\/\/.+/.test(formData.companyWebsite.trim())) {
-      newErrors.companyWebsite = 'Please start your website URL with "https://" or "http://" (e.g., https://yourcompany.com)';
-    }
-    
-    // Validate all questions are answered with specific guidance
-    Object.entries(questions).forEach(([key, question]) => {
+      
+      // Required validation
       if (question.required) {
-        const value = formData[key];
-        
-        if (question.type === 'checkbox' && !question.standalone) {
-          if (Array.isArray(value) && value.length === 0) {
-            newErrors[key] = `Please select at least one option for: "${question.label}"`;
-          }
-        } else if (question.type === 'checkbox' && question.standalone) {
-          if (!value) {
-            newErrors[key] = `Please check the box to accept: "${question.label}"`;
-          }
-        } else if (question.type === 'radio') {
-          if (!value || (typeof value === 'string' && value.trim() === '')) {
-            newErrors[key] = `Please select one option for: "${question.label}"`;
-          } else if (isYesNoQuestion(question) && value !== 'Yes') {
-            // For Yes/No questions, require "Yes" to continue
-            newErrors[key] = `Please select "Yes" to continue with: "${question.label}"`;
-          }
-        } else if (!value || (typeof value === 'string' && value.trim() === '')) {
-          newErrors[key] = `Please provide an answer for: "${question.label}"`;
+        if (!value || (Array.isArray(value) && value.length === 0) || value === '') {
+          sectionErrors[question.id] = `${question.label} is required`;
+          return;
         }
       }
+      
+      // Custom validation
+      if (question.validation && value) {
+        switch (question.validation.type) {
+          case 'company_domain':
+            if (typeof value === 'string') {
+              const email = value.toLowerCase();
+              const domain = email.split('@')[1];
+              if (question.validation.blockedDomains?.includes(domain)) {
+                sectionErrors[question.id] = 'Please use your work email address. Personal email domains are not allowed.';
+              }
+            }
+            break;
+          case 'required_value':
+            if (value !== question.validation.requiredValue) {
+              sectionErrors[question.id] = question.validation.errorMessage || `Must select "${question.validation.requiredValue}"`;
+            }
+            break;
+          case 'min_value':
+            if (typeof value === 'string' && question.validation.minValue !== undefined) {
+              const numValue = parseFloat(value);
+              if (isNaN(numValue) || numValue < question.validation.minValue) {
+                sectionErrors[question.id] = `Must be at least ${question.validation.minValue}`;
+              }
+            }
+            break;
+        }
+      }
+      
+      // Email format validation
+      if (question.type === 'email' && value && typeof value === 'string') {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          sectionErrors[question.id] = 'Please enter a valid email format';
+        }
+      }
+      
+      // URL validation - auto-correct instead of showing error
+      if (question.type === 'url' && value && typeof value === 'string') {
+        const trimmedValue = value.trim();
+        if (trimmedValue && !trimmedValue.startsWith('http://') && !trimmedValue.startsWith('https://')) {
+          // Auto-correct by adding https://
+          const correctedUrl = `https://${trimmedValue}`;
+          setFormData(prev => ({ ...prev, [question.id]: correctedUrl }));
+        }
+      }
+    };
+    
+    // Validate main questions
+    section.questions.forEach(validateQuestion);
+    
+    // Validate conditional questions
+    section.questions.forEach(question => {
+      getConditionalQuestions(question).forEach(validateQuestion);
     });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    
+    return sectionErrors;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleNext = () => {
+    const currentSection = sectionsData.sections[currentSectionIndex];
+    const sectionErrors = validateSection(currentSection);
     
-    if (!validateForm()) {
+    if (Object.keys(sectionErrors).length > 0) {
+      setErrors(sectionErrors);
+      return;
+    }
+    
+    setErrors({});
+    
+    // Check for hard stops
+    if (currentSection.id === 'founder_availability' && formData.founderAvailability !== 'Yes') {
+      setMessage('This consultation requires founder participation. Please reapply when available.');
       setStatus('error');
-      setMessage('Please fill in all required fields correctly.');
+      return;
+    }
+    
+    if (currentSection.id === 'commercial_terms' && formData.termsAcceptance !== 'Yes, I accept') {
+      setMessage('Thanks—this engagement requires acceptance of terms.');
+      setStatus('error');
       return;
     }
 
-    setStatus('loading');
-    setMessage('');
+    if (currentSectionIndex < sectionsData.sections.length - 1) {
+      setCurrentSectionIndex(prev => prev + 1);
+    } else {
+      handleSubmit();
+    }
+  };
 
+  const handlePrevious = () => {
+    if (currentSectionIndex > 0) {
+      setCurrentSectionIndex(prev => prev - 1);
+      setErrors({});
+      setMessage('');
+      setStatus('idle');
+    }
+  };
+
+  const handleSubmit = async () => {
+    setStatus('loading');
+    
     try {
-      // Send data to Airtable via our API endpoint
+      // Prepare submission data
+      const submissionData: Record<string, string> = {};
+      
+      // Handle file uploads - combine multiple files into single string
+      const fileUrls: string[] = [];
+      Object.values(uploadedFiles).forEach(file => {
+        if (file.url) {
+          fileUrls.push(file.url);
+        }
+      });
+      
+      // Store as single string with URLs separated by commas, or individual URLs
+      if (fileUrls.length === 1) {
+        submissionData.pitchDeckUrl = fileUrls[0];
+      } else if (fileUrls.length === 2) {
+        submissionData.pitchDeckUrl = `${fileUrls[0]}, ${fileUrls[1]}`;
+      } else if (fileUrls.length > 0) {
+        submissionData.pitchDeckUrl = fileUrls.join(', ');
+        } else {
+        submissionData.pitchDeckUrl = '';
+      }
+      
+      // Map contact section data
+      const contactSection = sectionsData.sections.find(s => s.id === 'contact');
+      if (contactSection) {
+        contactSection.questions.forEach(question => {
+          if (question.airtableField) {
+            if (question.id === 'applicantRole') {
+              // Format applicant role data
+              let roleFormatted = `Applicant Role: ${formData[question.id]}`;
+              if (formData[question.id] === 'Other' && formData.applicantRoleOther) {
+                roleFormatted += ` (${formData.applicantRoleOther})`;
+              }
+              if (formData[question.id] !== 'Founder/CEO' && formData.founderCeoAttendance) {
+                roleFormatted += `\nFounder/CEO will attend call: ${formData.founderCeoAttendance}`;
+              }
+              submissionData[question.airtableField] = roleFormatted;
+      } else {
+              submissionData[question.airtableField] = String(formData[question.id] || '');
+            }
+          }
+        });
+      }
+      
+      // Map other sections to Question fields
+      let questionIndex = 1;
+      sectionsData.sections.forEach(section => {
+        if (section.id !== 'contact') {
+          const sectionAnswers: string[] = [];
+          
+          section.questions.forEach(question => {
+            const value = formData[question.id];
+            if (value) {
+              sectionAnswers.push(`Question:\n${question.label}\nAnswer:\n${Array.isArray(value) ? value.join(', ') : value}`);
+            }
+            
+            // Add conditional questions
+            getConditionalQuestions(question).forEach(cq => {
+              const cqValue = formData[cq.id];
+              if (cqValue) {
+                sectionAnswers.push(`Question:\n${cq.label}\nAnswer:\n${Array.isArray(cqValue) ? cqValue.join(', ') : cqValue}`);
+              }
+            });
+          });
+          
+          if (sectionAnswers.length > 0) {
+            submissionData[`Question ${questionIndex}`] = sectionAnswers.join('\n\n');
+            questionIndex++;
+          }
+        }
+      });
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
+      if (response.ok) {
       const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to save contact information');
-      }
-
-      setStatus('success');
-      setMessage('Thank you! Your information has been submitted successfully.');
-      setContactRecordId(result.id);
-      trackContactFormComplete();
-      
-      // Show pitch deck prompt instead of going directly to Calendly
-      setShowPitchDeckPrompt(true);
-      
-    } catch (err) {
-      console.error('Form submission error:', err);
-      setStatus('error');
-      setMessage('Failed to submit form. Please check your information and try again.');
-    }
-  };
-
-  const handleContactInfoChange = (field: keyof ContactInfo, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleFieldFocus = (fieldName: string) => {
-    trackFormFieldInteraction(fieldName, 'focus');
-  };
-
-  const handleFieldBlur = (fieldName: string) => {
-    trackFormFieldInteraction(fieldName, 'blur');
-  };
-
-  const handleFieldChange = (fieldName: string) => {
-    trackFormFieldInteraction(fieldName, 'change');
-  };
-
-  const handleQuestionChange = (questionKey: string, value: string | string[], checked?: boolean) => {
-    const question = questions[questionKey];
-    
-    setFormData(prev => {
-      const newData = { ...prev };
-      
-      if (checked !== undefined) {
-        if (question?.type === 'checkbox' && question.standalone) {
-          // Handle standalone checkbox (consent)
-          newData[questionKey] = checked ? 'true' : '';
-        } else {
-          // Handle multiple checkbox questions
-          const currentValues = Array.isArray(prev[questionKey]) ? prev[questionKey] as string[] : [];
-          if (checked) {
-            newData[questionKey] = [...currentValues, value as string];
+        setStatus('success');
+        setMessage('Thank you! Your qualification has been submitted successfully.');
+        setContactRecordId(result.id);
+        
+        // Trigger n8n webhook with the record ID
+        try {
+          const webhookUrl = `https://n8n.brandbeam.io/webhook-test/35cdd99a-fc8e-42ae-b298-99cf41216b3c?record_id=${result.id}`;
+          const webhookResponse = await fetch(webhookUrl, {
+            method: 'GET',
+          });
+          
+          if (webhookResponse.ok) {
+            console.log('n8n webhook triggered successfully');
           } else {
-            newData[questionKey] = currentValues.filter(v => v !== value);
+            console.warn('n8n webhook failed:', webhookResponse.status);
           }
+        } catch (webhookError) {
+          console.warn('Failed to trigger n8n webhook:', webhookError);
         }
+        
+        // Automatically show Calendly instead of pitch deck prompt
+        setShowCalendly(true);
+        onCalendlyStart?.();
       } else {
-        // Handle other question types (radio, text, etc.)
-        newData[questionKey] = value;
-      }
-      
-      return newData;
-    });
-    
-    // Clear any existing error for this field
-    if (errors[questionKey]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[questionKey];
-        return newErrors;
-      });
-    }
-  };
-
-  const handlePitchDeckYes = () => {
-    setShowPitchDeckPrompt(false);
-    setShowPitchDeckUpload(true);
-  };
-
-  const handlePitchDeckNo = () => {
-    setShowPitchDeckPrompt(false);
-    trackCalendlyStart();
-    setShowCalendly(true);
-    onCalendlyStart?.(formData.fullName, formData.email);
-  };
-
-  const handlePitchDeckUploadComplete = async (fileUrl: string) => {
-    console.log('Pitch deck upload complete:', { fileUrl, contactRecordId });
-    
-    // Update the Airtable record with the pitch deck URL
-    try {
-      const response = await fetch('/api/update-contact', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          recordId: contactRecordId,
-          pitchDeckUrl: fileUrl,
-        }),
-      });
-
-      const result = await response.json();
-      console.log('Update contact response:', { status: response.status, result });
-
-      if (!response.ok) {
-        console.error('Failed to update contact record with pitch deck URL:', result);
-        alert('Warning: Your pitch deck was uploaded but we could not update your contact record. Please contact support.');
-      } else {
-        console.log('Successfully updated contact record with pitch deck URL');
+        throw new Error('Submission failed');
       }
     } catch (error) {
-      console.error('Error updating contact record:', error);
-      alert('Warning: Your pitch deck was uploaded but we could not update your contact record. Please contact support.');
+      console.error('Error submitting form:', error);
+      setStatus('error');
+      setMessage('There was an error submitting your information. Please try again.');
     }
-
-    setShowPitchDeckUpload(false);
-    trackCalendlyStart();
-    setShowCalendly(true);
-    onCalendlyStart?.(formData.fullName, formData.email);
   };
 
-  const handlePitchDeckSkip = () => {
-    setShowPitchDeckUpload(false);
-    trackCalendlyStart();
-    setShowCalendly(true);
-    onCalendlyStart?.(formData.fullName, formData.email);
-  };
-
-  const renderQuestion = (key: string, question: Question) => {
-    const questionNumber = key.replace('Question ', '');
-    const hasError = errors[key];
+  const renderQuestion = (question: Question) => {
+    const value = formData[question.id];
+    const error = errors[question.id];
+    
+    // Check conditional display
+    if (question.conditionalDisplay && !checkConditionalDisplay(question.conditionalDisplay, formData)) {
+      return null;
+    }
+    
+    const commonProps = {
+      className: "w-full p-2.5 md:p-3 rounded text-sm",
+      style: {
+        backgroundColor: '#ffffff',
+        color: '#1f2937',
+        border: `1px solid ${error ? '#dc2626' : '#d1d5db'}`,
+        outline: 'none'
+      }
+    };
+    
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      e.target.style.borderColor = '#3b82f6';
+      handleFieldFocus(question.id);
+    };
+    
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      e.target.style.borderColor = error ? '#dc2626' : '#d1d5db';
+      handleFieldBlur(question.id);
+      
+      // Auto-correct URLs on blur
+      if (question.type === 'url' && e.target.value) {
+        const trimmedValue = e.target.value.trim();
+        if (trimmedValue && !trimmedValue.startsWith('http://') && !trimmedValue.startsWith('https://')) {
+          const correctedUrl = `https://${trimmedValue}`;
+          handleFieldChange(question.id, correctedUrl);
+          e.target.value = correctedUrl; // Update the input field immediately
+        }
+      }
+    };
 
     switch (question.type) {
-      case 'radio':
-        const isYesNo = isYesNoQuestion(question);
+      case 'text':
+      case 'email':
+      case 'url':
+      case 'number':
         return (
-          <div key={key}>
-            <label className="block text-base md:text-lg mb-2 md:mb-3 font-medium" style={{color: 'var(--primary-text)'}}>
-              {questionNumber}. {question.label} {question.required && '*'}
-              {isYesNo && (
-                <span className="text-sm font-normal ml-2" style={{color: 'var(--secondary-text-80)'}}>
-                  (Must select &quot;Yes&quot; to continue)
-                </span>
-              )}
+          <div key={question.id} className="mb-4 md:mb-5">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+              {question.label} {question.required && '*'}
             </label>
-            <div className="space-y-2 md:space-y-3">
-              {question.options?.map((option, index) => (
-                <label key={index} className="flex items-center text-sm" style={{color: 'var(--primary-text)'}}>
+            <input
+              {...commonProps}
+              id={question.id}
+              name={question.id}
+              type={question.type}
+              value={String(value || '')}
+              onChange={(e) => handleFieldChange(question.id, e.target.value)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              placeholder={question.placeholder}
+            />
+            {error && <p className="text-xs md:text-sm mt-1 text-red-600">{error}</p>}
+          </div>
+        );
+        
+      case 'textarea':
+        return (
+          <div key={question.id} className="mb-4 md:mb-5">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+              {question.label} {question.required && '*'}
+            </label>
+            <textarea
+              {...commonProps}
+              id={question.id}
+              name={question.id}
+              value={String(value || '')}
+              onChange={(e) => handleFieldChange(question.id, e.target.value)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              placeholder={question.placeholder}
+              rows={4}
+            />
+            {error && <p className="text-xs md:text-sm mt-1 text-red-600">{error}</p>}
+          </div>
+        );
+        
+      case 'select':
+        return (
+          <div key={question.id} className="mb-4 md:mb-5">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+              {question.label} {question.required && '*'}
+            </label>
+            <select
+              {...commonProps}
+              id={question.id}
+              name={question.id}
+              value={String(value || '')}
+              onChange={(e) => handleFieldChange(question.id, e.target.value)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            >
+              <option value="">Select an option</option>
+              {question.options?.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+            {error && <p className="text-xs md:text-sm mt-1 text-red-600">{error}</p>}
+          </div>
+        );
+        
+      case 'radio':
+        return (
+          <div key={question.id} className="mb-4 md:mb-5">
+            <label className="block text-base md:text-lg mb-3 font-medium text-gray-800">
+              {question.label} {question.required && '*'}
+            </label>
+            <div className="space-y-2">
+              {question.options?.map(option => (
+                <label key={option} className="flex items-center">
                   <input
                     type="radio"
-                    name={key}
+                    name={question.id}
                     value={option}
-                    checked={(formData[key] as string) === option}
-                    onChange={(e) => {
-                      handleQuestionChange(key, e.target.value);
-                      handleFieldChange(key);
-                    }}
-                    onFocus={() => handleFieldFocus(key)}
-                    onBlur={() => handleFieldBlur(key)}
+                    checked={value === option}
+                    onChange={(e) => handleFieldChange(question.id, e.target.value)}
+                    onFocus={() => handleFieldFocus(question.id)}
+                    onBlur={() => handleFieldBlur(question.id)}
                     className="mr-2"
                   />
-                  {option}
+                  <span className="text-gray-800">{option}</span>
                 </label>
               ))}
             </div>
-            {hasError && <p className="text-xs md:text-sm mt-1" style={{color: 'var(--accent-elements)'}}>{hasError}</p>}
+            {error && <p className="text-xs md:text-sm mt-1 text-red-600">{error}</p>}
           </div>
         );
 
       case 'checkbox':
-        if (question.standalone) {
           return (
-            <div key={key}>
-              <label className="flex items-center" style={{color: 'var(--primary-text)'}}>
+          <div key={question.id} className="mb-4 md:mb-5">
+            <label className="block text-base md:text-lg mb-3 font-medium text-gray-800">
+              {question.label} {question.required && '*'}
+            </label>
+            <div className="space-y-2">
+              {question.options?.map(option => (
+                <label key={option} className="flex items-center">
                 <input
                   type="checkbox"
-                  name={key}
-                  checked={(formData[key] as string) === 'true'}
-                  onChange={(e) => {
-                    handleQuestionChange(key, '', e.target.checked);
-                    handleFieldChange(key);
-                  }}
-                  onFocus={() => handleFieldFocus(key)}
-                  onBlur={() => handleFieldBlur(key)}
+                    value={option}
+                    checked={Array.isArray(value) && value.includes(option)}
+                    onChange={(e) => {
+                      const currentValues = Array.isArray(value) ? value : [];
+                      if (e.target.checked) {
+                        handleFieldChange(question.id, [...currentValues, option]);
+                      } else {
+                        handleFieldChange(question.id, currentValues.filter(v => v !== option));
+                      }
+                    }}
+                    onFocus={() => handleFieldFocus(question.id)}
+                    onBlur={() => handleFieldBlur(question.id)}
                   className="mr-2"
                 />
-                <span className="text-sm md:text-base font-medium">
-                  {questionNumber}. {question.label} {question.required && '*'}
-                </span>
+                  <span className="text-gray-800">{option}</span>
               </label>
-              {hasError && <p className="text-xs md:text-sm mt-1" style={{color: 'var(--accent-elements)'}}>{hasError}</p>}
+              ))}
+            </div>
+            {error && <p className="text-xs md:text-sm mt-1 text-red-600">{error}</p>}
             </div>
           );
-        } else {
+        
+      case 'date':
           return (
-            <div key={key}>
-              <label className="block text-base md:text-lg mb-2 md:mb-3 font-medium" style={{color: 'var(--primary-text)'}}>
-                {questionNumber}. {question.label} {question.required && '*'}
+          <div key={question.id} className="mb-4 md:mb-5">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+              {question.label} {question.required && '*'}
               </label>
-              <div className="space-y-2 md:space-y-3">
-                {question.options?.map((option, index) => (
-                  <label key={index} className="flex items-center text-sm" style={{color: 'var(--primary-text)'}}>
                     <input
-                      type="checkbox"
-                      name={`${key}-${option}`}
-                      checked={Array.isArray(formData[key]) && (formData[key] as string[]).includes(option)}
-                      onChange={(e) => {
-                        handleQuestionChange(key, option, e.target.checked);
-                        handleFieldChange(key);
-                      }}
-                      onFocus={() => handleFieldFocus(key)}
-                      onBlur={() => handleFieldBlur(key)}
-                      className="mr-2"
-                    />
-                    {option}
+              {...commonProps}
+              id={question.id}
+              name={question.id}
+              type="date"
+              value={String(value || '')}
+              onChange={(e) => handleFieldChange(question.id, e.target.value)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            />
+            {error && <p className="text-xs md:text-sm mt-1 text-red-600">{error}</p>}
+          </div>
+        );
+        
+            case 'file':
+        const uploadedFile = uploadedFiles[question.id];
+        return (
+          <div key={question.id} className="mb-4 md:mb-5">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+              {question.label} {question.required && '*'}
                   </label>
-                ))}
-                {question.allowOther && (
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      placeholder={question.otherPlaceholder}
-                      value={(formData[`${key}_other`] as string) || ''}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          [`${key}_other`]: e.target.value,
-                        }));
-                        // Auto-check "Others" when typing
-                        if (e.target.value && !Array.isArray(formData[key])) {
-                          handleQuestionChange(key, 'Others', true);
-                        }
-                        handleFieldChange(`${key}_other`);
-                      }}
-                      onFocus={() => handleFieldFocus(`${key}_other`)}
-                      onBlur={() => handleFieldBlur(`${key}_other`)}
-                      className="w-full p-2 rounded text-sm"
-                      style={{
-                        backgroundColor: 'var(--input-fields)',
-                        color: 'var(--primary-text)',
-                        border: '1px solid var(--dividers-borders)',
-                        outline: 'none'
-                      }}
-                    />
+            
+            {uploadedFile ? (
+              <div className="border border-green-300 bg-green-50 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-green-800 font-medium">{uploadedFile.fileName}</span>
                   </div>
-                )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUploadedFiles(prev => {
+                        const updated = { ...prev };
+                        delete updated[question.id];
+                        return updated;
+                      });
+                      handleFieldChange(question.id, '');
+                    }}
+                    className="text-red-600 hover:text-red-800 text-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
-              {hasError && <p className="text-xs md:text-sm mt-1" style={{color: 'var(--accent-elements)'}}>{hasError}</p>}
+            ) : (
+              <PitchDeckUpload
+                onUploadComplete={(url: string) => {
+                  // Extract filename from URL - remove timestamp prefix and clean up
+                  let fileName = url.split('/').pop() || 'Uploaded file';
+                  // Remove timestamp prefix (numbers_) from filename
+                  fileName = fileName.replace(/^\d+_/, '').replace(/_/g, ' ');
+                  
+                  setUploadedFiles(prev => ({
+                          ...prev,
+                    [question.id]: { url, fileName }
+                  }));
+                  handleFieldChange(question.id, url);
+
+                }}
+                onSkip={() => {
+                  // Allow skipping if not required
+                  if (!question.required) {
+                    handleFieldChange(question.id, '');
+                  }
+                }}
+              />
+            )}
+            
+            {error && <p className="text-xs md:text-sm mt-1 text-red-600">{error}</p>}
             </div>
           );
-        }
 
       default:
         return null;
     }
   };
 
-  if (Object.keys(questions).length === 0) {
-    const lightVars: React.CSSProperties & ThemeVars = appearance === 'light' ? {
-      '--primary-text': '#000000',
-      '--secondary-text': '#374151',
-      '--secondary-text-80': 'rgba(0,0,0,0.8)',
-      '--dividers-borders': '#e5e7eb',
-      '--input-fields': '#f9fafb',
-      '--card-accent-1': '#f3f4f6',
-      '--accent-elements': '#fabf01',
-    } : {};
-    return <div className="text-center" style={{ color: 'var(--primary-text)', ...lightVars }}>Loading form...</div>;
+  if (sectionsData.sections.length === 0) {
+    return <div>Loading...</div>;
   }
 
-  const lightVars: React.CSSProperties & ThemeVars = appearance === 'light' ? {
-    '--primary-text': '#000000',
-    '--secondary-text': '#374151',
-    '--secondary-text-80': 'rgba(0,0,0,0.8)',
-    '--dividers-borders': '#e5e7eb',
-    '--input-fields': '#f9fafb',
-    '--card-accent-1': '#f3f4f6',
-    '--accent-elements': '#fabf01',
-  } : {};
+
+
+      if (showCalendly) {
+    return (
+      <div className="w-full max-w-4xl mx-auto">
+        <div className="mb-6 text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Thank you for your submission!
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Now let&apos;s schedule your 90-minute discovery call
+          </p>
+        </div>
+        <div
+          ref={calendlyContainerRef}
+          className="w-full bg-white rounded-lg shadow-lg"
+          style={{ height: `${calendlyHeight}px`, minWidth: '320px' }}
+        />
+      </div>
+    );
+  }
+
+  const currentSection = sectionsData.sections[currentSectionIndex];
+  const progress = ((currentSectionIndex + 1) / sectionsData.sections.length) * 100;
 
   return (
-    <div style={lightVars}>
-      {showPitchDeckPrompt ? (
-        <div className="max-w-2xl mx-auto text-center p-6">
-          <div className="mb-6">
-            <h2 className="text-xl md:text-2xl font-bold mb-4" style={{color: 'var(--primary-text)'}}>
-              Upload Your Pitch Deck
-            </h2>
-            <p className="text-base md:text-lg mb-6" style={{color: 'var(--secondary-text)'}}>
-              Please upload your teaser deck or pitch deck here to increase your chance of being selected for our program
-            </p>
-          </div>
-          
-          <div className="flex gap-4 justify-center">
-            <button
-              onClick={handlePitchDeckYes}
-              className="px-6 py-3 rounded font-medium text-white transition-colors"
-              style={{
-                backgroundColor: 'var(--accent-elements)',
-                border: 'none'
-              }}
-            >
-              Yes, Upload Pitch Deck
-            </button>
-            <button
-              onClick={handlePitchDeckNo}
-              className="px-6 py-3 rounded font-medium transition-colors"
-              style={{
-                backgroundColor: 'var(--card-accent-1)',
-                color: 'var(--secondary-text)',
-                border: `1px solid var(--dividers-borders)`
-              }}
-            >
-              No, Continue to Booking
-            </button>
-          </div>
-        </div>
-      ) : showPitchDeckUpload ? (
-        <PitchDeckUpload 
-          onUploadComplete={handlePitchDeckUploadComplete}
-          onSkip={handlePitchDeckSkip}
-        />
-      ) : !showCalendly ? (
-        <>
-          {showFormHeader && (
-            <div className="text-center mb-8">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-black">Get Started with JD Alchemy</h2>
-              <p className="text-black">Please fill out this quick form to help us prepare for your call</p>
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
-            {/* Error Summary */}
-            {Object.keys(errors).length > 0 && (
-              <div className="rounded-lg p-4 mb-6" style={{backgroundColor: 'var(--card-accent-1)', border: '1px solid var(--dividers-borders)'}}>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5" style={{color: 'var(--accent-elements)'}} viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium" style={{color: 'var(--primary-text)'}}>
-                      Please fix the following {Object.keys(errors).length === 1 ? 'issue' : 'issues'} to continue:
-                    </h3>
-                    <div className="mt-2 text-sm" style={{color: 'var(--secondary-text-80)'}}>
-                      <ul className="list-disc pl-5 space-y-1">
-                        {Object.entries(errors).map(([field, error]) => (
-                          <li key={field}>{error}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+    <div className="w-full max-w-2xl mx-auto">
+      {showFormHeader && (
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800">
+            Get Started with JD Alchemy
+          </h2>
+          <p className="text-base md:text-lg text-gray-600">
+            Please fill out this quick form to help us prepare for your call
+          </p>
               </div>
             )}
 
-            {/* Contact Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-              <div>
-                <label htmlFor="fullName" className="block text-base md:text-lg mb-1 font-medium" style={{color: 'var(--primary-text)'}}>Full Name *</label>
-                <input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={(e) => {
-                    handleContactInfoChange('fullName', e.target.value);
-                    handleFieldChange('fullName');
-                  }}
-                  className={`w-full p-2.5 md:p-3 rounded text-sm ${errors.fullName ? '' : ''}`}
-                  style={{
-                    backgroundColor: 'var(--input-fields)',
-                    color: 'var(--primary-text)',
-                    border: `1px solid ${errors.fullName ? 'var(--accent-elements)' : 'var(--dividers-borders)'}`,
-                    outline: 'none'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-elements)';
-                    handleFieldFocus('fullName');
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.fullName ? 'var(--accent-elements)' : 'var(--dividers-borders)';
-                    handleFieldBlur('fullName');
-                  }}
-                  placeholder="Enter your full name"
-                />
-                {errors.fullName && <p className="text-xs md:text-sm mt-1" style={{color: 'var(--accent-elements)'}}>{errors.fullName}</p>}
+      {/* Progress Bar */}
+      <div className="mb-6">
+        <div className="flex justify-between text-sm mb-2 text-gray-600">
+          <span>Step {currentSectionIndex + 1} of {sectionsData.sections.length}</span>
+          <span>{Math.round(progress)}% Complete</span>
               </div>
-              <div>
-                <label htmlFor="email" className="block text-base md:text-lg mb-1 font-medium" style={{color: 'var(--primary-text)'}}>Email *</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={(e) => {
-                    handleContactInfoChange('email', e.target.value);
-                    handleFieldChange('email');
-                  }}
-                  className={`w-full p-2.5 md:p-3 rounded text-sm`}
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            className="h-2 rounded-full transition-all duration-300"
                   style={{
-                    backgroundColor: 'var(--input-fields)',
-                    color: 'var(--primary-text)',
-                    border: `1px solid ${errors.email ? 'var(--accent-elements)' : 'var(--dividers-borders)'}`,
-                    outline: 'none'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-elements)';
-                    handleFieldFocus('email');
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.email ? 'var(--accent-elements)' : 'var(--dividers-borders)';
-                    handleFieldBlur('email');
-                  }}
-                  placeholder="name@example.com"
-                />
-                {errors.email && <p className="text-xs md:text-sm mt-1" style={{color: 'var(--accent-elements)'}}>{errors.email}</p>}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-              <div>
-                <label htmlFor="linkedinProfile" className="block text-base md:text-lg mb-1 font-medium" style={{color: 'var(--primary-text)'}}>Your LinkedIn profile *</label>
-                <input
-                  type="url"
-                  id="linkedinProfile"
-                  name="linkedinProfile"
-                  value={formData.linkedinProfile}
-                  onChange={(e) => {
-                    handleContactInfoChange('linkedinProfile', e.target.value);
-                    handleFieldChange('linkedinProfile');
-                  }}
-                  className={`w-full p-2.5 md:p-3 rounded text-sm`}
-                  style={{
-                    backgroundColor: 'var(--input-fields)',
-                    color: 'var(--primary-text)',
-                    border: `1px solid ${errors.linkedinProfile ? 'var(--accent-elements)' : 'var(--dividers-borders)'}`,
-                    outline: 'none'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-elements)';
-                    handleFieldFocus('linkedinProfile');
-                  }}
-                  onBlur={(e) => {
-                    const normalized = normalizeLinkedInUrl(e.target.value);
-                    if (normalized !== e.target.value) {
-                      e.target.value = normalized;
-                      handleContactInfoChange('linkedinProfile', normalized);
-                    }
-                    e.target.style.borderColor = errors.linkedinProfile ? 'var(--accent-elements)' : 'var(--dividers-borders)';
-                    handleFieldBlur('linkedinProfile');
-                  }}
-                  placeholder="https://www.linkedin.com/in/yourprofile"
-                  inputMode="url"
-                  autoComplete="url"
-                  title="Enter a LinkedIn profile URL like https://www.linkedin.com/in/yourname. We will auto-add https:// if omitted."
-                />
-                {errors.linkedinProfile && <p className="text-xs md:text-sm mt-1" style={{color: 'var(--accent-elements)'}}>{errors.linkedinProfile}</p>}
-              </div>
-              <div>
-                <label htmlFor="companyWebsite" className="block text-base md:text-lg mb-1 font-medium" style={{color: 'var(--primary-text)'}}>Your Company website *</label>
-                <input
-                  type="url"
-                  id="companyWebsite"
-                  name="companyWebsite"
-                  value={formData.companyWebsite}
-                  onChange={(e) => {
-                    handleContactInfoChange('companyWebsite', e.target.value);
-                    handleFieldChange('companyWebsite');
-                  }}
-                  className={`w-full p-2.5 md:p-3 rounded text-sm`}
-                  style={{
-                    backgroundColor: 'var(--input-fields)',
-                    color: 'var(--primary-text)',
-                    border: `1px solid ${errors.companyWebsite ? 'var(--accent-elements)' : 'var(--dividers-borders)'}`,
-                    outline: 'none'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--accent-elements)';
-                    handleFieldFocus('companyWebsite');
-                  }}
-                  onBlur={(e) => {
-                    const normalized = ensureHttps(e.target.value);
-                    if (normalized !== e.target.value) {
-                      e.target.value = normalized;
-                      handleContactInfoChange('companyWebsite', normalized);
-                    }
-                    e.target.style.borderColor = errors.companyWebsite ? 'var(--accent-elements)' : 'var(--dividers-borders)';
-                    handleFieldBlur('companyWebsite');
-                  }}
-                  placeholder="https://yourcompany.com"
-                  inputMode="url"
-                  autoComplete="url"
-                  title="Enter your company website URL (we will auto-add https:// if omitted)"
-                />
-                {errors.companyWebsite && <p className="text-xs md:text-sm mt-1" style={{color: 'var(--accent-elements)'}}>{errors.companyWebsite}</p>}
+              width: `${progress}%`,
+              backgroundColor: 'var(--deep-blue)'
+            }}
+          ></div>
               </div>
             </div>
 
-            {/* Dynamic Questions */}
-            {Object.entries(questions).map(([key, question]) => renderQuestion(key, question))}
-            
+      {/* Section Card */}
+      <div className="p-6 rounded-lg mb-6 bg-white shadow-lg">
+        <div className="mb-6">
+          <h3 className="text-xl md:text-2xl font-bold mb-2 text-gray-800">
+            {currentSection.title}
+          </h3>
+          <p className="text-gray-600">
+            {currentSection.description}
+          </p>
+              </div>
+
+        {/* Questions */}
+              <div>
+          {currentSection.questions.map(question => (
+            <div key={question.id}>
+              {renderQuestion(question)}
+              {/* Render conditional questions */}
+              {getConditionalQuestions(question).map(cq => renderQuestion(cq))}
+              </div>
+          ))}
+            </div>
+
+        {/* Status Message */}
             {message && (
-              <div className="p-3 md:p-4 rounded" style={{
-                backgroundColor: status === 'success' ? 'var(--success-positive)' : 
-                               status === 'error' ? 'var(--accent-elements)' : 
-                               'var(--card-accent-1)',
-                color: status === 'success' ? 'var(--card-contrast)' : 
-                       status === 'error' ? 'var(--card-contrast)' : 
-                       'var(--primary-text)'
-              }}>
+          <div className={`p-4 rounded-lg mb-4 ${status === 'error' ? 'bg-red-100 text-red-800' : status === 'success' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
                 {message}
               </div>
             )}
             
-            <div className="text-right">
+        {/* Navigation Buttons */}
+        <div className="flex justify-between pt-6 border-t border-gray-300">
               <button
-                type="submit"
+            type="button"
+            onClick={handlePrevious}
+            disabled={currentSectionIndex === 0}
+            className="px-4 py-2 border rounded disabled:opacity-50"
+            style={{
+              borderColor: '#d1d5db',
+              color: '#6b7280'
+            }}
+          >
+            Previous
+          </button>
+          
+              <button
+            type="button"
+            onClick={handleNext}
                 disabled={status === 'loading'}
-                className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors text-sm sm:text-base px-4 sm:px-6 py-3 sm:py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="button px-6 py-2"
               >
-                {status === 'loading' ? 'Submitting...' : 'Continue'}
+            {status === 'loading' ? 'Processing...' : 
+             currentSectionIndex === sectionsData.sections.length - 1 ? 'Submit' : 'Next'}
               </button>
             </div>
-          </form>
-        </>
-      ) : (
-        <div
-          ref={calendlyContainerRef}
-          className="w-full bg-white"
-          style={{ height: `${calendlyHeight}px` }}
-        />
-      )}
+      </div>
     </div>
   );
 } 

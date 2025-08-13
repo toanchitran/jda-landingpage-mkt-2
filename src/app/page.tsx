@@ -87,7 +87,7 @@ function AudioPlayer({ src }: { src: string }) {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="w-full max-w-3xl mx-auto rounded-2xl p-8" style={{backgroundColor: '#E8DDD4'}}>
+    <div className="w-full rounded-2xl p-8 bg-transparent">
       <audio ref={audioRef} src={src} />
       
       {/* Waveform with Play Button Overlay */}
@@ -141,22 +141,22 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
 
   const features = {
     share: {
-      title: 'You Share Your Vision',
-      description: 'The easy part. You simply provide the raw material—your company updates, insights, and technical achievements.',
-      imageText: 'You Share Your Vision',
-      image:'/Share.png'
+      title: 'You Provide the Raw Material',
+      description: 'The easy part. You share your vision, key milestones, and unique industry insights - the core data we need to begin your narrative audit.',
+      imageText: 'You Provide the Raw Material',
+      image:'/You Provide the Raw Material.png'
     },
     refine: {
       title: 'We Forge Your Narrative',
-      description: 'We turn that raw material into a powerful, investor-grade story, aligning every word with your fundraising goals.',
+      description: 'We provide the expert framework and guidance to help you forge your own investor-grade narrative, aligning every word with your fundraising goals.',
       imageText: 'We Forge Your Narrative',
-      image:'/Strategize.png'
+      image:'/We Forge Your Narrative.png'
     },
     tailor: {
       title: 'You Command the Conversation',
-      description: 'You deploy the content, building authority and drawing investors into your orbit, all guided by our insights.',
+      description: 'With a clear strategic roadmap, you can now deploy your PR activities with purpose and precision.',
       imageText: 'You Command the Conversation',
-      image:'/Create.png'
+      image:'/You Command the Conversation.png'
     },
     // amplify: {
     //   title: 'Amplify',
@@ -267,9 +267,7 @@ export default function Home() {
     'Access Top-Tier Capital',
     'Higher Valuation Multiples',
     'Favorable Funding Terms',
-    'Build Authority Faster',
-    'Scale without hiring',
-    'Never Miss Deadlines',
+    'Dismantle Skepticism'
 
   ], []);
 
@@ -294,29 +292,29 @@ export default function Home() {
       key: 'Investor_Magnet',
       title: 'Investor Magnet',
       description:
-        "Your strategic narrative consistently draws potential investors to you, so you don’t have to constantly seek them out.",
-      videoSrc: '/always_improving.mp4',
+        "Your strategic narrative consistently draws potential investors to you, so you don't have to constantly seek them out.",
+      videoSrc: '/Investor_Magnet.mp4',
     },
     {
       key: 'Funding_Advantage',
       title: 'Funding Advantage',
       description:
         "A clear story helps investors instantly understand your vision and market potential, turning a technical achievement into a compelling commercial story.",
-      videoSrc: '/knows_your_story.mp4',
+      videoSrc: '/Funding_Advantage.mp4',
     },
     {
       key: 'Brand_Power',
       title: 'Brand Power',
       description:
         'A well-articulated narrative builds a memorable brand identity that makes your company stand out and stick in the minds of decision-makers.',
-      videoSrc: '/works_with_your_tools.mp4',
+      videoSrc: '/Brand_Power.mp4',
     },
     {
       key: 'Competitive_Edge',
       title: 'Competitive Edge',
       description:
         'Your unique story differentiates you from the competition, ensuring yours is the one investors remember and discuss.',
-      videoSrc: '/thinks_strategically.mp4',
+      videoSrc: '/Competitive_Edge.mp4',
     },
     // {
     //   key: 'always_available',
@@ -487,7 +485,7 @@ export default function Home() {
             </h1>
             {/* <div className="w-80 h-0.5 bg-accent-elements mb-6"></div> */}
             <p className="text-lg sm:text-xl md:text-2xl leading-relaxed mb-6 sm:mb-8 text-secondary-text-80">
-            Attract the funding you deserve by shaping your company&apos;s narrative,<br/>not just creating more content.
+            Attract the funding you deserve by shaping your company&apos;s narrative, and make your insights scalable.
             </p>
             <button onClick={handleBookCallHero} className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors text-sm sm:text-base px-4 sm:px-6 py-3 sm:py-4">
               Book a call
@@ -496,18 +494,32 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Narrative Value Section - Secondary BG */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8" style={{backgroundColor: 'var(--secondary-bg)'}}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-primary-text">Is Your Genius Getting Lost in the Noise?</h2>
-            <p className="text-secondary-text-80 max-w-3xl mx-auto">
-            You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
-            </p>
-          </div>
+             {/*  Is Your Genius Getting Lost in the Noise - Fullscreen with Podcast Background */}
+        <section 
+          className="min-h-screen flex items-center justify-center py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative"
+          style={{
+            backgroundImage: 'url(/Podcast Audio BG.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          {/* Optional overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/30"></div>
+          
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="text-center mb-10 sm:mb-14">
+             <h1 className="text-6xl font-bold mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
+              <p className="text-white/90 max-w-3xl mx-auto">
+              You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones.But you still feel like you&apos;re shouting into the void.You see lesser ideas get funded while you struggle to get a second meeting.This isn&apos;t a product problem; it&apos;s a narrative problem.Investors don&apos;t just invest in products; they invest in stories.
+              </p>
+            </div>
           <div className="max-w-4xl mx-auto">
-            <div className="rounded-2xl p-4 flex items-center justify-center" style={{backgroundColor: 'var(--card-elevated)'}}>
-              <AudioPlayer src="/sample.wav" />
+            <div className="rounded-2xl p-6 bg-white shadow-lg">
+              
+                <AudioPlayer src="/sample.wav" />
+              
+              <p className="text-center text-gray-600 text-sm mt-3">Listen to our podcast</p>
             </div>
           </div>
         </div>
@@ -519,7 +531,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <h1 className="text-6xl font-bold mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
             <p className="text-secondary-text-80 max-w-4xl mx-auto">
-            You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat. What you need isn&apos;t another consultant; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.
+            You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat.<br/> What you need isn&apos;t another AI tool or agency; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.  
             </p>
           </div>
           
@@ -529,12 +541,13 @@ export default function Home() {
               {/* Agent Image with Overlay */}
               <div className="flex justify-center mb-8">
                 <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
-                                                                                <Image
-                        src="/Alex.webp"
-                        alt="Jay Jin - Narrative Architect"
-                        fill
-                        className="object-cover"
-                        unoptimized={true}
+                  <video
+                    src="/Jay.mp4"
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
                       />
                       
                       {/* Overlay Tags */}
@@ -542,7 +555,7 @@ export default function Home() {
                         {/* Top Tag */}
                         <div className="absolute top-4 left-4">
                           <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
-                          Jay Jin, Narrative Architect
+                          Jay Jin, Strategic Architect
                           </div>
                         </div>
                         
@@ -561,13 +574,18 @@ export default function Home() {
                 </div>
               </div>
               
-              <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Narrative Architect</h3>
+              <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Strategic Architect</h3>
               <p className="text-white mb-6 leading-relaxed">
-              Jay is your systems-minded narrative architect. He helps you identify and engineer the authentic story that investors need to hear, turning your lived experience into a capital-attracting force.<br/>
+              Jay is your social influence architect. He helps you identify and engineer the authentic story that investors need to hear, turning your lived experience into a capital-attracting force. His expertise leads to a powerful, actionable 90-Day Investment PR Plan that makes you more attractive and influential.
               </p>
-              {/* <button onClick={handleBookCallWorkflow} className="text-white font-semibold hover:text-gray-200 transition-colors">
+              <a 
+                href="https://www.linkedin.com/in/jay-jin-60071238/" 
+                target="_blank" 
+                rel="noopener"
+                className="text-white font-semibold hover:text-gray-200 transition-colors"
+              >
                 Meet Jay Jin →
-              </button> */}
+              </a>
             </div>
             
             {/* David Yi, Investment Strategist */}
@@ -576,13 +594,14 @@ export default function Home() {
               <div className="flex justify-center mb-8">
                 <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
                 
-                      <Image
-                        src="/Alex.webp"
-                        alt="David Yi, Investment Strategist"
-                        fill
-                        className="object-cover"
-                        unoptimized={true}
-                      />
+                  <video
+                    src="/David.mp4"
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
                       
                       {/* Overlay Tags */}
                       <div className="absolute inset-0">
@@ -612,9 +631,17 @@ export default function Home() {
               <p className="text-white mb-6 leading-relaxed">
               David is your cross-border investment strategist. He provides the critical lens of an investor, ensuring every piece of your story is calibrated with discernment to attract the right conversations and secure funding.
               </p>
-              {/* <button onClick={handleBookCallWorkflow} className="text-white font-semibold hover:text-gray-200 transition-colors">
-                Meet David →
-              </button> */}
+              <br/>
+              
+              
+                             <a 
+                 href="https://www.linkedin.com/in/thedavidyi/" 
+                 target="_blank" 
+                 rel="noopener"
+                 className="text-white font-semibold hover:text-gray-200 transition-colors"
+               >
+                 Meet David →
+               </a>
             </div>
           </div>
         </div>
@@ -622,13 +649,13 @@ export default function Home() {
 
 
 
-      {/*  Before You Hire Another PR Agency, Consider This - Deep Blue */}
+      {/*  The Funded Future You Can Build - Deep Blue */}
       <section className="py-20 padding-global" style={{backgroundColor: 'var(--secondary-bg)'}}>
         <div className="w-full padding-global">
           <div className="text-center mb-8 padding-global">
-            <h1 className="text-6xl font-bold mb-4 text-primary-text"> Before You Hire Another PR Agency...</h1>
+            <h1 className="text-6xl font-bold mb-4 text-primary-text"> The Funded Future You Can Build</h1>
             <p className="text-secondary-text-80 max-w-4xl mx-auto mb-6">
-            Smart founders are choosing our Narrative Engine and experts who work without the agency fees or hiring headaches. We deliver better outcomes at a fraction of the cost.
+            This is the transformation you&apos;ve been working for - a clear, compelling narrative that changes your trajectory. Our strategic guidance fundamentally rewrites how investors see your company, leading to powerful business outcomes that define your legacy.
             </p>
             <button 
               onClick={handleBookCallConsider}
@@ -692,7 +719,7 @@ export default function Home() {
             <section className="py-12 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-accent-elements">The Unfair Advantage of a Strategic Story</h1>
+            <h1 className="text-6xl font-bold mb-4 text-primary-text">The Unfair Advantage of a Strategic Story</h1>
             <p className="max-w-4xl mx-auto mb-6 text-secondary-text-80 text-sm sm:text-base">
             In a crowded market, your story is your most powerful asset. It&apos;s the key to building credibility and earning the trust of investors. It&apos;s not just about what you say, but how you say it—and when. 
             </p>
@@ -816,58 +843,76 @@ export default function Home() {
           
                     {/* Masonry Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6 padding-global">
-            {/* Top Left Card - Metric */}
-            <div className="rounded-2xl p-6 text-center border lg:col-span-2" style={{backgroundColor: '#fabf0133', borderColor: '#fabf01', height: '400px'}}>
-              <div className="text-6xl font-bold mb-2" style={{color: '#fabf01'}}>80%</div>
-              <p className="text-base font-bold text-center" style={{color: '#ffffff'}}>
-              Less time on PR tasks
-              </p>
+            {/* Top Left Card - Logo Only */}
+            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#fffffff', borderColor: '#fabf01', height: '400px'}}>
+              <Image
+                src="/Logo (3).png"
+                alt="Logo 3"
+                width={120}
+                height={40}
+                className="object-contain"
+                unoptimized={true}
+              />
             </div>
             
-            {/* Top Center Card - Metric */}
-            <div className="rounded-2xl p-6 text-center border lg:col-span-2" style={{backgroundColor: '#F6F5F5', borderColor: '#c0a876', height: '400px'}}>
-              <div className="text-6xl font-bold mb-2" style={{color: '#c0a876'}}>5X</div>
-              <p className="text-base font-bold text-center" style={{color: '#03032e'}}>
-              Faster Content Creation
-              </p>
+            {/* Top Center Card - Logo Only */}
+            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a876', height: '400px'}}>
+              <Image
+                src="/Logo (4).png"
+                alt="Logo 4"
+                width={120}
+                height={40}
+                className="object-contain"
+                unoptimized={true}
+              />
             </div>
             
-            {/* Top Right Card - Testimonial */}
-            <div className="rounded-2xl p-6 border lg:col-span-4 relative" style={{backgroundColor: '#09093e66', borderColor: '#c0a87680', height: '400px'}}>
-              <p className="mb-4 text-2xl leading-relaxed font-bold" style={{color: '#ffffff'}}>
-                &ldquo;This isn&apos;t just AI; it&apos;s like having a dedicated PR team working 24/7. Our communication with stakeholders has never been more precise.&rdquo;
-              </p>
-              <p className="text-sm absolute bottom-6 left-6" style={{color: 'rgba(255, 255, 255, 0.6)'}}>
-                — Minh Chau, Pascal Studio
-              </p>
+            {/* Top Right Card - Logo Only */}
+            <div className="rounded-2xl p-6 border lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '400px'}}>
+              <Image
+                src="/Logo (1).png"
+                alt="Digicon Logo"
+                width={120}
+                height={40}
+                className="object-contain"
+                unoptimized={true}
+              />
             </div>
             
-            {/* Bottom Left Card - Testimonial */}
-            <div className="rounded-2xl p-6 border lg:col-span-4 relative" style={{backgroundColor: '#fabf0133', borderColor: '#fabf01', height: '400px'}}>
-              <p className="mb-4 text-2xl leading-relaxed font-bold" style={{color: '#ffffff'}}>
-                &ldquo;We were struggling to articulate our vision to potential investors. This engine helped us clarify our message and get noticed. It&apos;s truly a game-changer for fundraising!&rdquo;
-              </p>
-              <p className="text-sm absolute bottom-6 left-6" style={{color: 'rgba(255, 255, 255, 0.8)'}}>
-                — Ryan Ettridge, Cybercert
-              </p>
+            {/* Bottom Left Card - Logo Only */}
+            <div className="rounded-2xl p-6 border lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#fabf01', height: '400px'}}>
+              <Image
+                src="/Logo (5).png"
+                alt="Logo 5"
+                width={120}
+                height={40}
+                className="object-contain"
+                unoptimized={true}
+              />
             </div>
             
-            {/* Bottom Center Card - Metric */}
-            <div className="rounded-2xl p-6 text-center border lg:col-span-2" style={{backgroundColor: '#F6F5F5', borderColor: '#c0a876', height: '400px'}}>
-              <div className="text-6xl font-bold mb-2" style={{color: '#c0a876'}}>30%</div>
-              <p className="text-base font-bold text-center" style={{color: '#03032e'}}>
-                Increase in investor engagement
-              </p>
+            {/* Bottom Center Card - Logo Only */}
+            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '400px'}}>
+              <Image
+                src="/Logo (6).png"
+                alt="Logo 6"
+                width={120}
+                height={40}
+                className="object-contain"
+                unoptimized={true}
+              />
             </div>
             
-            {/* Bottom Right Card - Testimonial */}
-            <div className="rounded-2xl p-6 border lg:col-span-2 relative" style={{backgroundColor: '#09093e66', borderColor: '#c0a87680', height: '400px'}}>
-              <p className="mb-4 text-2xl leading-relaxed font-bold" style={{color: '#ffffff'}}>
-                &ldquo;The insights we get are invaluable. We can quickly see what resonates and adjust our strategy in real-time.&rdquo;
-              </p>
-              <p className="text-sm absolute bottom-6 left-6" style={{color: 'rgba(255, 255, 255, 0.6)'}}>
-                — Johnny Le, DigiEx
-              </p>
+            {/* Bottom Right Card - Logo Only */}
+            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '400px'}}>
+              <Image
+                src="/Logo (2).png"
+                alt="Maco Logo"
+                width={120}
+                height={40}
+                className="object-contain"
+                unoptimized={true}
+              />
             </div>
           </div>
         </div>
@@ -877,7 +922,7 @@ export default function Home() {
       <section className="py-20 relative">
         <div className="absolute inset-0">
           <Image
-            src="/bottom_cta_bg.jpeg"
+            src="/CTA BG.jpg"
             alt="Bottom CTA Background"
             fill
             className="object-cover"
@@ -889,9 +934,9 @@ export default function Home() {
           <div className="rounded-3xl p-12 bg-card-elevated border border-dividers-borders">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h1 className="text-6xl font-bold mb-4 text-primary-text">We Only Partner With a Limited Number of Founders</h1>
+                <h1 className="text-6xl font-bold mb-4 text-primary-text"> By Application Only</h1>
                 <p className="text-secondary-text-80 mb-6 leading-relaxed">
-                Our approach is highly personalized and our capacity is limited. We work with founders who are ready to stop scrambling and start commanding. We&apos;re not a content factory— we&apos;re your strategic partner in building a funded future. Let&apos;s see if we&apos;re the right fit for your journey.
+                Our highly personalized approach means we partner with a select group of founders each month. We&apos;re not a content factory - we&apos;re your strategic partner in building a funded future.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button 
@@ -914,7 +959,7 @@ export default function Home() {
                   playsInline
                   className="w-full h-full object-cover"
                 >
-                  <source src="/bottom_cta.mp4" type="video/mp4" />
+                  <source src="/CTA video.mp4" type="video/mp4" />
                 </video>
               </div>
             </div>

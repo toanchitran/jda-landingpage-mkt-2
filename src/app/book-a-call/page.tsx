@@ -17,6 +17,17 @@ export default function BookACallPage() {
     if (videoCompleted && !showQualificationSection) {
       setShowQualificationSection(true);
       trackLeadQualificationShow();
+      
+      // Auto scroll to qualification section after a short delay
+      setTimeout(() => {
+        const qualificationSection = document.getElementById('qualification-section');
+        if (qualificationSection) {
+          qualificationSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 500); // 500ms delay to ensure the section has rendered
     }
   }, [videoCompleted, showQualificationSection, trackLeadQualificationShow]);
 

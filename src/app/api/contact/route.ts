@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
 const AIRTABLE_API_KEY = 'patuBi3WMEA1SssqX.0a634c1146471ac425c6e9ae49b7d4a36cca2656c1708c07dc77283e3cc6a231';
@@ -9,102 +9,84 @@ const AIRTABLE_TABLE_ID = 'tblP52B81ccH8jICa';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { 
-      fullName, 
-      email, 
-      linkedinProfile, 
-      companyWebsite, 
-      pitchDeckUrl,
-      ...questionAnswers 
-    } = body;
 
-    // Load questions from JSON file
-    const questionsFilePath = path.join(process.cwd(), 'public', 'questions.json');
-    const questionsFileContent = await fs.readFile(questionsFilePath, 'utf8');
-    const questions = JSON.parse(questionsFileContent);
+    // Load sections from JSON file for field mapping
+    const sectionsFilePath = path.join(process.cwd(), 'public', 'sections.json');
+    const sectionsFileContent = await fs.readFile(sectionsFilePath, 'utf8');
+    const sectionsData = JSON.parse(sectionsFileContent);
 
     // Prepare the record data for Airtable
-    const recordData: Record<string, string> = {
-      "Name": fullName,
-      "Email": email,
-      "Company Website": companyWebsite,
-      "Linkedin Profile": linkedinProfile,
-      "Pitch Deck URL": pitchDeckUrl || '', // Initialize field even if empty
-    };
+    const recordData: Record<string, string> = {};
 
-    // Format question answers
-    Object.entries(questionAnswers).forEach(([key, value]) => {
-      if (key.startsWith('Question ')) {
-        const questionData = questions[key.replace('_other', '')];
-        
-        if (!key.endsWith('_other')) {
-          // Main question answer
-          let formattedAnswer = '';
-          
-          if (questionData) {
-            if (Array.isArray(value)) {
-              // For checkbox questions
-              const answers = value as string[];
-              const otherAnswer = questionAnswers[`${key}_other`];
-              
-              if (answers.length > 0) {
-                formattedAnswer = `Question:\n${questionData.label}\nAnswer:\n${answers.join(', ')}`;
-                if (otherAnswer && otherAnswer.trim()) {
-                  formattedAnswer += `, ${otherAnswer}`;
-                }
-              }
-            } else if (typeof value === 'string' && value.trim()) {
-              // For radio and text questions
-              formattedAnswer = `Question:\n${questionData.label}\nAnswer:\n${value}`;
-            } else if (typeof value === 'boolean' && value) {
-              // For standalone checkbox questions
-              formattedAnswer = `Question:\n${questionData.label}\nAnswer:\nYes`;
-            }
+    interface Question {
+      id: string;
+      label: string;
+      type: string;
+      required: boolean;
+      airtableField?: string;
+    }
 
-            if (formattedAnswer) {
-              recordData[key] = formattedAnswer;
-            }
-          }
-        } else {
-          // Other field for checkbox questions
-          if (value && typeof value === 'string' && value.trim()) {
-            recordData[key] = value;
-          }
+    interface Section {
+      id: string;
+      questions: Question[];
+    }
+
+    // Handle contact section fields (direct mapping to Airtable fields)
+    const contactSection = (sectionsData as { sections: Section[] }).sections.find((s: Section) => s.id === 'contact');
+    if (contactSection) {
+      contactSection.questions.forEach((question: Question) => {
+        if (question.airtableField && body[question.airtableField]) {
+          recordData[question.airtableField] = body[question.airtableField];
+        }
+      });
+    }
+
+    // Handle other sections (mapped to Question 1, Question 2, etc.)
+    let questionIndex = 1;
+    (sectionsData as { sections: Section[] }).sections.forEach((section: Section) => {
+      if (section.id !== 'contact') {
+        const questionField = `Question ${questionIndex}`;
+        if (body[questionField]) {
+          recordData[questionField] = body[questionField];
+          questionIndex++;
         }
       }
     });
 
-    // Send to Airtable
-    const airtableResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}`, {
+    // Add pitch deck URL if provided
+    if (body.pitchDeckUrl) {
+      recordData['Pitch Deck URL'] = body.pitchDeckUrl;
+    }
+
+    console.log('Submitting to Airtable:', recordData);
+
+    // Create the record in Airtable
+    const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        records: [
-          {
-            fields: recordData
-          }
-        ]
+        records: [{
+          fields: recordData
+        }]
       }),
     });
 
-    if (!airtableResponse.ok) {
-      const errorData = await airtableResponse.json();
+    if (!response.ok) {
+      const errorData = await response.text();
       console.error('Airtable error:', errorData);
-      throw new Error(`Airtable API error: ${airtableResponse.status}`);
+      throw new Error(`Airtable API error: ${response.status}`);
     }
 
-    const result = await airtableResponse.json();
+    const result = await response.json();
     const recordId = result.records[0].id;
-    console.log('Airtable success:', result);
 
-    // Generate unique link for lead qualification answers
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const uniqueLink = `${baseUrl}/lead-qualification-answer/${recordId}`;
+    // Generate unique URL for lead qualification answer page
+    const leadQualificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/lead-qualification-answer/${recordId}`;
 
-    // Update the record with the unique link
+    // Update the record with the lead qualification URL
     const updateResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}/${recordId}`, {
       method: 'PATCH',
       headers: {
@@ -113,28 +95,27 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         fields: {
-          "Lead qualification Answer": uniqueLink
+          'Lead qualification Answer': leadQualificationUrl
         }
       }),
     });
 
     if (!updateResponse.ok) {
-      console.error('Failed to update record with unique link:', await updateResponse.text());
-      // Don't fail the whole request if this update fails
+      console.error('Failed to update record with lead qualification URL');
     }
 
     return NextResponse.json({ 
       success: true, 
+      message: 'Contact information submitted successfully',
       id: recordId,
-      qualificationLink: uniqueLink 
+      leadQualificationUrl 
     });
+
   } catch (error) {
-    console.error('Contact form submission error:', error);
+    console.error('Error submitting contact form:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to save contact information' },
+      { error: 'Failed to submit contact information' },
       { status: 500 }
     );
   }
 }
-
- 

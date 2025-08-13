@@ -2,22 +2,44 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+interface Question {
+  id: string;
+  label: string;
+  type: string;
+  required: boolean;
+  options?: string[];
+  answer?: string | string[];
+}
+
+interface SectionAnswer {
+  title: string;
+  description: string;
+  questions: Question[];
+}
+
+interface Section {
+  id: string;
+  title: string;
+  description: string;
+  airtableMapping: string;
+  questions: Question[];
+}
+
 interface ContactData {
   id: string;
   fullName: string;
   email: string;
   linkedinProfile: string;
   companyWebsite: string;
+  applicantRole: string;
   pitchDeckUrl: string | null;
   calendlyScheduledTime: string | null;
   calendlyScheduledTimeRaw: string | null;
   meetingLink: string | null;
-  answers: Record<string, string | string[]>;
-  questions: Record<string, {
-    type: string;
-    label: string;
-    options?: string[];
-  }>;
+  aiScreeningScore: string | null;
+  aiScreeningDetail: string | null;
+  sections: Section[];
+  sectionAnswers: Record<string, SectionAnswer>;
   submittedAt: string;
 }
 
@@ -38,34 +60,47 @@ async function getContactData(id: string): Promise<ContactData | null> {
   }
 }
 
-export default async function LeadQualificationAnswerPage({ params }: { params: Promise<{ id: string }> }) {
+function formatDate(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch {
+    return dateString;
+  }
+}
+
+function formatAnswer(answer: string | string[] | undefined, question: Question): string {
+  if (!answer) return 'Not answered';
+  
+  if (Array.isArray(answer)) {
+    return answer.join(', ');
+  }
+  
+  if (question.type === 'checkbox' && typeof answer === 'string') {
+    // Handle comma-separated checkbox values
+    return answer.split(', ').join(', ');
+  }
+  
+  return String(answer);
+}
+
+export default async function LeadQualificationAnswerPage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
   const { id } = await params;
   const contactData = await getContactData(id);
-  
+
   if (!contactData) {
     notFound();
   }
-
-  const formatAnswer = (answer: string | string[]): string => {
-    if (Array.isArray(answer)) {
-      return answer.join(', ');
-    }
-    return answer || 'Not answered';
-  };
-
-  const formatDate = (dateString: string): string => {
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch {
-      return dateString;
-    }
-  };
 
   return (
     <div className="font-sans text-primary-text min-h-screen" style={{backgroundColor: 'var(--primary-bg)'}}>
@@ -106,50 +141,126 @@ export default async function LeadQualificationAnswerPage({ params }: { params: 
             </div>
           </div>
 
-          {/* Contact Information */}
-          <div className="mb-10">
-            <h2 className="text-2xl font-bold mb-6 text-black border-b border-gray-200 pb-2">
-              Contact Information
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <p className="text-black font-medium">{contactData.fullName}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <p className="text-black font-medium">{contactData.email}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn Profile</label>
-                <a 
-                  href={contactData.linkedinProfile} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 font-medium break-all"
-                >
-                  {contactData.linkedinProfile}
-                </a>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Company Website</label>
-                <a 
-                  href={contactData.companyWebsite} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 font-medium break-all"
-                >
-                  {contactData.companyWebsite}
-                </a>
+          {/* AI Screening Section */}
+          {(contactData.aiScreeningScore || contactData.aiScreeningDetail) && (
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold mb-6 text-black border-b border-gray-200 pb-2">
+                AI Screening Results
+              </h2>
+              
+              {contactData.aiScreeningScore && (
+                <div className="mb-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex-shrink-0">
+                      {(() => {
+                        const score = contactData.aiScreeningScore;
+                        const isAccept = score.includes('ACCEPT');
+                        const isWaitlist = score.includes('WAITLIST');
+                        const isDecline = score.includes('DECLINE');
+                        
+                        return (
+                          <div className={`w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-sm ${
+                            isAccept ? 'bg-green-500' : 
+                            isWaitlist ? 'bg-yellow-500' : 
+                            isDecline ? 'bg-red-500' : 'bg-gray-500'
+                          }`}>
+                            {score.split(' ')[0]} {/* Extract score like "11/15" */}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                    <div className="flex-grow">
+                      <h3 className="text-xl font-bold text-black mb-1">
+                        Screening Score: {contactData.aiScreeningScore}
+                      </h3>
+                      <div className="text-sm text-gray-600">
+                        <span className="inline-block mr-4">✅ Accept: ≥ 9/15</span>
+                        <span className="inline-block mr-4">⏳ Waitlist: 7-8/15</span>
+                        <span className="inline-block">❌ Decline: ≤ 6/15</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {contactData.aiScreeningDetail && (
+                <div className="bg-blue-50 rounded-lg p-6">
+                  <h4 className="text-lg font-semibold text-black mb-3">Detailed Analysis</h4>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                    {contactData.aiScreeningDetail}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Contact Information Section */}
+          {contactData.sectionAnswers.contact && (
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold mb-6 text-black border-b border-gray-200 pb-2">
+                {contactData.sectionAnswers.contact.title}
+              </h2>
+              <p className="text-gray-600 mb-6">{contactData.sectionAnswers.contact.description}</p>
+              
+              <div className="space-y-6">
+                {contactData.sectionAnswers.contact.questions.map((question, index) => (
+                  <div key={`contact-${index}`} className="bg-gray-50 rounded-lg p-6">
+                    <div className="mb-2">
+                      <h3 className="text-lg font-semibold text-black mb-1">
+                        {question.label}
+                      </h3>
+                      <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                        {question.type}
+                      </span>
+                    </div>
+                    
+                    <div className="mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Answer:</label>
+                      <div className="text-black font-medium bg-white px-3 py-2 rounded border">
+                        {(question.type === 'file' || (question.answer && String(question.answer).includes('api/serve-pitch-deck'))) && question.answer ? (
+                          <div className="space-y-2">
+                            {String(question.answer).split(', ').map((url, fileIndex) => (
+                              <a
+                                key={fileIndex}
+                                href={url.trim()}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium mr-2 mb-2"
+                              >
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Download File {String(question.answer).split(', ').length > 1 ? (fileIndex + 1) : ''}
+                              </a>
+                            ))}
+                          </div>
+                        ) : question.type === 'url' && question.answer ? (
+                          <a 
+                            href={String(question.answer)} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 break-all"
+                          >
+                            {formatAnswer(question.answer, question)}
+                          </a>
+                        ) : (
+                          <div className="whitespace-pre-line">
+                            {formatAnswer(question.answer, question)}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          )}
 
           {/* Pitch Deck Section */}
           {contactData.pitchDeckUrl && (
             <div className="mb-10">
               <h2 className="text-2xl font-bold mb-6 text-black border-b border-gray-200 pb-2">
-                Pitch Deck
+                Materials
               </h2>
               <div className="bg-blue-50 rounded-lg p-6">
                 <div className="flex items-start gap-4">
@@ -161,21 +272,26 @@ export default async function LeadQualificationAnswerPage({ params }: { params: 
                     </div>
                   </div>
                   <div className="flex-grow">
-                    <h3 className="text-lg font-semibold text-black mb-2">Submitted Pitch Deck</h3>
+                    <h3 className="text-lg font-semibold text-black mb-2">Submitted Materials</h3>
                     <p className="text-gray-600 text-sm mb-3">
-                      The prospect has uploaded their pitch deck for review.
+                      The prospect has uploaded their materials for review.
                     </p>
-                    <a
-                      href={contactData.pitchDeckUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                    >
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      Download Pitch Deck
-                    </a>
+                    <div className="space-y-2">
+                      {contactData.pitchDeckUrl?.split(', ').map((url, index) => (
+                        <a
+                          key={index}
+                          href={url.trim()}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium mr-2 mb-2"
+                        >
+                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          Download File {contactData.pitchDeckUrl && contactData.pitchDeckUrl.split(', ').length > 1 ? (index + 1) : ''}
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -228,48 +344,44 @@ export default async function LeadQualificationAnswerPage({ params }: { params: 
             </div>
           )}
 
-          {/* Questions and Answers */}
-          <div>
-            <h2 className="text-2xl font-bold mb-6 text-black border-b border-gray-200 pb-2">
-              Qualification Answers
-            </h2>
-            <div className="space-y-6">
-              {Object.entries(contactData.questions).map(([key, question]) => {
-                const answer = contactData.answers[key];
-                const otherAnswer = contactData.answers[`${key}_other`];
-                const questionNumber = key.replace('Question ', '');
-                
-                return (
-                  <div key={key} className="bg-gray-50 rounded-lg p-6">
-                    <div className="mb-3">
-                      <h3 className="text-lg font-semibold text-black">
-                        {questionNumber}. {question.label}
-                      </h3>
-                      <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                        {question.type}
-                      </span>
-                    </div>
-                    
-                    <div className="mb-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Answer:</label>
-                      <p className="text-black font-medium bg-white px-3 py-2 rounded border">
-                        {formatAnswer(answer)}
-                      </p>
-                    </div>
-                    
-                    {otherAnswer && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Additional Details:</label>
-                        <p className="text-black font-medium bg-white px-3 py-2 rounded border">
-                          {otherAnswer}
-                        </p>
+          {/* Qualification Sections */}
+          {contactData.sections
+            .filter(section => section.id !== 'contact')
+            .map(section => {
+              const sectionAnswer = contactData.sectionAnswers[section.id];
+              if (!sectionAnswer || !sectionAnswer.questions.length) return null;
+
+              return (
+                <div key={section.id} className="mb-10">
+                  <h2 className="text-2xl font-bold mb-2 text-black border-b border-gray-200 pb-2">
+                    {sectionAnswer.title}
+                  </h2>
+                  <p className="text-gray-600 mb-6">{sectionAnswer.description}</p>
+                  
+                  <div className="space-y-6">
+                    {sectionAnswer.questions.map((question, index) => (
+                      <div key={`${section.id}-${index}`} className="bg-gray-50 rounded-lg p-6">
+                        <div className="mb-2">
+                          <h3 className="text-lg font-semibold text-black mb-1">
+                            {question.label}
+                          </h3>
+                          <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                            {question.type}
+                          </span>
+                        </div>
+                        
+                        <div className="mb-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Answer:</label>
+                          <div className="text-black font-medium bg-white px-3 py-2 rounded border">
+                            {formatAnswer(question.answer, question)}
+                          </div>
+                        </div>
                       </div>
-                    )}
+                    ))}
                   </div>
-                );
-              })}
-            </div>
-          </div>
+                </div>
+              );
+            })}
 
           {/* Footer */}
           <div className="mt-10 pt-8 border-t border-gray-200 text-center">
@@ -286,18 +398,22 @@ export default async function LeadQualificationAnswerPage({ params }: { params: 
   );
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
   const { id } = await params;
   const contactData = await getContactData(id);
   
   if (!contactData) {
     return {
-      title: 'Lead Qualification Not Found',
+      title: 'Lead Qualification Not Found'
     };
   }
 
   return {
     title: `Lead Qualification - ${contactData.fullName}`,
-    description: `Lead qualification answers for ${contactData.fullName}`,
+    description: `Lead qualification answers submitted by ${contactData.fullName}`,
   };
 }

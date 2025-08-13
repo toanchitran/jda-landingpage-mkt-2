@@ -12,8 +12,8 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [currentView, setCurrentView] = useState<'upload' | 'uploading'>('upload');
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [totalBytes, setTotalBytes] = useState(0);
-  const [pitchDeckFileUrl, setPitchDeckFileUrl] = useState<string>('');
+
+
   const [isUploading, setIsUploading] = useState(false);
 
   const { trackAnalyzeClick } = useGoogleAnalytics();
@@ -38,7 +38,7 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
           try {
             const response = JSON.parse(xhr.responseText);
             resolve(response.fileUrl);
-          } catch (error) {
+          } catch (_error) {
             reject(new Error('Invalid response format'));
           }
         } else {
@@ -91,12 +91,10 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
     setIsUploading(true);
     
     try {
-      // Initialize byte counters
-      setTotalBytes(file.size);
+
       
       // Start real file upload with progress tracking
       const fileUrl = await uploadFileWithProgress(file);
-      setPitchDeckFileUrl(fileUrl);
       
       console.log('File upload successful, fileUrl:', fileUrl);
       

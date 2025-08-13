@@ -1,0 +1,456 @@
+{
+  "sections": [
+    {
+      "id": "contact",
+      "title": "Contact Information",
+      "description": "Please provide your contact details",
+      "airtableMapping": "contact",
+      "questions": [
+        {
+          "id": "fullName",
+          "label": "Full name",
+          "type": "text",
+          "required": true,
+          "airtableField": "Name"
+        },
+        {
+          "id": "email",
+          "label": "Work email",
+          "type": "email",
+          "required": true,
+          "validation": {
+            "type": "company_domain",
+            "blockedDomains": ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "aol.com", "icloud.com"]
+          },
+          "airtableField": "Email"
+        },
+        {
+          "id": "linkedinProfile",
+          "label": "LinkedIn profile URL",
+          "type": "url",
+          "required": true,
+          "airtableField": "Linkedin Profile"
+        },
+        {
+          "id": "companyWebsite",
+          "label": "Company website URL",
+          "type": "url",
+          "required": true,
+          "airtableField": "Company Website"
+        },
+        {
+          "id": "applicantRole",
+          "label": "Your role",
+          "type": "select",
+          "required": true,
+          "options": ["Founder/CEO", "Co-founder", "CTO", "COO", "Other"],
+          "airtableField": "Applicant role",
+          "conditionalQuestions": [
+            {
+              "condition": {
+                "field": "applicantRole",
+                "operator": "equals",
+                "value": "Other"
+              },
+              "question": {
+                "id": "applicantRoleOther",
+                "label": "Please specify your role",
+                "type": "text",
+                "required": true
+              }
+            },
+            {
+              "condition": {
+                "field": "applicantRole",
+                "operator": "not_equals",
+                "value": "Founder/CEO"
+              },
+              "question": {
+                "id": "founderCeoAttendance",
+                "label": "Will the Founder/CEO attend the discovery call?",
+                "type": "radio",
+                "required": true,
+                "options": ["Yes", "No"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "founder_availability",
+      "title": "Founder Availability",
+      "description": "This consultation requires founder participation",
+      "airtableMapping": "Question 1",
+      "questions": [
+        {
+          "id": "founderAvailability",
+          "label": "The Founder/CEO can join a 90-minute discovery call within 7 days.",
+          "type": "radio",
+          "required": true,
+          "options": ["Yes", "No"],
+          "validation": {
+            "type": "required_value",
+            "requiredValue": "Yes",
+            "errorMessage": "This consultation requires founder participation. Please reapply when available."
+          }
+        }
+      ]
+    },
+    {
+      "id": "fundraising_timing",
+      "title": "Fundraising Timing",
+      "description": "Tell us about your fundraising timeline",
+      "airtableMapping": "Question 2",
+      "questions": [
+        {
+          "id": "roundCloseTiming",
+          "label": "When do you aim to close your current/next round?",
+          "type": "select",
+          "required": true,
+          "options": ["In ≤ 14 days", "In 15–45 days", "In 46–90 days", "> 90 days / No active round"]
+        },
+        {
+          "id": "targetCloseDate",
+          "label": "Target close date (if known)",
+          "type": "date",
+          "required": false,
+          "conditionalDisplay": {
+            "field": "roundCloseTiming",
+            "operator": "not_equals",
+            "value": "> 90 days / No active round"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stage_round_facts",
+      "title": "Stage & Round Facts",
+      "description": "Provide details about your company stage and funding",
+      "airtableMapping": "Question 3",
+      "questions": [
+        {
+          "id": "companyStage",
+          "label": "Current company stage",
+          "type": "select",
+          "required": true,
+          "options": ["Pre-seed", "Seed", "Series A", "Series B+", "Not sure"]
+        },
+        {
+          "id": "capitalRaised",
+          "label": "Capital raised to date (USD)",
+          "type": "number",
+          "required": true,
+          "validation": {
+            "type": "min_value",
+            "minValue": 0
+          }
+        },
+        {
+          "id": "targetRoundSize",
+          "label": "Target round size (USD)",
+          "type": "number",
+          "required": true,
+          "validation": {
+            "type": "min_value",
+            "minValue": 0
+          }
+        },
+        {
+          "id": "leadCommitmentStatus",
+          "label": "Lead/commitments status",
+          "type": "select",
+          "required": true,
+          "options": ["No lead identified", "Lead identified (no commits)", "Soft-circled", "Committed"],
+          "conditionalQuestions": [
+            {
+              "condition": {
+                "field": "leadCommitmentStatus",
+                "operator": "in",
+                "value": ["Soft-circled", "Committed"]
+              },
+              "question": {
+                "id": "commitmentAmount",
+                "label": "Approximate amount (USD)",
+                "type": "number",
+                "required": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "traction_snapshot",
+      "title": "Traction Snapshot",
+      "description": "Pick your primary traction metric",
+      "airtableMapping": "Question 4",
+      "questions": [
+        {
+          "id": "primaryTractionMetric",
+          "label": "Pick your primary traction metric (the one investors care about most right now)",
+          "type": "select",
+          "required": true,
+          "options": ["ARR/MRR", "Usage", "Commercial proof", "Waitlist / reservations", "R&D"],
+          "conditionalQuestions": [
+            {
+              "condition": {
+                "field": "primaryTractionMetric",
+                "operator": "equals",
+                "value": "ARR/MRR"
+              },
+              "question": {
+                "id": "arrMrrValue",
+                "label": "Current MRR or ARR",
+                "type": "number",
+                "required": true
+              }
+            },
+            {
+              "condition": {
+                "field": "primaryTractionMetric",
+                "operator": "equals",
+                "value": "Usage"
+              },
+              "question": {
+                "id": "dauMau",
+                "label": "DAU/MAU",
+                "type": "text",
+                "required": true
+              }
+            },
+            {
+              "condition": {
+                "field": "primaryTractionMetric",
+                "operator": "equals",
+                "value": "Usage"
+              },
+              "question": {
+                "id": "growthRate",
+                "label": "30-day growth %",
+                "type": "number",
+                "required": true
+              }
+            },
+            {
+              "condition": {
+                "field": "primaryTractionMetric",
+                "operator": "equals",
+                "value": "Commercial proof"
+              },
+              "question": {
+                "id": "paidPilots",
+                "label": "Number of paid pilots / LOIs",
+                "type": "number",
+                "required": true
+              }
+            },
+            {
+              "condition": {
+                "field": "primaryTractionMetric",
+                "operator": "equals",
+                "value": "Waitlist / reservations"
+              },
+              "question": {
+                "id": "waitlistCount",
+                "label": "Number on waitlist/reservations",
+                "type": "number",
+                "required": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "investor_focus",
+      "title": "Investor Focus",
+      "description": "Tell us about your target investors",
+      "airtableMapping": "Question 5",
+      "questions": [
+        {
+          "id": "targetInvestorsList",
+          "label": "List up to 10 target investors (firms or angels).",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Example: Sequoia Capital, Andreessen Horowitz, First Round Capital..."
+        },
+        {
+          "id": "investorThesis",
+          "label": "Describe the precise investor thesis (geo, check size, sector).",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "Examples: \"US deeptech seed, $1–2M lead\" / \"APAC SaaS Series A, $5–10M, PLG\""
+        }
+      ]
+    },
+    {
+      "id": "newsability",
+      "title": "Newsability in the next 90 days",
+      "description": "What concrete events are likely in the next 90 days?",
+      "airtableMapping": "Question 6",
+      "questions": [
+        {
+          "id": "upcomingEvents",
+          "label": "Which concrete events are likely in the next 90 days? (check all that apply)",
+          "type": "checkbox",
+          "required": true,
+          "options": [
+            "Product launch / major release",
+            "Pilot go-live / first customer launch",
+            "Strategic partnership / integration",
+            "Funding announce/close",
+            "Executive hire / advisor appointment",
+            "Regulatory / certification milestone",
+            "None planned"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "constraints_disclosure",
+      "title": "Constraints & Disclosure Posture",
+      "description": "Tell us about any limitations or requirements",
+      "airtableMapping": "Question 7",
+      "questions": [
+        {
+          "id": "publicationLimits",
+          "label": "Any stealth, regulatory, or contractual limits that could restrict what we can publish in the next 90 days?",
+          "type": "select",
+          "required": true,
+          "options": ["None", "Some limits (describe)", "Strict/stealth (describe)"],
+          "conditionalQuestions": [
+            {
+              "condition": {
+                "field": "publicationLimits",
+                "operator": "in",
+                "value": ["Some limits (describe)", "Strict/stealth (describe)"]
+              },
+              "question": {
+                "id": "constraintDescription",
+                "label": "Briefly describe the constraint and approval process (who signs off).",
+                "type": "textarea",
+                "required": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "ndaRequired",
+          "label": "Is an NDA required to review your materials?",
+          "type": "radio",
+          "required": true,
+          "options": ["Yes", "No"]
+        }
+      ]
+    },
+    {
+      "id": "commercial_terms",
+      "title": "Commercial Terms",
+      "description": "Please review and accept our terms",
+      "airtableMapping": "Question 8",
+      "questions": [
+        {
+          "id": "termsAcceptance",
+          "label": "This is a strategy consultation (no media or investor meetings included). The fee is promo-priced, cohort-limited, 100% upfront, and creditable to our Narrative Engine if engaged within 30 days. Do you accept?",
+          "type": "radio",
+          "required": true,
+          "options": ["Yes, I accept", "No"],
+          "validation": {
+            "type": "required_value",
+            "requiredValue": "Yes, I accept",
+            "errorMessage": "Thanks—this engagement requires acceptance of terms."
+          }
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "title": "Materials (Mandatory)",
+      "description": "Please upload your materials",
+      "airtableMapping": "Question 9",
+      "questions": [
+        {
+          "id": "stealthMode",
+          "label": "Are you in stealth and unable to share a full deck?",
+          "type": "radio",
+          "required": true,
+          "options": ["Yes", "No"],
+          "conditionalQuestions": [
+            {
+              "condition": {
+                "field": "stealthMode",
+                "operator": "equals",
+                "value": "Yes"
+              },
+              "question": {
+                "id": "redactedBrief",
+                "label": "5-slide redacted brief (problem, solution, team, traction, round facts) (PDF only)",
+                "type": "file",
+                "required": true,
+                "allowedTypes": ["pdf"]
+              }
+            },
+            {
+              "condition": {
+                "field": "stealthMode",
+                "operator": "equals",
+                "value": "Yes"
+              },
+              "question": {
+                "id": "roundFactsDoc",
+                "label": "1-page round facts (target size, use of proceeds, close date, commitments) (PDF only)",
+                "type": "file",
+                "required": true,
+                "allowedTypes": ["pdf"]
+              }
+            },
+            {
+              "condition": {
+                "field": "stealthMode",
+                "operator": "equals",
+                "value": "No"
+              },
+              "question": {
+                "id": "pitchDeckUpload",
+                "label": "Upload your teaser or pitch deck (PDF only).",
+                "type": "file",
+                "required": true,
+                "allowedTypes": ["pdf"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "consent",
+      "title": "Consent",
+      "description": "Please confirm your understanding and agreement",
+      "airtableMapping": "Question 10",
+      "questions": [
+        {
+          "id": "consultationConsent",
+          "label": "I understand this is a strategy consultation only; no media bookings or investor meetings are included.",
+          "type": "checkbox",
+          "required": true,
+          "options": ["I understand"]
+        },
+        {
+          "id": "pricingConsent",
+          "label": "I acknowledge cohort pricing is time/slot limited",
+          "type": "checkbox",
+          "required": true,
+          "options": ["I acknowledge"]
+        },
+        {
+          "id": "cohortConsent",
+          "label": "We run a four-cohort launch. The earliest cohort is offered at a nominal fee to reduce friction; later cohorts increase toward list price. Final pricing is presented upon acceptance.",
+          "type": "checkbox",
+          "required": true,
+          "options": ["I agree to these terms"]
+        }
+      ]
+    }
+  ]
+}
