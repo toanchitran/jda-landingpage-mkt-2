@@ -82,9 +82,11 @@ export async function POST(request: NextRequest) {
 
     const result = await response.json();
     const recordId = result.records[0].id;
+    const protocol = request.headers.get('x-forwarded-proto') || (request.url.startsWith('https') ? 'https' : 'http');
+    const host = request.headers.get('host') || 'localhost:3000';
 
     // Generate unique URL for lead qualification answer page
-    const leadQualificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/lead-qualification-answer/${recordId}`;
+    const leadQualificationUrl = `${protocol}//${host}/lead-qualification-answer/${recordId}`;
 
     // Update the record with the lead qualification URL
     const updateResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}/${recordId}`, {

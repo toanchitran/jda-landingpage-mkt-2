@@ -77,7 +77,9 @@ export async function GET(
     // Load sections from the JSON file
     let sectionsData: SectionsData = { sections: [] };
     try {
-      const sectionsResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/sections.json`);
+        const protocol = request.headers.get('x-forwarded-proto') || (request.url.startsWith('https') ? 'https' : 'http');
+        const host = request.headers.get('host') || 'localhost:3000';
+      const sectionsResponse = await fetch(`${protocol}//${host}/sections.json`);
       sectionsData = await sectionsResponse.json();
     } catch (error) {
       console.error('Error loading sections:', error);
