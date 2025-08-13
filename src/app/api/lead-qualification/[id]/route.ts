@@ -73,14 +73,23 @@ export async function GET(
 
     const record = await response.json();
     const fields = record.fields;
+    
+    console.log('Record ID:', id);
+    console.log('Record fields:', Object.keys(fields));
+    console.log('Name field:', fields['Name']);
+    console.log('Email field:', fields['Email']);
 
     // Load sections from the JSON file
     let sectionsData: SectionsData = { sections: [] };
     try {
         const protocol = request.headers.get('x-forwarded-proto') || (request.url.startsWith('https') ? 'https' : 'http');
         const host = request.headers.get('host') || 'localhost:3000';
-      const sectionsResponse = await fetch(`${protocol}//${host}/sections.json`);
+      const sectionsUrl = `${protocol}://${host}/sections.json`;
+      console.log('Loading sections from:', sectionsUrl);
+      const sectionsResponse = await fetch(sectionsUrl);
+      console.log('Sections response status:', sectionsResponse.status);
       sectionsData = await sectionsResponse.json();
+      console.log('Loaded sections count:', sectionsData.sections.length);
     } catch (error) {
       console.error('Error loading sections:', error);
     }
@@ -174,6 +183,15 @@ export async function GET(
       }
     };
 
+    // Check if we have basic required data
+    if (!fields['Name'] && !fields['Email']) {
+      console.warn('Record missing basic contact information');
+      return NextResponse.json(
+        { error: 'Record found but missing essential data' },
+        { status: 404 }
+      );
+    }
+
     const contactData = {
       id: record.id,
       fullName: fields['Name'] || '',
@@ -191,6 +209,14 @@ export async function GET(
       sectionAnswers,
       submittedAt: fields['Created'] || new Date().toISOString(),
     };
+
+    console.log('Final contactData:', {
+      id: contactData.id,
+      hasName: !!contactData.fullName,
+      hasEmail: !!contactData.email,
+      sectionsCount: contactData.sections.length,
+      sectionAnswersKeys: Object.keys(contactData.sectionAnswers)
+    });
 
     return NextResponse.json(contactData);
   } catch (error) {

@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     const host = request.headers.get('host') || 'localhost:3000';
 
     // Generate unique URL for lead qualification answer page
-    const leadQualificationUrl = `${protocol}//${host}/lead-qualification-answer/${recordId}`;
+    const leadQualificationUrl = `${protocol}://${host}/lead-qualification-answer/${recordId}`;
 
     // Update the record with the lead qualification URL
     const updateResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}/${recordId}`, {
