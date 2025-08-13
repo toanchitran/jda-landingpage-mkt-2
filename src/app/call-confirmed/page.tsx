@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import fs from "fs";
 import path from "path";
+import VideoTracker from "@/components/VideoTracker";
 
 type VideoItem = {
   title: string;
@@ -104,20 +105,15 @@ export default async function CallConfirmedPage() {
             <div className="grid md:grid-cols-2 gap-8 items-start">
               {/* Left: Video */}
               <div className="w-full">
-                <div className="w-full aspect-video rounded-xl overflow-hidden bg-black">
-                  {heroVideo ? (
-                    <iframe
-                      className="w-full h-full"
-                      src={heroVideo.embedUrl}
-                      title={heroVideo.title || 'Before Your Call'}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/70">No video available</div>
-                  )}
-                </div>
+                {heroVideo ? (
+                  <VideoTracker
+                    videoTitle={heroVideo.title || 'Before Your Call'}
+                    videoIndex={0}
+                    embedUrl={heroVideo.embedUrl}
+                  />
+                ) : (
+                  <div className="w-full aspect-video rounded-xl overflow-hidden bg-black flex items-center justify-center text-white/70">No video available</div>
+                )}
               </div>
 
               {/* Right: 3 Steps */}
@@ -167,16 +163,11 @@ export default async function CallConfirmedPage() {
                     {v.title && (
                       <h3 className="text-lg font-semibold text-black">{v.title}</h3>
                     )}
-                    <div className="w-full aspect-video rounded-xl overflow-hidden bg-black">
-                      <iframe
-                        className="w-full h-full"
-                        src={v.embedUrl}
-                        title={v.title || `Training Video ${idx + 1}`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                        allowFullScreen
-                      />
-                    </div>
+                    <VideoTracker
+                      videoTitle={v.title || `Training Video ${idx + 1}`}
+                      videoIndex={idx + 1}
+                      embedUrl={v.embedUrl}
+                    />
                   </div>
                 ))
               )}

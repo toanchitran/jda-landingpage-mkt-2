@@ -64,9 +64,10 @@ type ContactFormProps = {
   onCalendlyShow?: (isShown: boolean) => void;
   appearance?: 'dark' | 'light';
   calendlyHeight?: number;
+  showFormHeader?: boolean;
 };
 
-export default function ContactForm({ variant = 'full', prefillName = '', prefillEmail = '', onCalendlyStart, onCalendlyShow, appearance = 'dark', calendlyHeight = 900 }: ContactFormProps) {
+export default function ContactForm({ variant = 'full', prefillName = '', prefillEmail = '', onCalendlyStart, onCalendlyShow, appearance = 'dark', calendlyHeight = 900, showFormHeader = false }: ContactFormProps) {
   const [questions, setQuestions] = useState<Questions>({});
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
@@ -303,6 +304,14 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
     };
   }, [shouldInitCalendly, formData.fullName, formData.email, prefillName, prefillEmail, contactRecordId]);
 
+  // Helper function to check if a question is a Yes/No question
+  const isYesNoQuestion = (question: Question): boolean => {
+    return question.type === 'radio' && 
+           question.options?.length === 2 && 
+           question.options.includes('Yes') && 
+           question.options.includes('No');
+  };
+
   const validateForm = () => {
     const newErrors: FormErrors = {};
     
@@ -353,6 +362,9 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
         } else if (question.type === 'radio') {
           if (!value || (typeof value === 'string' && value.trim() === '')) {
             newErrors[key] = `Please select one option for: "${question.label}"`;
+          } else if (isYesNoQuestion(question) && value !== 'Yes') {
+            // For Yes/No questions, require "Yes" to continue
+            newErrors[key] = `Please select "Yes" to continue with: "${question.label}"`;
           }
         } else if (!value || (typeof value === 'string' && value.trim() === '')) {
           newErrors[key] = `Please provide an answer for: "${question.label}"`;
@@ -524,10 +536,16 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
 
     switch (question.type) {
       case 'radio':
+        const isYesNo = isYesNoQuestion(question);
         return (
           <div key={key}>
             <label className="block text-base md:text-lg mb-2 md:mb-3 font-medium" style={{color: 'var(--primary-text)'}}>
               {questionNumber}. {question.label} {question.required && '*'}
+              {isYesNo && (
+                <span className="text-sm font-normal ml-2" style={{color: 'var(--secondary-text-80)'}}>
+                  (Must select &quot;Yes&quot; to continue)
+                </span>
+              )}
             </label>
             <div className="space-y-2 md:space-y-3">
               {question.options?.map((option, index) => (
@@ -537,7 +555,12 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
                     name={key}
                     value={option}
                     checked={(formData[key] as string) === option}
-                    onChange={(e) => handleQuestionChange(key, e.target.value)}
+                    onChange={(e) => {
+                      handleQuestionChange(key, e.target.value);
+                      handleFieldChange(key);
+                    }}
+                    onFocus={() => handleFieldFocus(key)}
+                    onBlur={() => handleFieldBlur(key)}
                     className="mr-2"
                   />
                   {option}
@@ -557,7 +580,12 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
                   type="checkbox"
                   name={key}
                   checked={(formData[key] as string) === 'true'}
-                  onChange={(e) => handleQuestionChange(key, '', e.target.checked)}
+                  onChange={(e) => {
+                    handleQuestionChange(key, '', e.target.checked);
+                    handleFieldChange(key);
+                  }}
+                  onFocus={() => handleFieldFocus(key)}
+                  onBlur={() => handleFieldBlur(key)}
                   className="mr-2"
                 />
                 <span className="text-sm md:text-base font-medium">
@@ -580,7 +608,12 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
                       type="checkbox"
                       name={`${key}-${option}`}
                       checked={Array.isArray(formData[key]) && (formData[key] as string[]).includes(option)}
-                      onChange={(e) => handleQuestionChange(key, option, e.target.checked)}
+                      onChange={(e) => {
+                        handleQuestionChange(key, option, e.target.checked);
+                        handleFieldChange(key);
+                      }}
+                      onFocus={() => handleFieldFocus(key)}
+                      onBlur={() => handleFieldBlur(key)}
                       className="mr-2"
                     />
                     {option}
@@ -601,7 +634,10 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
                         if (e.target.value && !Array.isArray(formData[key])) {
                           handleQuestionChange(key, 'Others', true);
                         }
+                        handleFieldChange(`${key}_other`);
                       }}
+                      onFocus={() => handleFieldFocus(`${key}_other`)}
+                      onBlur={() => handleFieldBlur(`${key}_other`)}
                       className="w-full p-2 rounded text-sm"
                       style={{
                         backgroundColor: 'var(--input-fields)',
@@ -690,6 +726,12 @@ export default function ContactForm({ variant = 'full', prefillName = '', prefil
         />
       ) : !showCalendly ? (
         <>
+          {showFormHeader && (
+            <div className="text-center mb-8">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-black">Get Started with JD Alchemy</h2>
+              <p className="text-black">Please fill out this quick form to help us prepare for your call</p>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
             {/* Error Summary */}
             {Object.keys(errors).length > 0 && (

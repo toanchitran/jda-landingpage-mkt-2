@@ -2,15 +2,62 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import ContactForm from "@/components/ContactForm";
+import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
 
 export default function BookACallPage() {
   const router = useRouter();
-  const [isCalendlyShown, setIsCalendlyShown] = useState(false);
+  const [videoCompleted, setVideoCompleted] = useState(false);
+  const [showQualificationSection, setShowQualificationSection] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { trackVideoPlay, trackVideoStop, trackVideoComplete, trackLeadQualificationShow } = useGoogleAnalytics();
+
+  useEffect(() => {
+    if (videoCompleted && !showQualificationSection) {
+      setShowQualificationSection(true);
+      trackLeadQualificationShow();
+    }
+  }, [videoCompleted, showQualificationSection, trackLeadQualificationShow]);
+
+  const handleVideoPlay = () => {
+    if (videoRef.current) {
+      trackVideoPlay(videoRef.current.currentTime);
+    }
+  };
+
+  const handleVideoPause = () => {
+    if (videoRef.current) {
+      trackVideoStop(videoRef.current.currentTime, videoRef.current.duration);
+    }
+  };
+
+  const handleVideoEnded = () => {
+    if (videoRef.current) {
+      trackVideoComplete(videoRef.current.duration);
+      setVideoCompleted(true);
+    }
+  };
 
   return (
     <div className="font-sans text-primary-text">
+      <style jsx>{`
+        video::-webkit-media-controls-timeline {
+          display: none !important;
+        }
+        video::-webkit-media-controls-current-time-display {
+          display: none !important;
+        }
+        video::-webkit-media-controls-time-remaining-display {
+          display: none !important;
+        }
+        video::-moz-progress-bar {
+          display: none !important;
+        }
+        video::-webkit-progress-bar {
+          display: none !important;
+        }
+      `}</style>
       {/* Navigation */}
       <nav className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-8 py-4 sm:py-6">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -57,10 +104,24 @@ export default function BookACallPage() {
               </p>
             </div>
 
-            <div className="rounded-xl overflow-hidden bg-[#1a1a2e] aspect-video mb-8 flex items-center justify-center">
-              <div className="w-20 h-20 bg-gold/90 rounded-full flex items-center justify-center cursor-pointer">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg>
-              </div>
+            <div className="rounded-xl overflow-hidden bg-[#1a1a2e] aspect-video mb-8">
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                onPlay={handleVideoPlay}
+                onPause={handleVideoPause}
+                onEnded={handleVideoEnded}
+                controls
+                controlsList="nodownload nofullscreen noremoteplayback"
+                style={{
+                  '--webkit-media-controls-timeline': 'none',
+                  '--webkit-media-controls-current-time-display': 'none',
+                  '--webkit-media-controls-time-remaining-display': 'none'
+                } as React.CSSProperties}
+              >
+                <source src="/Hero_video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
 
             <div className="text-center">
@@ -70,24 +131,20 @@ export default function BookACallPage() {
         </div>
       </section>
 
-      {/* Lead Qualification Section */}
-      <section id="qualification-section" className="py-16 px-4 sm:px-6 lg:px-8" style={{backgroundColor: 'var(--primary-bg)'}}>
-        <div className="max-w-4xl mx-auto">
-          <div className="rounded-2xl p-8 shadow-2xl" style={{ backgroundColor: "#ffffff" }}>
-            <div className="text-center mb-8">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-black">Get Started with JD Alchemy</h2>
-              {!isCalendlyShown && (
-                <p className="text-black">Please fill out this quick form to help us prepare for your call</p>
-              )}
+      {/* Lead Qualification Section - Only show after video completion */}
+      {showQualificationSection && (
+        <section id="qualification-section" className="py-16 px-4 sm:px-6 lg:px-8" style={{backgroundColor: 'var(--primary-bg)'}}>
+          <div className="max-w-4xl mx-auto">
+            <div className="rounded-2xl p-8 shadow-2xl" style={{ backgroundColor: "#ffffff" }}>
+              <ContactForm 
+                appearance="light" 
+                calendlyHeight={600}
+                showFormHeader={true}
+              />
             </div>
-            <ContactForm 
-              appearance="light" 
-              calendlyHeight={600}
-              onCalendlyShow={setIsCalendlyShown}
-            />
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Calendly booking is handled inside ContactForm; no separate Calendly section here */}
     </div>

@@ -13,6 +13,7 @@ function AudioPlayer({ src }: { src: string }) {
   const [waveHeights, setWaveHeights] = useState<number[]>([]);
   const audioRef = useRef<HTMLAudioElement>(null);
   const animationRef = useRef<number | null>(null);
+  const { trackAudioPlay, trackAudioPause, trackAudioComplete } = useGoogleAnalytics();
 
   // Initialize wave heights
   useEffect(() => {
@@ -47,17 +48,21 @@ function AudioPlayer({ src }: { src: string }) {
 
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      trackAudioComplete(audio.duration, src);
+    };
 
     audio.addEventListener('timeupdate', updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('ended', () => setIsPlaying(false));
+    audio.addEventListener('ended', handleEnded);
 
     return () => {
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('ended', () => setIsPlaying(false));
+      audio.removeEventListener('ended', handleEnded);
     };
-  }, []);
+  }, [trackAudioComplete, src]);
 
   const togglePlayPause = () => {
     const audio = audioRef.current;
@@ -65,8 +70,10 @@ function AudioPlayer({ src }: { src: string }) {
 
     if (isPlaying) {
       audio.pause();
+      trackAudioPause(audio.currentTime, audio.duration, src);
     } else {
       audio.play();
+      trackAudioPlay(audio.currentTime, src);
     }
     setIsPlaying(!isPlaying);
   };
