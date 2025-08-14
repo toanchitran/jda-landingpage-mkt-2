@@ -6,9 +6,17 @@ import { useGoogleAnalytics } from '@/hooks/useGoogleAnalytics';
 interface PitchDeckUploadProps {
   onUploadComplete: (fileUrl: string) => void;
   onSkip: () => void;
+  title?: string;
+  description?: string;
+  acceptedTypes?: string[];
 }
 
-export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckUploadProps) {
+export default function PitchDeckUpload({ 
+  onUploadComplete, 
+  title = "Upload Your Pitch Deck",
+  description = "Please upload your teaser deck or pitch deck here to increase your chance of being selected for our program",
+  acceptedTypes = ['.pdf']
+}: Omit<PitchDeckUploadProps, 'onSkip'>) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [currentView, setCurrentView] = useState<'upload' | 'uploading'>('upload');
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -38,7 +46,8 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
           try {
             const response = JSON.parse(xhr.responseText);
             resolve(response.fileUrl);
-          } catch (_error) {
+          } catch (parseError) {
+            console.error('Response parsing error:', parseError);
             reject(new Error('Invalid response format'));
           }
         } else {
@@ -63,11 +72,20 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
     
     // File validation
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB in bytes
-    const allowedTypes = ['application/pdf'];
+    
+    // Determine allowed MIME types based on accepted file extensions
+    const mimeTypeMap: { [key: string]: string[] } = {
+      '.pdf': ['application/pdf'],
+      '.pptx': ['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+      '.key': ['application/x-iwork-keynote-sffkey']
+    };
+    
+    const allowedMimeTypes = acceptedTypes.flatMap(ext => mimeTypeMap[ext] || []);
+    const allowedExtensions = acceptedTypes.join(', ');
     
     // Check file type
-    if (!allowedTypes.includes(file.type)) {
-      alert('Please upload a PDF file only. Other file formats are not supported.');
+    if (allowedMimeTypes.length > 0 && !allowedMimeTypes.includes(file.type)) {
+      alert(`Please upload a file with one of these formats: ${allowedExtensions}. Other file formats are not supported.`);
       return;
     }
     
@@ -80,8 +98,9 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
     
     // Additional check for file extension as backup
     const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.pdf')) {
-      alert('Please upload a PDF file only. The file must have a .pdf extension.');
+    const hasValidExtension = acceptedTypes.some(ext => fileName.endsWith(ext));
+    if (!hasValidExtension) {
+      alert(`Please upload a file with one of these extensions: ${allowedExtensions}.`);
       return;
     }
     
@@ -140,10 +159,10 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold mb-2" style={{color: 'var(--primary-text)'}}>
-            Uploading your pitch deck...
+          <h3 className="text-lg font-semibold mb-2 text-gray-800">
+            Uploading your file...
           </h3>
-          <p className="text-sm" style={{color: 'var(--secondary-text)'}}>
+          <p className="text-sm text-gray-600">
             {uploadedFile?.name}
           </p>
         </div>
@@ -155,7 +174,7 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
           />
         </div>
         
-        <p className="text-sm" style={{color: 'var(--secondary-text)'}}>
+        <p className="text-sm text-gray-600">
           {Math.round(uploadProgress)}% complete
         </p>
       </div>
@@ -167,46 +186,42 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
   return (
     <div className="max-w-2xl mx-auto p-6">
       <div className="text-center mb-6">
-        <h2 className="text-xl md:text-2xl font-bold mb-2" style={{color: 'var(--primary-text)'}}>
-          Upload Your Pitch Deck
+        <h2 className="text-xl md:text-2xl font-bold mb-2 text-gray-800">
+          {title}
         </h2>
-        <p className="text-sm md:text-base" style={{color: 'var(--secondary-text)'}}>
-          Please upload your teaser deck or pitch deck here to increase your chance of being selected for our program
+        <p className="text-sm md:text-base text-gray-600">
+          {description}
         </p>
       </div>
 
       <div 
-        className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors"
-        style={{
-          borderColor: 'var(--dividers-borders)',
-          backgroundColor: 'var(--input-fields)'
-        }}
+        className="border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 hover:bg-gray-100 transition-colors"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onClick={() => document.getElementById('pitch-deck-input')?.click()}
       >
         <div className="mb-4">
-          <svg className="w-12 h-12 mx-auto" style={{color: 'var(--secondary-text)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
           </svg>
         </div>
-        <p className="text-lg font-medium mb-2" style={{color: 'var(--primary-text)'}}>
-          Drop your PDF here or click to browse
+        <p className="text-lg font-medium mb-2 text-gray-800">
+          Drop your file here or click to browse
         </p>
-        <p className="text-sm" style={{color: 'var(--secondary-text)'}}>
-          Maximum file size: 10MB • PDF format only
+        <p className="text-sm text-gray-600">
+          Maximum file size: 10MB • {acceptedTypes.join(', ')} format{acceptedTypes.length > 1 ? 's' : ''} only
         </p>
         <input
           id="pitch-deck-input"
           type="file"
-          accept=".pdf"
+          accept={acceptedTypes.join(',')}
           onChange={handleFileSelect}
           className="hidden"
           disabled={isUploading}
         />
       </div>
 
-      <div className="flex gap-4 mt-6">
+      {/* <div className="flex gap-4 mt-6">
         <button
           onClick={onSkip}
           disabled={isUploading}
@@ -219,7 +234,7 @@ export default function PitchDeckUpload({ onUploadComplete, onSkip }: PitchDeckU
         >
           Skip for now
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

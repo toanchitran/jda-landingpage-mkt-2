@@ -261,7 +261,11 @@ export default function ContactForm({
             
             // Query Calendly REST API for the latest event to get both start_time and join_link
             try {
-              const lookup = await fetch('/api/calendly-latest-event');
+              const contactEmail = getContactEmail();
+              const lookupUrl = contactEmail 
+                ? `/api/calendly-latest-event?invitee_email=${encodeURIComponent(contactEmail)}`
+                : '/api/calendly-latest-event';
+              const lookup = await fetch(lookupUrl);
               const lookupJson = await lookup.json();
               finalStart = lookupJson?.start_time || finalStart;
               joinLink = lookupJson?.join_link;
@@ -426,6 +430,14 @@ export default function ContactForm({
           // Auto-correct by adding https://
           const correctedUrl = `https://${trimmedValue}`;
           setFormData(prev => ({ ...prev, [question.id]: correctedUrl }));
+        }
+      }
+      
+      // Number validation
+      if (question.type === 'number' && value && typeof value === 'string') {
+        const numValue = parseFloat(value);
+        if (isNaN(numValue)) {
+          sectionErrors[question.id] = 'Please enter a valid number';
         }
       }
     };
@@ -659,6 +671,11 @@ export default function ContactForm({
               onFocus={handleFocus}
               onBlur={handleBlur}
               placeholder={question.placeholder}
+              // Add number-specific attributes
+              {...(question.type === 'number' && {
+                min: question.validation?.minValue,
+                step: 'any'
+              })}
             />
             {error && <p className="text-xs md:text-sm mt-1 text-red-600">{error}</p>}
           </div>
@@ -824,6 +841,9 @@ export default function ContactForm({
               </div>
             ) : (
               <PitchDeckUpload
+                title={question.label}
+                description="Please upload your file here"
+                acceptedTypes={question.allowedTypes || ['.pdf']}
                 onUploadComplete={(url: string) => {
                   // Extract filename from URL - remove timestamp prefix and clean up
                   let fileName = url.split('/').pop() || 'Uploaded file';
@@ -837,12 +857,7 @@ export default function ContactForm({
                   handleFieldChange(question.id, url);
 
                 }}
-                onSkip={() => {
-                  // Allow skipping if not required
-                  if (!question.required) {
-                    handleFieldChange(question.id, '');
-                  }
-                }}
+
               />
             )}
             

@@ -742,7 +742,7 @@ export default function Home() {
             <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <h1 className="text-6xl font-bold mb-4 text-primary-text">The Unfair Advantage of a Strategic Story</h1>
+            <h1 className="text-6xl font-bold mb-4 text-primary-text">The Unfair Advantage of a<br/>Strategic Story</h1>
             <p className="max-w-4xl mx-auto mb-6 text-secondary-text-80 text-sm sm:text-base">
             In a crowded market, your story is your most powerful asset. It&apos;s the key to building credibility and earning the trust of investors. It&apos;s not just about what you say, but how you say it—and when. 
             </p>
@@ -828,7 +828,7 @@ export default function Home() {
         <div className="relative z-10 w-full max-w-3xl ml-auto" style={{marginRight: 'var(--border-radius--padding--global--regular)'}}>
           <div className="rounded-3xl p-10 shadow-2xl text-center bg-white border border-gray-200">
             <h2 className="text-4xl font-bold mb-6 text-black">
-              Does Your Pitch Deck Tell a Story Worth Funding?
+              Does Your Pitch Deck Tell<br/>a Story Worth Funding?
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed text-left">
             This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
@@ -868,7 +868,7 @@ export default function Home() {
                     {/* Masonry Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6 padding-global py-16">
             {/* Top Left Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#ffffffffffff', height: '250px'}}>
+            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
               <Image
                 src="/Logo (3).png"
                 alt="Logo 3"
@@ -880,7 +880,7 @@ export default function Home() {
             </div>
             
             {/* Top Center Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a876', height: '250px'}}>
+            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
               <Image
                 src="/Logo (4).png"
                 alt="Logo 4"
@@ -892,7 +892,7 @@ export default function Home() {
             </div>
             
             {/* Top Right Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '250px'}}>
+            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
               <Image
                 src="/Logo (1).png"
                 alt="Digicon Logo"
@@ -904,7 +904,7 @@ export default function Home() {
             </div>
             
             {/* Bottom Left Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#fabf01', height: '250px'}}>
+            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
               <Image
                 src="/Logo (5).png"
                 alt="Logo 5"
@@ -916,7 +916,7 @@ export default function Home() {
             </div>
             
             {/* Bottom Center Card - Logo Only */}
-                <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '250px'}}>
+                <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
               <Image
                 src="/Logo (6).png"
                 alt="Logo 6"
@@ -928,7 +928,7 @@ export default function Home() {
             </div>
             
             {/* Bottom Right Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '250px'}}>
+            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
               <Image
                 src="/Logo (2).png"
                 alt="Maco Logo"

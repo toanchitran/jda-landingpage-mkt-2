@@ -99,7 +99,7 @@ export default function BookACallPage() {
         <div className="relative max-w-6xl mx-auto pt-32 pb-16 z-10">
           <div className="text-center mb-16">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              Schedule Your Personalized <span className="text-gold">Discovery Call</span>
+              Schedule Your Personalized<br/><span className="text-gold">Discovery Call</span>
             </h1>
             <p className="text-xl md:text-2xl leading-relaxed mb-12 text-secondary-text-80 max-w-4xl mx-auto">
               If you&apos;re a startup founder struggling to get investor attention, you might just be one strategic narrative away from transforming from &quot;unrecognized&quot; to &quot;industry authority that investors seek out.&quot;
