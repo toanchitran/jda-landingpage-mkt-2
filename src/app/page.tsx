@@ -8,6 +8,7 @@ import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
 // Audio Player Component with Animation
 function AudioPlayer({ src }: { src: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [mounted, setMounted] = useState(false);
   // const [currentTime, setCurrentTime] = useState(0);
   // const [duration, setDuration] = useState(0);
   const [waveHeights, setWaveHeights] = useState<number[]>([]);
@@ -15,17 +16,24 @@ function AudioPlayer({ src }: { src: string }) {
   const animationRef = useRef<number | null>(null);
   const { trackAudioPlay, trackAudioPause, trackAudioComplete } = useGoogleAnalytics();
 
-  // Initialize wave heights
+  // Prevent hydration mismatch
   useEffect(() => {
-    const heights = Array.from({ length: 60 }, () => Math.random() * 30 + 20);
-    setWaveHeights(heights);
+    setMounted(true);
   }, []);
+
+  // Initialize wave heights - only on client to prevent hydration mismatch
+  useEffect(() => {
+    if (mounted) {
+      const heights = Array.from({ length: 120 }, () => Math.random() * 30 + 20);
+      setWaveHeights(heights);
+    }
+  }, [mounted]);
 
   // Animate waveform when playing
   useEffect(() => {
     if (isPlaying) {
       const animate = () => {
-        setWaveHeights(prev => prev.map(() => Math.random() * 60 + 20));
+        setWaveHeights(prev => prev.map(() => Math.random() * 70 + 20));
         animationRef.current = requestAnimationFrame(animate);
       };
       animationRef.current = requestAnimationFrame(animate);
@@ -99,7 +107,7 @@ function AudioPlayer({ src }: { src: string }) {
               key={i}
               className="rounded-t transition-all duration-75"
               style={{
-                backgroundColor: '#A67C5A',
+                backgroundColor: '#c0a876',
                 height: `${height}%`,
                 opacity: isPlaying ? 1 : 0.7,
                 width: `${100 / waveHeights.length}%`,
@@ -114,7 +122,7 @@ function AudioPlayer({ src }: { src: string }) {
           <button
             onClick={togglePlayPause}
             className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-            style={{backgroundColor: '#8B5A3C', color: '#ffffff'}}
+            style={{backgroundColor: '#6b624b', color: '#ffffff'}}
           >
             {isPlaying ? (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -144,19 +152,19 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
       title: 'You Provide the Raw Material',
       description: 'The easy part. You share your vision, key milestones, and unique industry insights - the core data we need to begin your narrative audit.',
       imageText: 'You Provide the Raw Material',
-      image:'/You Provide the Raw Material.png'
+      image:'/You Provide the Raw Material-v2.jpg'
     },
     refine: {
       title: 'We Forge Your Narrative',
       description: 'We provide the expert framework and guidance to help you forge your own investor-grade narrative, aligning every word with your fundraising goals.',
       imageText: 'We Forge Your Narrative',
-      image:'/We Forge Your Narrative.png'
+      image:'/We Forge Your Narrative-v2.jpg'
     },
     tailor: {
       title: 'You Command the Conversation',
       description: 'With a clear strategic roadmap, you can now deploy your PR activities with purpose and precision.',
       imageText: 'You Command the Conversation',
-      image:'/You Command the Conversation.png'
+      image:'/You Command the Conversation-v2.jpg'
     },
     // amplify: {
     //   title: 'Amplify',
@@ -167,8 +175,8 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
   };
 
   return (
-    <div className="rounded-3xl p-8 text-primary-text" style={{backgroundColor: 'var(--primary-bg)'}}>
-      <div className="text-left mb-8">
+    <div className="rounded-3xl p-8 text-primary-text padding-global" style={{backgroundColor: 'var(--primary-bg)'}}>
+      <div className="mb-8 padding-global text-center items-center justify-center">
         <h3 className="text-4xl font-bold mb-3">Your Simple 3-Step Plan to a Compelling Story</h3>
         <p className="text-secondary-text-80 mb-6"> Stop scrambling for content and start commanding investor attention.</p>
         <button 
@@ -180,7 +188,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
       </div>
       
       {/* Desktop Layout - Grid with Product UI Screenshot */}
-      <div className="hidden md:block">
+      <div className="hidden md:block padding-global">
         {/* Product UI Screenshot */}
         <div className="w-full mb-8">
           <div className="aspect-video bg-card-accent-2 rounded-lg flex items-center justify-center overflow-hidden">
@@ -256,18 +264,28 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   // Carousel state variables
   const cardRef = useRef<HTMLDivElement>(null);
   const [cardWidth, setCardWidth] = useState(500); // Default width
   const [gapSize, setGapSize] = useState(6); // Default gap (0.375rem = 6px)
   const [isMobile, setIsMobile] = useState(false);
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   // Marquee tags source
   const marqueeTags = useMemo(() => [
     'Access Top-Tier Capital',
     'Higher Valuation Multiples',
     'Favorable Funding Terms',
-    'Dismantle Skepticism'
+    'Dismantle Skepticism',
+    'Attract premier investors',
+    'Boost company valuation',
+    'Eliminate investor doubt',
+    'Secure better terms'
 
   ], []);
 
@@ -284,9 +302,9 @@ export default function Home() {
     return Array.from({ length: times }).flatMap(() => items);
   };
 
-  const row1 = useMemo(() => repeat(shuffle(marqueeTags), 3), [marqueeTags]);
-  const row2 = useMemo(() => repeat(shuffle(marqueeTags), 3), [marqueeTags]);
-  const row3 = useMemo(() => repeat(shuffle(marqueeTags), 3), [marqueeTags]);
+  const row1 = useMemo(() => mounted ? repeat(shuffle(marqueeTags), 3) : repeat(marqueeTags, 3), [marqueeTags, mounted]);
+  const row2 = useMemo(() => mounted ? repeat(shuffle(marqueeTags), 3) : repeat(marqueeTags, 3), [marqueeTags, mounted]);
+  const row3 = useMemo(() => mounted ? repeat(shuffle(marqueeTags), 3) : repeat(marqueeTags, 3), [marqueeTags, mounted]);
   const carouselCards: { key: string; title: string; description: string; videoSrc: string }[] = [
     {
       key: 'Investor_Magnet',
@@ -335,11 +353,13 @@ export default function Home() {
     trackUTMParameters,
   } = useGoogleAnalytics();
 
-  // Track page view and UTM parameters on component mount
+  // Track page view and UTM parameters on component mount - only on client
   useEffect(() => {
-    trackPageView('JD Alchemy - Digital PR Specialists', window.location.pathname);
-    trackUTMParameters();
-  }, [trackPageView, trackUTMParameters]);
+    if (mounted) {
+      trackPageView('JD Alchemy - Digital PR Specialists', window.location.pathname);
+      trackUTMParameters();
+    }
+  }, [trackPageView, trackUTMParameters, mounted]);
 
   const handleBookCall = (location: string = 'hero_section') => {
     trackBookCallClick(location);
@@ -432,7 +452,7 @@ export default function Home() {
             playsInline
             className="w-full h-full object-cover"
           >
-            <source src="/Hero_video.mp4" type="video/mp4" />
+            <source src="/Hero_BG_video.mp4" type="video/mp4" />
           </video>
           {/* <div className="absolute" style={{backgroundColor: 'var(--primary-bg)'}}></div> */}
         </div>
@@ -521,7 +541,7 @@ export default function Home() {
             </div>
           <div className="max-w-4xl mx-auto">
             <div className="rounded-2xl p-4 bg-white shadow-lg">
-                <AudioPlayer src="/sample.wav" />
+                <AudioPlayer src="/audio_podcast.MP3" />
               <p className="text-center text-gray-600 text-sm mt-2">Listen to our podcast</p>
             </div>
           </div>
@@ -587,7 +607,7 @@ export default function Home() {
                 rel="noopener"
                 className="text-white font-semibold hover:text-gray-200 transition-colors"
               >
-                Meet Jay Jin →
+                Meet Jay →
               </a>
             </div>
             
@@ -675,7 +695,7 @@ export default function Home() {
                    className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
                    style={{
                      width: 'calc(var(--border-radius--padding--global--regular) * 2)',
-                     background: 'linear-gradient(to right, var(--primary-bg), transparent)',
+                     background: 'linear-gradient(to right, var(--secondary-bg), transparent)',
                     //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
                    }}
                  ></div>
@@ -685,7 +705,7 @@ export default function Home() {
                    className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
                    style={{
                      width: 'calc(var(--border-radius--padding--global--regular) * 2)',
-                     background: 'linear-gradient(to left, var(--primary-bg), transparent)',
+                     background: 'linear-gradient(to left, var(--secondary-bg), transparent)',
                     //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
                    }}
                  ></div>
@@ -926,7 +946,7 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center justify-center">
         <div className="absolute inset-0">
           <Image
-            src="/CTA BG.jpg"
+            src="/CTA BG.jpeg"
             alt="Bottom CTA Background"
             fill
             className="object-cover"
@@ -934,9 +954,9 @@ export default function Home() {
             unoptimized={true}
           />
         </div>
-        <div className="max-w-6xl mx-auto px-8 relative z-10">
-          <div className="rounded-3xl p-12 bg-card-elevated border border-dividers-borders">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-6xl mx-auto px-8 relative z-10" >
+          <div className="rounded-3xl p-12 bg-gray-500/20 backdrop-blur-md border border-gray-500/50 shadow-2xl" >
+            <div className="grid md:grid-cols-2 gap-12 items-center" >
               <div>
                 <h1 className="text-6xl font-bold mb-4 text-primary-text"> By Application Only</h1>
                 <p className="text-secondary-text-80 mb-6 leading-relaxed">

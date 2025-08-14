@@ -130,7 +130,7 @@ export default function BookACallPage() {
                   '--webkit-media-controls-time-remaining-display': 'none'
                 } as React.CSSProperties}
               >
-                <source src="/Hero_video.mp4" type="video/mp4" />
+                <source src="/optimized_brandbeam.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
