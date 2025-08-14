@@ -45,7 +45,38 @@ interface ContactData {
 
 async function getContactData(id: string): Promise<ContactData | null> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/lead-qualification/${id}`, {
+    // For server-side rendering in production, construct the proper URL
+    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    
+    if (!baseUrl) {
+      // Try to determine the base URL from environment
+      const host = process.env.VERCEL_URL || process.env.HOST || 'localhost';
+      const port = process.env.PORT || '3000';
+      const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+      
+      if (host.includes('localhost') || host.includes('127.0.0.1')) {
+        baseUrl = `http://${host}:${port}`;
+      } else if (host.includes(':')) {
+        // Host already includes port
+        baseUrl = `${protocol}://${host}`;
+      } else {
+        baseUrl = `${protocol}://${host}:${port}`;
+      }
+    }
+    
+    console.log('Environment info:', {
+      NODE_ENV: process.env.NODE_ENV,
+      HOST: process.env.HOST,
+      PORT: process.env.PORT,
+      VERCEL_URL: process.env.VERCEL_URL,
+      NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+      constructedBaseUrl: baseUrl
+    });
+    
+    const apiUrl = `${baseUrl}/api/lead-qualification/${id}`;
+    console.log('Fetching contact data from:', apiUrl);
+    
+    const response = await fetch(apiUrl, {
       cache: 'no-store'
     });
     
