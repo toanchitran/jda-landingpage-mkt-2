@@ -194,25 +194,25 @@ export default function ContactForm({
 
     const init = async () => {
       try {
-        await loadCalendlyScript();
+      await loadCalendlyScript();
         
         if (cancelled || !calendlyContainerRef.current || !window.Calendly) {
           return;
         }
         
-        // Clear node to avoid duplicate widgets
-        calendlyContainerRef.current.innerHTML = '';
+      // Clear node to avoid duplicate widgets
+      calendlyContainerRef.current.innerHTML = '';
         
         const prefillData = {
           name: prefillName || getContactName(),
           email: prefillEmail || getContactEmail(),
         };
         
-        window.Calendly.initInlineWidget({
-          url: calendlyUrl,
-          parentElement: calendlyContainerRef.current,
+      window.Calendly.initInlineWidget({
+        url: calendlyUrl,
+        parentElement: calendlyContainerRef.current,
           prefill: prefillData,
-        });
+      });
       } catch (error) {
         console.error('Error initializing Calendly:', error);
       }
@@ -580,15 +580,15 @@ export default function ContactForm({
           
           if (webhookResponse.ok) {
             console.log('n8n webhook triggered successfully');
-          } else {
+      } else {
             console.warn('n8n webhook failed:', webhookResponse.status);
-          }
+      }
         } catch (webhookError) {
           console.warn('Failed to trigger n8n webhook:', webhookError);
-        }
-        
+    }
+
         // Automatically show Calendly instead of pitch deck prompt
-        setShowCalendly(true);
+    setShowCalendly(true);
         onCalendlyStart?.();
       } else {
         throw new Error('Submission failed');
@@ -862,22 +862,22 @@ export default function ContactForm({
 
 
       if (showCalendly) {
-    return (
+  return (
       <div className="w-full max-w-4xl mx-auto">
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
             Thank you for your submission!
-          </h2>
+            </h2>
           <p className="text-gray-600 mb-4">
             Now let&apos;s schedule your 90-minute discovery call
-          </p>
-        </div>
+            </p>
+          </div>
         <div
           ref={calendlyContainerRef}
           className="w-full bg-white rounded-lg shadow-lg"
           style={{ height: `${calendlyHeight}px`, minWidth: '320px' }}
         />
-      </div>
+                  </div>
     );
   }
 

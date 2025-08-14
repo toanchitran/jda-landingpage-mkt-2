@@ -8,8 +8,8 @@ import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
 // Audio Player Component with Animation
 function AudioPlayer({ src }: { src: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
+  // const [currentTime, setCurrentTime] = useState(0);
+  // const [duration, setDuration] = useState(0);
   const [waveHeights, setWaveHeights] = useState<number[]>([]);
   const audioRef = useRef<HTMLAudioElement>(null);
   const animationRef = useRef<number | null>(null);
@@ -46,20 +46,20 @@ function AudioPlayer({ src }: { src: string }) {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => setDuration(audio.duration);
+    // const updateTime = () => setCurrentTime(audio.currentTime);
+    // const updateDuration = () => setDuration(audio.duration);
     const handleEnded = () => {
       setIsPlaying(false);
       trackAudioComplete(audio.duration, src);
     };
 
-    audio.addEventListener('timeupdate', updateTime);
-    audio.addEventListener('loadedmetadata', updateDuration);
+    // audio.addEventListener('timeupdate', updateTime);
+    // audio.addEventListener('loadedmetadata', updateDuration);
     audio.addEventListener('ended', handleEnded);
 
     return () => {
-      audio.removeEventListener('timeupdate', updateTime);
-      audio.removeEventListener('loadedmetadata', updateDuration);
+      // audio.removeEventListener('timeupdate', updateTime);
+      // audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('ended', handleEnded);
     };
   }, [trackAudioComplete, src]);
@@ -78,13 +78,13 @@ function AudioPlayer({ src }: { src: string }) {
     setIsPlaying(!isPlaying);
   };
 
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
+  // const formatTime = (time: number) => {
+  //   const minutes = Math.floor(time / 60);
+  //   const seconds = Math.floor(time % 60);
+  //   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  // };
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  // const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="w-full rounded-2xl p-8 bg-transparent">
@@ -496,42 +496,45 @@ export default function Home() {
 
              {/*  Is Your Genius Getting Lost in the Noise - Fullscreen with Podcast Background */}
         <section 
-          className="min-h-screen flex items-center justify-center py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative"
-          style={{
-            backgroundImage: 'url(/Podcast Audio BG.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
+          className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8"
         >
-          {/* Optional overlay for better text readability */}
-          <div className="absolute inset-0 bg-black/30"></div>
+          <div className="absolute inset-0">
+            <Image
+              src="/Podcast_Audio_BG.png"
+              alt="Podcast Audio Background"
+              fill
+              className="object-cover"
+              priority
+              unoptimized={true}
+            />
+            
+            {/* <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.7)'}}></div> */}
+          </div>
+          
           
           <div className="max-w-6xl mx-auto relative z-10">
-            <div className="text-center mb-10 sm:mb-14">
+            <div className="text-center mb-6 sm:mb-8">
              <h1 className="text-6xl font-bold mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
               <p className="text-white/90 max-w-3xl mx-auto">
-              You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones.But you still feel like you&apos;re shouting into the void.You see lesser ideas get funded while you struggle to get a second meeting.This isn&apos;t a product problem; it&apos;s a narrative problem.Investors don&apos;t just invest in products; they invest in stories.
+              You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
               </p>
             </div>
           <div className="max-w-4xl mx-auto">
-            <div className="rounded-2xl p-6 bg-white shadow-lg">
-              
+            <div className="rounded-2xl p-4 bg-white shadow-lg">
                 <AudioPlayer src="/sample.wav" />
-              
-              <p className="text-center text-gray-600 text-sm mt-3">Listen to our podcast</p>
+              <p className="text-center text-gray-600 text-sm mt-2">Listen to our podcast</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Meet Your Digital PR Team Section - Deep Blue */}
-      <section className="py-16 padding-global" style={{backgroundColor: 'var(--primary-bg)'}}>
+      <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: 'var(--primary-bg)'}}>
         <div className="max-w-6xl mx-auto px-8">
           <div className="text-center mb-12">
             <h1 className="text-6xl font-bold mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
             <p className="text-secondary-text-80 max-w-4xl mx-auto">
-            You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat.<br/> What you need isn&apos;t another AI tool or agency; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.  
+            You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat. What you need isn&apos;t another AI tool or agency; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.  
             </p>
           </div>
           
@@ -650,7 +653,7 @@ export default function Home() {
 
 
       {/*  The Funded Future You Can Build - Deep Blue */}
-      <section className="py-20 padding-global" style={{backgroundColor: 'var(--secondary-bg)'}}>
+      <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: 'var(--secondary-bg)'}}>
         <div className="w-full padding-global">
           <div className="text-center mb-8 padding-global">
             <h1 className="text-6xl font-bold mb-4 text-primary-text"> The Funded Future You Can Build</h1>
@@ -716,7 +719,7 @@ export default function Home() {
       </section>
 
             {/* Carousel Section */}
-            <section className="py-12 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
+            <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h1 className="text-6xl font-bold mb-4 text-primary-text">The Unfair Advantage of a Strategic Story</h1>
@@ -797,6 +800,7 @@ export default function Home() {
             priority
             unoptimized={true}
           />
+          
           {/* <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.7)'}}></div> */}
         </div>
         
@@ -835,16 +839,16 @@ export default function Home() {
 
 
       {/* Testimonials Section - Deep Blue */}
-      <section className="py-20 padding-global" style={{backgroundColor: '#03032e'}}>
+      <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: '#03032e'}}>
         <div className="w-full">
-          <div className="text-center mb-12 padding-global">
+          <div className="text-center padding-global">
             <h1 className="text-6xl font-bold mb-4 text-primary-text">Trusted by Smart Founders</h1>
           </div>
           
                     {/* Masonry Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6 padding-global">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6 padding-global py-16">
             {/* Top Left Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#fffffff', borderColor: '#fabf01', height: '400px'}}>
+            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#ffffffffffff', height: '250px'}}>
               <Image
                 src="/Logo (3).png"
                 alt="Logo 3"
@@ -856,7 +860,7 @@ export default function Home() {
             </div>
             
             {/* Top Center Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a876', height: '400px'}}>
+            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a876', height: '250px'}}>
               <Image
                 src="/Logo (4).png"
                 alt="Logo 4"
@@ -868,7 +872,7 @@ export default function Home() {
             </div>
             
             {/* Top Right Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '400px'}}>
+            <div className="rounded-2xl p-6 border lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '250px'}}>
               <Image
                 src="/Logo (1).png"
                 alt="Digicon Logo"
@@ -880,7 +884,7 @@ export default function Home() {
             </div>
             
             {/* Bottom Left Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#fabf01', height: '400px'}}>
+            <div className="rounded-2xl p-6 border lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#fabf01', height: '250px'}}>
               <Image
                 src="/Logo (5).png"
                 alt="Logo 5"
@@ -892,7 +896,7 @@ export default function Home() {
             </div>
             
             {/* Bottom Center Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '400px'}}>
+                <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '250px'}}>
               <Image
                 src="/Logo (6).png"
                 alt="Logo 6"
@@ -904,7 +908,7 @@ export default function Home() {
             </div>
             
             {/* Bottom Right Card - Logo Only */}
-            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '400px'}}>
+            <div className="rounded-2xl p-6 border lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', borderColor: '#c0a87680', height: '250px'}}>
               <Image
                 src="/Logo (2).png"
                 alt="Maco Logo"
@@ -919,7 +923,7 @@ export default function Home() {
       </section>
 
       {/* Bottom CTA Section - Deep Purple */}
-      <section className="py-20 relative">
+      <section className="relative min-h-screen flex items-center justify-center">
         <div className="absolute inset-0">
           <Image
             src="/CTA BG.jpg"
