@@ -271,6 +271,7 @@ export default function Home() {
   const [cardWidth, setCardWidth] = useState(500); // Default width
   const [gapSize, setGapSize] = useState(6); // Default gap (0.375rem = 6px)
   const [isMobile, setIsMobile] = useState(false);
+  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -390,6 +391,17 @@ export default function Home() {
   const handleCardClick = (index: number) => {
     setCurrentSlide(index);
   };
+
+  // Auto-advance carousel every 5 seconds (pause when hovered)
+  useEffect(() => {
+    if (isCarouselHovered) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide(current => (current + 1) % totalSlides);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [totalSlides, isCarouselHovered]);
 
   // Handle seamless loop when reaching the end
   useEffect(() => {
@@ -755,7 +767,11 @@ export default function Home() {
           </div>
 
           {/* Carousel Container */}
-            <div className="relative overflow-hidden max-w-[1088px] mx-auto">
+            <div 
+              className="relative overflow-hidden max-w-[1088px] mx-auto"
+              onMouseEnter={() => setIsCarouselHovered(true)}
+              onMouseLeave={() => setIsCarouselHovered(false)}
+            >
             <div
               className="flex gap-1.5 transition-transform duration-700 ease-in-out"
               style={{ 
