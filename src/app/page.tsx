@@ -177,7 +177,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
   return (
     <div className="text-primary-text" style={{backgroundColor: 'var(--primary-bg)'}}>
       <div className="mb-8 padding-global text-center items-center justify-center">
-        <h3 className="text-4xl font-bold mb-3">Your Simple 3-Step Plan to a Compelling Story</h3>
+        <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">Your Simple 3-Step Plan to a Compelling Story</h3>
         <p className="mb-6" style={{color: 'var(--medium-grey)'}}> Stop scrambling for content and start commanding investor attention.</p>
         <button 
           onClick={() => onBookCall('workflow_section')}
@@ -470,7 +470,7 @@ export default function Home() {
         </div>
         
         {/* Navigation */}
-        <nav className="absolute top-0 left-0 right-0 z-50 padding-global py-4 sm:py-6">
+        <nav className="fixed top-0 left-0 right-0 z-50 padding-global py-4 sm:py-6 backdrop-blur-md" style={{backgroundColor: 'rgba(3, 3, 46, 0.9)'}}>
           <div className="max-w-6xl mx-auto flex justify-between items-center">
             <div className="text-white font-bold text-xl">
               <button 
@@ -510,7 +510,7 @@ export default function Home() {
         </nav>
 
         {/* Hero Content */}
-        <div className="relative max-w-6xl mx-auto pt-16 sm:pt-20 pb-16 sm:pb-24 flex items-center min-h-screen z-10 padding-global">
+        <div className="relative max-w-6xl mx-auto pt-24 sm:pt-28 pb-16 sm:pb-24 flex items-center min-h-screen z-10 padding-global">
           <div className="text-primary-text">
             <h1 className="is-hero font-bold mb-4 leading-tight">
               Triple Your<br/>Investor Engagement Without Becoming a Content Slave
@@ -546,7 +546,7 @@ export default function Home() {
           
           <div className="max-w-6xl mx-auto relative z-10 padding-global">
             <div className="text-center mb-6 sm:mb-8">
-             <h1 className="text-6xl font-bold mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
+             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
               <p className="max-w-3xl mx-auto" style={{color: 'var(--medium-grey)'}}>
               You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
               </p>
@@ -564,7 +564,7 @@ export default function Home() {
       <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: 'var(--primary-bg)'}}>
         <div className="max-w-6xl mx-auto padding-global">
           <div className="text-center mb-12">
-            <h1 className="text-6xl font-bold mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
             <p className="max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
             You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat. What you need isn&apos;t another AI tool or agency; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.  
             </p>
@@ -689,7 +689,7 @@ export default function Home() {
       <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: 'var(--secondary-bg)'}}>
         <div className="w-full padding-global">
           <div className="text-center mb-8 padding-global">
-            <h1 className="text-6xl font-bold mb-4 text-primary-text"> The Funded Future You Can Build</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary-text"> The Funded Future You Can Build</h1>
             <p className="max-w-4xl mx-auto mb-6" style={{color: 'var(--medium-grey)'}}>
             This is the transformation you&apos;ve been working for - a clear, compelling narrative that changes your trajectory. Our strategic guidance fundamentally rewrites how investors see your company, leading to powerful business outcomes that define your legacy.
             </p>
@@ -755,7 +755,7 @@ export default function Home() {
             <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
         <div className="max-w-6xl mx-auto padding-global">
           <div className="text-center mb-8 sm:mb-12">
-            <h1 className="text-6xl font-bold mb-4 text-primary-text">The Unfair Advantage of a<br/>Strategic Story</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary-text">The Unfair Advantage of a<br/>Strategic Story</h1>
             <p className="max-w-4xl mx-auto mb-6 text-sm sm:text-base" style={{color: 'var(--medium-grey)'}}>
             In a crowded market, your story is your most powerful asset. It&apos;s the key to building credibility and earning the trust of investors. It&apos;s not just about what you say, but how you say it—and when. 
             </p>
@@ -844,7 +844,7 @@ export default function Home() {
                 {/* Modal Card - Top Right */}
         <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global">
           <div className="rounded-3xl p-10 shadow-2xl text-center bg-white border border-gray-200">
-            <h2 className="text-4xl font-bold mb-6 text-black">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-black">
               Does Your Pitch Deck Tell<br/>a Story Worth Funding?
             </h2>
             <p className="text-lg leading-relaxed text-left" style={{color: 'var(--deep-grey)'}}>
@@ -879,7 +879,7 @@ export default function Home() {
       <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: '#03032e'}}>
         <div className="w-full">
           <div className="text-center padding-global">
-            <h1 className="text-6xl font-bold mb-4 text-primary-text">Trusted by Smart Founders</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary-text">Trusted by Smart Founders</h1>
           </div>
           
                     {/* Masonry Grid */}
@@ -975,7 +975,7 @@ export default function Home() {
           <div className="rounded-3xl p-12 bg-white backdrop-blur-md border border-white shadow-2xl" >
             <div className="grid md:grid-cols-2 gap-12 items-center" >
               <div>
-                <h1 className="text-6xl font-bold mb-4 text-black"> By Application Only</h1>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-black"> By Application Only</h1>
                 <p className="mb-6 leading-relaxed" style={{color: 'var(--deep-grey)'}}>
                 Our highly personalized approach means we partner with a select group of founders each month. We&apos;re not a content factory - we&apos;re your strategic partner in building a funded future.
                 </p>
