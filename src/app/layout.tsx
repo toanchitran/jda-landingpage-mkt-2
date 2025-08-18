@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JD Alchemy - Digital PR Specialists for Investor Relations",
+  title: "Fundraising Flywheel - Digital PR Specialists for Investor Relations",
   description: "Transform your company's narrative and attract the funding you deserve with our digital PR specialists. Maya and Alex work 24/7 to build your authority and connect with investors.",
   icons: {
     icon: '/favicon.ico',

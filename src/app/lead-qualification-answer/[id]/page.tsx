@@ -140,10 +140,10 @@ export default async function LeadQualificationAnswerPage({
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="text-white font-bold text-xl">
             <Image
-              src="/jda-logo-horizontal.png"
-              alt="JD Alchemy"
-              width={180}
-              height={60}
+              src="/ff_logo.png"
+              alt="Fundraising Flywheel"
+              width={210}
+              height={65}
               className="h-8 sm:h-12 w-auto"
             />
           </div>

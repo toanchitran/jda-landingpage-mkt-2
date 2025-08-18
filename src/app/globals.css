@@ -27,8 +27,11 @@ body {
     --primary-bg: #03032e;
     --secondary-bg: #09093e;
     --primary-text: #ffffff;
-    --secondary-text-80: rgba(255, 255, 255, 0.8);
-    --secondary-text-60: rgba(255, 255, 255, 0.6);
+    --secondary-text-80: #818197;
+    --secondary-text-60: rgba(129, 129, 151, 0.6);
+    --medium-grey: #C3C3C3;
+    --light-grey: #E2E2E2;
+    --deep-grey: #7F7F7F;
     --card-elevated: #09093e66;
     --card-accent-1: #fabf0133;
     --card-accent-2: #c0a87640;
@@ -170,7 +173,31 @@ body {
 
 h1.is-hero {
   letter-spacing: -.045em;
-  font-size: 6rem;
+  font-size: 3.5rem;
   line-height: 1.15;
+}
+
+@media (min-width: 640px) {
+  h1.is-hero {
+    font-size: 3.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  h1.is-hero {
+    font-size: 4.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1.is-hero {
+    font-size: 5.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  h1.is-hero {
+    font-size: 6rem;
+  }
 }
 }

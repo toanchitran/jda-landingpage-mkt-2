@@ -74,10 +74,10 @@ export default function BookACallPage() {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="text-white font-bold text-xl">
             <Image
-              src="/jda-logo-horizontal.png"
-              alt="JD Alchemy"
-              width={180}
-              height={60}
+              src="/ff_logo.png"
+              alt="Fundraising Flywheel"
+              width={210}
+              height={65}
               className="h-8 sm:h-12 w-auto"
             />
           </div>
@@ -99,9 +99,9 @@ export default function BookACallPage() {
         <div className="relative max-w-6xl mx-auto pt-32 pb-16 z-10">
           <div className="text-center mb-16">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              Schedule Your Personalized<br/><span className="text-gold">Discovery Call</span>
+              Schedule Your Personalized<br/>Discovery Call
             </h1>
-            <p className="text-xl md:text-2xl leading-relaxed mb-12 text-secondary-text-80 max-w-4xl mx-auto">
+            <p className="text-xl md:text-2xl leading-relaxed mb-12 max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
               If you&apos;re a startup founder struggling to get investor attention, you might just be one strategic narrative away from transforming from &quot;unrecognized&quot; to &quot;industry authority that investors seek out.&quot;
             </p>
           </div>
@@ -110,7 +110,7 @@ export default function BookACallPage() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl sm:text-4xl font-bold mb-6">Watch This Quick Video</h2>
-              <p className="text-lg text-secondary-text-80 mb-8">
+              <p className="text-lg mb-8" style={{color: 'var(--medium-grey)'}}>
                 To book your discovery call: 1) Watch this video to completion 2) Fill out your information 3) Schedule your call
               </p>
             </div>

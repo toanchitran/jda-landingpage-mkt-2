@@ -175,10 +175,10 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
   };
 
   return (
-    <div className="rounded-3xl p-8 text-primary-text padding-global" style={{backgroundColor: 'var(--primary-bg)'}}>
+    <div className="text-primary-text" style={{backgroundColor: 'var(--primary-bg)'}}>
       <div className="mb-8 padding-global text-center items-center justify-center">
         <h3 className="text-4xl font-bold mb-3">Your Simple 3-Step Plan to a Compelling Story</h3>
-        <p className="text-secondary-text-80 mb-6"> Stop scrambling for content and start commanding investor attention.</p>
+        <p className="mb-6" style={{color: 'var(--medium-grey)'}}> Stop scrambling for content and start commanding investor attention.</p>
         <button 
           onClick={() => onBookCall('workflow_section')}
           className="button hover:!bg-yellow-400 hover:!text-black transition-colors"
@@ -258,7 +258,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
           </div>
         ))}
       </div>
-        </div>
+    </div>
   );
 }
 
@@ -392,13 +392,13 @@ export default function Home() {
     setCurrentSlide(index);
   };
 
-  // Auto-advance carousel every 5 seconds (pause when hovered)
+  // Auto-advance carousel every 2 seconds (pause when hovered)
   useEffect(() => {
     if (isCarouselHovered) return;
 
     const interval = setInterval(() => {
       setCurrentSlide(current => (current + 1) % totalSlides);
-    }, 5000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [totalSlides, isCarouselHovered]);
@@ -454,7 +454,7 @@ export default function Home() {
   return (
     <div className="font-sans text-primary-text">
 
-      <section className="relative min-h-screen overflow-hidden px-4 sm:px-6 lg:px-8" style={{backgroundColor: 'var(--primary-bg)'}}>
+      <section className="relative min-h-screen overflow-hidden" style={{backgroundColor: 'var(--primary-bg)'}}>
         {/* Background Video */}
         <div className="absolute inset-0">
           <video
@@ -470,7 +470,7 @@ export default function Home() {
         </div>
         
         {/* Navigation */}
-        <nav className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-8 py-4 sm:py-6">
+        <nav className="absolute top-0 left-0 right-0 z-50 padding-global py-4 sm:py-6">
           <div className="max-w-6xl mx-auto flex justify-between items-center">
             <div className="text-white font-bold text-xl">
               <button 
@@ -481,10 +481,10 @@ export default function Home() {
                 className="cursor-pointer hover:opacity-80 transition-opacity"
               >
                 <Image
-                  src="/jda-logo-horizontal.png"
-                  alt="JD Alchemy"
-                  width={180}
-                  height={60}
+                  src="/ff_logo.png"
+                  alt="Fundraising Flywheel"
+                  width={210}
+                  height={65}
                   className="h-8 sm:h-12 w-auto"
                 />
               </button>
@@ -510,13 +510,13 @@ export default function Home() {
         </nav>
 
         {/* Hero Content */}
-        <div className="relative max-w-6xl mx-auto pt-16 sm:pt-20 pb-16 sm:pb-24 flex items-center min-h-screen z-10 px-4 sm:px-8">
+        <div className="relative max-w-6xl mx-auto pt-16 sm:pt-20 pb-16 sm:pb-24 flex items-center min-h-screen z-10 padding-global">
           <div className="text-primary-text">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 leading-tight">
+            <h1 className="is-hero font-bold mb-4 leading-tight">
               Triple Your<br/>Investor Engagement Without Becoming a Content Slave
             </h1>
             {/* <div className="w-80 h-0.5 bg-accent-elements mb-6"></div> */}
-            <p className="text-lg sm:text-xl md:text-2xl leading-relaxed mb-6 sm:mb-8 text-secondary-text-80">
+            <p className="text-lg sm:text-xl md:text-2xl leading-relaxed mb-6 sm:mb-8" style={{color: 'var(--light-grey)'}}>
             Attract the funding you deserve by shaping your company&apos;s narrative, and make your insights scalable.
             </p>
             <button onClick={handleBookCallHero} className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors text-sm sm:text-base px-4 sm:px-6 py-3 sm:py-4">
@@ -528,7 +528,7 @@ export default function Home() {
 
              {/*  Is Your Genius Getting Lost in the Noise - Fullscreen with Podcast Background */}
         <section 
-          className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8"
+          className="relative min-h-screen flex items-center justify-center"
         >
           <div className="absolute inset-0">
             <Image
@@ -544,10 +544,10 @@ export default function Home() {
           </div>
           
           
-          <div className="max-w-6xl mx-auto relative z-10">
+          <div className="max-w-6xl mx-auto relative z-10 padding-global">
             <div className="text-center mb-6 sm:mb-8">
              <h1 className="text-6xl font-bold mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
-              <p className="text-white/90 max-w-3xl mx-auto">
+              <p className="max-w-3xl mx-auto" style={{color: 'var(--medium-grey)'}}>
               You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
               </p>
             </div>
@@ -562,17 +562,17 @@ export default function Home() {
 
       {/* Meet Your Digital PR Team Section - Deep Blue */}
       <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: 'var(--primary-bg)'}}>
-        <div className="max-w-6xl mx-auto px-8">
+        <div className="max-w-6xl mx-auto padding-global">
           <div className="text-center mb-12">
             <h1 className="text-6xl font-bold mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
-            <p className="text-secondary-text-80 max-w-4xl mx-auto">
+            <p className="max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
             You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat. What you need isn&apos;t another AI tool or agency; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.  
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-4 items-start">
+          <div className="grid md:grid-cols-2 gap-4 items-stretch">
             {/* JayJin - Narrative Architect */}
-            <div className="bg-transparent rounded-2xl p-8">
+            <div className="bg-transparent rounded-2xl p-8 flex flex-col">
               {/* Agent Image with Overlay */}
               <div className="flex justify-center mb-8">
                 <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
@@ -609,22 +609,24 @@ export default function Home() {
                 </div>
               </div>
               
-              <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Strategic Architect</h3>
-              <p className="text-white mb-6 leading-relaxed">
-              Jay is your social influence architect. He helps you identify and engineer the authentic story that investors need to hear, turning your lived experience into a capital-attracting force. His expertise leads to a powerful, actionable 90-Day Investment PR Plan that makes you more attractive and influential.
-              </p>
+              <div className="flex-grow">
+                <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Strategic Architect</h3>
+                <p className="mb-6 leading-relaxed" style={{color: 'var(--medium-grey)'}}>
+                Jay is your social influence architect. He helps you identify and engineer the authentic story that investors need to hear, turning your lived experience into a capital-attracting force. His expertise leads to a powerful, actionable 90-Day Investment PR Plan that makes you more attractive and influential.
+                </p>
+              </div>
               <a 
                 href="https://www.linkedin.com/in/jay-jin-60071238/" 
                 target="_blank" 
                 rel="noopener"
-                className="text-white font-semibold hover:text-gray-200 transition-colors"
+                className="text-white font-semibold hover:text-gray-200 transition-colors mt-auto"
               >
                 Meet Jay →
               </a>
             </div>
             
             {/* David Yi, Investment Strategist */}
-            <div className="bg-transparent rounded-2xl p-8">
+            <div className="bg-transparent rounded-2xl p-8 flex flex-col">
               {/* Agent Image with Overlay */}
               <div className="flex justify-center mb-8">
                 <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
@@ -662,21 +664,20 @@ export default function Home() {
                 </div>
               </div>
               
-              <h3 className="text-2xl font-bold mb-3 text-white">David Yi, Investment Strategist</h3>
-              <p className="text-white mb-6 leading-relaxed">
-              David is your cross-border investment strategist. He provides the critical lens of an investor, ensuring every piece of your story is calibrated with discernment to attract the right conversations and secure funding.
-              </p>
-              <br/>
-              
-              
-                             <a 
-                 href="https://www.linkedin.com/in/thedavidyi/" 
-                 target="_blank" 
-                 rel="noopener"
-                 className="text-white font-semibold hover:text-gray-200 transition-colors"
-               >
-                 Meet David →
-               </a>
+                            <div className="flex-grow">
+                <h3 className="text-2xl font-bold mb-3 text-white">David Yi, Investment Strategist</h3>
+                <p className="mb-6 leading-relaxed" style={{color: 'var(--medium-grey)'}}>
+                David is your cross-border investment strategist. He provides the critical lens of an investor, ensuring every piece of your story is calibrated with discernment to attract the right conversations and secure funding.
+                </p>
+              </div>
+              <a 
+                href="https://www.linkedin.com/in/thedavidyi/" 
+                target="_blank" 
+                rel="noopener"
+                className="text-white font-semibold hover:text-gray-200 transition-colors mt-auto"
+              >
+                Meet David →
+              </a>
             </div>
           </div>
         </div>
@@ -689,7 +690,7 @@ export default function Home() {
         <div className="w-full padding-global">
           <div className="text-center mb-8 padding-global">
             <h1 className="text-6xl font-bold mb-4 text-primary-text"> The Funded Future You Can Build</h1>
-            <p className="text-secondary-text-80 max-w-4xl mx-auto mb-6">
+            <p className="max-w-4xl mx-auto mb-6" style={{color: 'var(--medium-grey)'}}>
             This is the transformation you&apos;ve been working for - a clear, compelling narrative that changes your trajectory. Our strategic guidance fundamentally rewrites how investors see your company, leading to powerful business outcomes that define your legacy.
             </p>
             <button 
@@ -724,21 +725,21 @@ export default function Home() {
                              {/* First row - scroll from right to left */}
                  <div className="flex gap-2 mb-2 animate-marquee-left">
                    {row1.map((tag, idx) => (
-                     <span key={`row1-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+                     <span key={`row1-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--light-grey)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
                    ))}
                  </div>
             
             {/* Second row - scroll from left to right */}
             <div className="flex gap-2 mb-2 animate-marquee-right">
               {row2.map((tag, idx) => (
-                <span key={`row2-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+                <span key={`row2-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--light-grey)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
               ))}
             </div>
             
                              {/* Third row - scroll from right to left */}
                  <div className="flex gap-2 animate-marquee-left">
               {row3.map((tag, idx) => (
-                <span key={`row3-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--primary-text)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+                <span key={`row3-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--light-grey)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
               ))}
             </div>
           </div>
@@ -752,10 +753,10 @@ export default function Home() {
 
             {/* Carousel Section */}
             <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto padding-global">
           <div className="text-center mb-8 sm:mb-12">
             <h1 className="text-6xl font-bold mb-4 text-primary-text">The Unfair Advantage of a<br/>Strategic Story</h1>
-            <p className="max-w-4xl mx-auto mb-6 text-secondary-text-80 text-sm sm:text-base">
+            <p className="max-w-4xl mx-auto mb-6 text-sm sm:text-base" style={{color: 'var(--medium-grey)'}}>
             In a crowded market, your story is your most powerful asset. It&apos;s the key to building credibility and earning the trust of investors. It&apos;s not just about what you say, but how you say it—and when. 
             </p>
             <button
@@ -768,7 +769,7 @@ export default function Home() {
 
           {/* Carousel Container */}
             <div 
-              className="relative overflow-hidden max-w-[1088px] mx-auto"
+              className="relative overflow-hidden max-w-[1088px] mx-auto px-4 md:px-0"
               onMouseEnter={() => setIsCarouselHovered(true)}
               onMouseLeave={() => setIsCarouselHovered(false)}
             >
@@ -802,7 +803,7 @@ export default function Home() {
                       </video>
                     </div>
                     <p className="text-base font-bold mb-2 text-left" style={{color: '#ffffff'}}>{card.title}</p>
-                    <p className="text-base text-left leading-relaxed" style={{color: '#ffffff'}}>
+                    <p className="text-base text-left leading-relaxed" style={{color: 'var(--medium-grey)'}}>
                       {card.description}
                     </p>
                   </div>
@@ -841,12 +842,12 @@ export default function Home() {
         </div>
         
                 {/* Modal Card - Top Right */}
-        <div className="relative z-10 w-full max-w-3xl ml-auto" style={{marginRight: 'var(--border-radius--padding--global--regular)'}}>
+        <div className="relative z-10 w-full max-w-3xl ml-auto padding-global">
           <div className="rounded-3xl p-10 shadow-2xl text-center bg-white border border-gray-200">
             <h2 className="text-4xl font-bold mb-6 text-black">
               Does Your Pitch Deck Tell<br/>a Story Worth Funding?
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed text-left">
+            <p className="text-lg leading-relaxed text-left" style={{color: 'var(--deep-grey)'}}>
             This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
             </p>
             <div className="flex justify-center z-10">
@@ -970,23 +971,23 @@ export default function Home() {
             unoptimized={true}
           />
         </div>
-        <div className="max-w-6xl mx-auto px-8 relative z-10" >
-          <div className="rounded-3xl p-12 bg-gray-500/20 backdrop-blur-md border border-gray-500/50 shadow-2xl" >
+        <div className="max-w-6xl mx-auto padding-global relative z-10" >
+          <div className="rounded-3xl p-12 bg-white backdrop-blur-md border border-white shadow-2xl" >
             <div className="grid md:grid-cols-2 gap-12 items-center" >
               <div>
-                <h1 className="text-6xl font-bold mb-4 text-primary-text"> By Application Only</h1>
-                <p className="text-secondary-text-80 mb-6 leading-relaxed">
+                <h1 className="text-6xl font-bold mb-4 text-black"> By Application Only</h1>
+                <p className="mb-6 leading-relaxed" style={{color: 'var(--deep-grey)'}}>
                 Our highly personalized approach means we partner with a select group of founders each month. We&apos;re not a content factory - we&apos;re your strategic partner in building a funded future.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button 
                     onClick={handleBookCallBottom}
-                    className="button hover:!bg-yellow-400 hover:!text-black transition-colors"
+                    className="button hover:!bg-yellow-400 hover:!text-blue-600 transition-colors"
                   >
                     Secure My Strategy Call Now
                   </button>
                 </div>
-                <p className="text-sm text-secondary-text-80 mt-3 italic">
+                <p className="text-sm mt-3 italic" style={{color: 'var(--deep-grey)'}}>
                   Only a handful of spots available this month. No commitment, just a conversation.
                 </p>
               </div>

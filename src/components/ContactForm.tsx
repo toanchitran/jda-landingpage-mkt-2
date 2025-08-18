@@ -625,7 +625,7 @@ export default function ContactForm({
       className: "w-full p-2.5 md:p-3 rounded text-sm",
       style: {
         backgroundColor: '#ffffff',
-        color: '#1f2937',
+        color: 'var(--base-color-neutral--black)',
         border: `1px solid ${error ? '#dc2626' : '#d1d5db'}`,
         outline: 'none'
       }
@@ -658,7 +658,7 @@ export default function ContactForm({
       case 'number':
         return (
           <div key={question.id} className="mb-4 md:mb-5">
-            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-black">
               {question.label} {question.required && '*'}
             </label>
             <input
@@ -684,7 +684,7 @@ export default function ContactForm({
       case 'textarea':
         return (
           <div key={question.id} className="mb-4 md:mb-5">
-            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-black">
               {question.label} {question.required && '*'}
             </label>
             <textarea
@@ -705,7 +705,7 @@ export default function ContactForm({
       case 'select':
         return (
           <div key={question.id} className="mb-4 md:mb-5">
-            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-black">
               {question.label} {question.required && '*'}
             </label>
             <select
@@ -729,7 +729,7 @@ export default function ContactForm({
       case 'radio':
         return (
           <div key={question.id} className="mb-4 md:mb-5">
-            <label className="block text-base md:text-lg mb-3 font-medium text-gray-800">
+            <label className="block text-base md:text-lg mb-3 font-medium text-black">
               {question.label} {question.required && '*'}
             </label>
             <div className="space-y-2">
@@ -745,7 +745,7 @@ export default function ContactForm({
                     onBlur={() => handleFieldBlur(question.id)}
                     className="mr-2"
                   />
-                  <span className="text-gray-800">{option}</span>
+                  <span className="text-black">{option}</span>
                 </label>
               ))}
             </div>
@@ -756,7 +756,7 @@ export default function ContactForm({
       case 'checkbox':
           return (
           <div key={question.id} className="mb-4 md:mb-5">
-            <label className="block text-base md:text-lg mb-3 font-medium text-gray-800">
+            <label className="block text-base md:text-lg mb-3 font-medium text-black">
               {question.label} {question.required && '*'}
             </label>
             <div className="space-y-2">
@@ -778,7 +778,7 @@ export default function ContactForm({
                     onBlur={() => handleFieldBlur(question.id)}
                   className="mr-2"
                 />
-                  <span className="text-gray-800">{option}</span>
+                  <span className="text-black">{option}</span>
               </label>
               ))}
             </div>
@@ -789,7 +789,7 @@ export default function ContactForm({
       case 'date':
           return (
           <div key={question.id} className="mb-4 md:mb-5">
-            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-black">
               {question.label} {question.required && '*'}
               </label>
                     <input
@@ -810,7 +810,7 @@ export default function ContactForm({
         const uploadedFile = uploadedFiles[question.id];
         return (
           <div key={question.id} className="mb-4 md:mb-5">
-            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-gray-800">
+            <label htmlFor={question.id} className="block text-base md:text-lg mb-1 font-medium text-black">
               {question.label} {question.required && '*'}
                   </label>
             
@@ -821,7 +821,7 @@ export default function ContactForm({
                     <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-green-800 font-medium">{uploadedFile.fileName}</span>
+                    <span className="font-medium" style={{color: 'var(--base-color-neutral--black)'}}>{uploadedFile.fileName}</span>
                   </div>
                   <button
                     type="button"
@@ -880,10 +880,10 @@ export default function ContactForm({
   return (
       <div className="w-full max-w-4xl mx-auto">
         <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="text-2xl font-bold text-black mb-2">
             Thank you for your submission!
             </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="mb-4" style={{color: 'var(--deep-grey)'}}>
             Now let&apos;s schedule your 90-minute discovery call
             </p>
           </div>
@@ -903,10 +903,10 @@ export default function ContactForm({
     <div className="w-full max-w-2xl mx-auto">
       {showFormHeader && (
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-black">
             Get Started with JD Alchemy
           </h2>
-          <p className="text-base md:text-lg text-gray-600">
+          <p className="text-base md:text-lg" style={{color: 'var(--deep-grey)'}}>
             Please fill out this quick form to help us prepare for your call
           </p>
               </div>
@@ -914,7 +914,7 @@ export default function ContactForm({
 
       {/* Progress Bar */}
       <div className="mb-6">
-        <div className="flex justify-between text-sm mb-2 text-gray-600">
+        <div className="flex justify-between text-sm mb-2" style={{color: 'var(--deep-grey)'}}>
           <span>Step {currentSectionIndex + 1} of {sectionsData.sections.length}</span>
           <span>{Math.round(progress)}% Complete</span>
               </div>
@@ -932,10 +932,10 @@ export default function ContactForm({
       {/* Section Card */}
       <div className="p-6 rounded-lg mb-6 bg-white shadow-lg">
         <div className="mb-6">
-          <h3 className="text-xl md:text-2xl font-bold mb-2 text-gray-800">
+          <h3 className="text-xl md:text-2xl font-bold mb-2 text-black">
             {currentSection.title}
           </h3>
-          <p className="text-gray-600">
+          <p style={{color: 'var(--deep-grey)'}}>
             {currentSection.description}
           </p>
               </div>
@@ -967,7 +967,7 @@ export default function ContactForm({
             className="px-4 py-2 border rounded disabled:opacity-50"
             style={{
               borderColor: '#d1d5db',
-              color: '#6b7280'
+              color: 'var(--deep-grey)'
             }}
           >
             Previous
