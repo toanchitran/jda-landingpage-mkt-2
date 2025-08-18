@@ -173,19 +173,19 @@ body {
 
 h1.is-hero {
   letter-spacing: -.045em;
-  font-size: 3.5rem;
+  font-size: 4.5rem;
   line-height: 1.15;
 }
 
 @media (min-width: 640px) {
   h1.is-hero {
-    font-size: 3.5rem;
+    font-size: 4.5rem;
   }
 }
 
 @media (min-width: 768px) {
   h1.is-hero {
-    font-size: 4.5rem;
+    font-size: 5rem;
   }
 }
 

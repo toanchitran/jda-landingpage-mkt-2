@@ -842,7 +842,7 @@ export default function Home() {
         </div>
         
                 {/* Modal Card - Top Right */}
-        <div className="relative z-10 w-full max-w-3xl ml-auto padding-global">
+        <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global">
           <div className="rounded-3xl p-10 shadow-2xl text-center bg-white border border-gray-200">
             <h2 className="text-4xl font-bold mb-6 text-black">
               Does Your Pitch Deck Tell<br/>a Story Worth Funding?
