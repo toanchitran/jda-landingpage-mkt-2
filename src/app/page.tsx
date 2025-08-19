@@ -204,20 +204,20 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
         </div>
         
         {/* Feature Columns - Improved for better visibility */}
-        <div className="grid md:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-12 max-w-6xl mx-auto">
           {Object.entries(features).map(([key, feature]) => (
             <div 
               key={key}
-              className={`p-2 cursor-pointer transition-all duration-300 border-t-2 mb-12 ${
+              className={`p-2 cursor-pointer transition-all duration-300 mb-12 rounded-lg overflow-hidden ${
                 activeFeature === key 
-                  ? 'opacity-100 border-t-accent-elements bg-card-elevated shadow-lg transform scale-105' 
-                  : 'opacity-70 border-t-transparent bg-card-elevated/50 hover:opacity-90 hover:bg-card-elevated/70'
+                  ? 'opacity-100 bg-card-elevated shadow-lg transform scale-105' 
+                  : 'opacity-70 bg-card-elevated/50 hover:opacity-90 hover:bg-card-elevated/70'
               }`}
               onClick={() => setActiveFeature(key)}
             >
               <div 
-                className={`w-full h-0.5 mb-3 transition-colors duration-300 ${
-                  activeFeature === key ? 'bg-accent-elements' : 'bg-secondary-text-80'
+                className={`w-full h-1 mb-3 transition-colors duration-300 ${
+                  activeFeature === key ? 'bg-accent-elements' : 'bg-white/30'
                 }`}
               ></div>
               <h4 className="text-xl font-bold mb-2 text-left text-white">{feature.title}</h4>
@@ -238,7 +238,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
             onClick={() => setActiveFeature(key)}
           >
             {/* Feature Image */}
-            <div className="w-full mb-4">
+            <div className="w-full mb-4 padding-global">
               <div className="aspect-video bg-card-accent-2 rounded-lg flex items-center justify-center overflow-hidden">
                 <Image
                   src={feature.image}
@@ -510,7 +510,7 @@ export default function Home() {
             backgroundColor: isScrolled ? 'rgba(3, 3, 46, 0.9)' : 'transparent'
           }}
         >
-          <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="max-w-6xl mx-auto flex justify-between items-center padding-global">
             <div className="text-white font-bold text-xl">
               <button 
                 onClick={() => {
@@ -567,8 +567,8 @@ export default function Home() {
 
              {/*  Is Your Genius Getting Lost in the Noise - Fullscreen with Podcast Background */}
         <section 
-          className="relative min-h-screen flex items-center justify-center"
-          style={{backgroundColor: 'var(--secondary-bg)'}}
+          className="py-16 sm:py-20 padding-global"
+          style={{backgroundColor: 'var(--secondary-bg)', backgroundImage: 'url(/Podcast_Audio_BG.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}
         >
           {/* <div className="absolute inset-0"> */}
             {/* <Image
@@ -591,7 +591,7 @@ export default function Home() {
               You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
               </p>
             </div>
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto padding-global">
             <div className="rounded-2xl p-4 bg-white shadow-lg">
               <div className="aspect-video rounded-xl overflow-hidden">
                 <video
@@ -610,7 +610,7 @@ export default function Home() {
       </section>
 
       {/* Meet Your Digital PR Team Section - Deep Blue */}
-      <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: 'var(--primary-bg)'}}>
+      <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
         <div className="max-w-6xl mx-auto padding-global">
           <div className="text-center mb-12">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
@@ -619,12 +619,12 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-4 items-stretch">
+          <div className="grid md:grid-cols-2 gap-12 items-stretch">
             {/* JayJin - Narrative Architect */}
-            <div className="bg-transparent rounded-2xl p-8 flex flex-col">
+            <div className="bg-transparent rounded-2xl flex flex-col">
               {/* Agent Image with Overlay */}
-              <div className="flex justify-center mb-8">
-                <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
+              <div className="flex mb-8 w-full">
+                                 <div className="relative w-full rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
                   <video
                     src="/Jay.mp4"
                     className="w-full h-full object-cover"
@@ -675,10 +675,10 @@ export default function Home() {
             </div>
             
             {/* David Yi, Investment Strategist */}
-            <div className="bg-transparent rounded-2xl p-8 flex flex-col">
+            <div className="bg-transparent rounded-2xl flex flex-col">
               {/* Agent Image with Overlay */}
-              <div className="flex justify-center mb-8">
-                <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
+              <div className="flex md:justify-center mb-8">
+                                 <div className="relative w-full rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
                 
                   <video
                     src="/David.mp4"
@@ -735,8 +735,8 @@ export default function Home() {
 
 
       {/*  The Funded Future You Can Build - Deep Blue */}
-      <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: 'var(--secondary-bg)'}}>
-        <div className="w-full padding-global">
+      <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--secondary-bg)'}}>
+        <div className="w-full">
           <div className="text-center mb-8 padding-global">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text"> The Funded Future You Can Build</h1>
             <p className="max-w-4xl mx-auto mb-6" style={{color: 'var(--medium-grey)'}}>
@@ -794,7 +794,7 @@ export default function Home() {
           </div>
           
           {/* Interactive Workflow */}
-          <div>
+          <div className="padding-global">
             <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
           </div>
         </div>
@@ -820,7 +820,7 @@ export default function Home() {
 
         {/* Carousel Container - Full Width */}
         <div 
-          className="relative overflow-hidden w-full mx-auto px-4 md:px-8"
+          className="relative overflow-hidden w-full mx-auto padding-global"
           style={{ maxWidth: '1600px' }}
           onMouseEnter={() => setIsCarouselHovered(true)}
           onMouseLeave={() => setIsCarouselHovered(false)}
@@ -893,15 +893,15 @@ export default function Home() {
         </div>
         
                 {/* Modal Card - Top Right */}
-                 <div className="relative z-10 w-full max-w-5xl mx-auto md:ml-auto md:mr-0 padding-global md:min-w-[1000px]">
-          <div className="rounded-3xl p-10 shadow-2xl bg-white border border-gray-200 ">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-black">
+                 <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global md:min-w-[700px]">
+                     <div className="rounded-3xl shadow-2xl bg-white border border-gray-200 pt-8 pb-8 padding-global">
+                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black my-2">
               Does Your Pitch Deck Tell a Story Worth Funding?
             </h2>
-            <p className="text-lg leading-relaxed text-left" style={{color: 'var(--deep-grey)'}}>
+            <p className="leading-relaxed text-left my-2" style={{color: 'var(--deep-grey)'}}>
             This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
             </p>
-            <div className="z-10 rounded-lg">
+            <div className="z-10 rounded-lg my-6">
                               <Image
                   src="/Lead_Magnet_Teaser.png"
                   alt="Lead Magnet Preview"
@@ -914,7 +914,7 @@ export default function Home() {
             <button onClick={() => {
               trackSiteDeckClick();
               window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
-            }} className="button_dark mt-6">
+                         }} className="button_dark my-2">
               Analyze My Deck Now
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -927,7 +927,7 @@ export default function Home() {
 
 
       {/* Testimonials Section - Deep Blue */}
-      <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: '#03032e'}}>
+      <section className="py-16 sm:py-20" style={{backgroundColor: '#03032e'}}>
         <div className="w-full">
           <div className="text-center padding-global">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Trusted by Smart Founders</h1>
@@ -1011,7 +1011,7 @@ export default function Home() {
       </section>
 
       {/* Bottom CTA Section - Deep Purple */}
-      <section className="relative min-h-screen flex items-center justify-center">
+      <section className="relative min-h-screen flex items-center justify-center py-16 sm:py-20">
         <div className="absolute inset-0">
           <Image
             src="/CTA BG.jpeg"
@@ -1022,14 +1022,14 @@ export default function Home() {
           />
         </div>
                  <div className="max-w-6xl mx-auto padding-global relative z-10 md:min-w-[1000px]" >
-          <div className="rounded-3xl p-12 bg-white backdrop-blur-md border border-white shadow-2xl" >
+          <div className="rounded-3xl py-12 padding-global bg-white backdrop-blur-md border border-white shadow-2xl" >
             <div className="grid md:grid-cols-2 gap-12 items-center" >
               <div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-black"> By Application Only</h1>
-                <p className="mb-6 leading-relaxed" style={{color: 'var(--deep-grey)'}}>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl my-2 text-black"> By Application Only</h1>
+                <p className="leading-relaxed my-2" style={{color: 'var(--deep-grey)'}}>
                 Our highly personalized approach means we partner with a select group of founders each month. We&apos;re not a content factory - we&apos;re your strategic partner in building a funded future.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 my-2">
                   <button 
                     onClick={handleBookCallBottom}
                     className="button_dark"
@@ -1037,7 +1037,7 @@ export default function Home() {
                     Secure My Strategy Call Now
                   </button>
                 </div>
-                <p className="text-sm mt-3 italic" style={{color: 'var(--deep-grey)'}}>
+                <p className="text-sm my-2 italic" style={{color: 'var(--deep-grey)'}}>
                   Only a handful of spots available this month. No commitment, just a conversation.
                 </p>
               </div>
@@ -1060,7 +1060,7 @@ export default function Home() {
 
       {/* Footer - Deep Blue */}
       {/* <footer className="py-12" style={{backgroundColor: 'var(--deep-blue)'}}>
-        <div className="max-w-6xl mx-auto px-8">
+        <div className="max-w-6xl mx-auto padding-global">
           <div className="grid md:grid-cols-4 gap-8">
             <div className="border-t border-dividers-borders mt-8 pt-8 text-center text-sm text-secondary-text-60">
               <p>© 2025 JD Alchemy. All rights reserved.</p>
