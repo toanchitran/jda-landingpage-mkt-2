@@ -11,6 +11,7 @@ interface Question {
   required: boolean;
   airtableField?: string;
   options?: string[];
+  maxSelections?: number;
   validation?: {
     type: string;
     blockedDomains?: string[];
@@ -356,6 +357,13 @@ export default function ContactForm({
         return Array.isArray(condition.value) && condition.value.includes(String(fieldValue));
       case 'not_in':
         return Array.isArray(condition.value) && !condition.value.includes(String(fieldValue));
+      case 'includes':
+        // For checkbox arrays - check if the checkbox array includes the target value
+        if (Array.isArray(fieldValue)) {
+          return fieldValue.includes(String(condition.value));
+        }
+        // For single values - check if the value contains the target
+        return String(fieldValue).includes(String(condition.value));
       default:
         return true;
     }
@@ -754,37 +762,52 @@ export default function ContactForm({
         );
 
       case 'checkbox':
-          return (
+        const currentValues = Array.isArray(value) ? value : [];
+        const maxReached = Boolean(question.maxSelections && currentValues.length >= question.maxSelections);
+        
+        return (
           <div key={question.id} className="mb-4 md:mb-5">
             <label className="block text-base md:text-lg mb-3 font-medium text-black">
               {question.label} {question.required && '*'}
+              {question.maxSelections && (
+                <span className="text-sm font-normal text-gray-600 ml-2">
+                  (max {question.maxSelections} selections - {currentValues.length} selected)
+                </span>
+              )}
             </label>
             <div className="space-y-2">
-              {question.options?.map(option => (
-                <label key={option} className="flex items-center">
-                <input
-                  type="checkbox"
-                    value={option}
-                    checked={Array.isArray(value) && value.includes(option)}
-                    onChange={(e) => {
-                      const currentValues = Array.isArray(value) ? value : [];
-                      if (e.target.checked) {
-                        handleFieldChange(question.id, [...currentValues, option]);
-                      } else {
-                        handleFieldChange(question.id, currentValues.filter(v => v !== option));
-                      }
-                    }}
-                    onFocus={() => handleFieldFocus(question.id)}
-                    onBlur={() => handleFieldBlur(question.id)}
-                  className="mr-2"
-                />
-                  <span className="text-black">{option}</span>
-              </label>
-              ))}
+              {question.options?.map(option => {
+                const isChecked = currentValues.includes(option);
+                const isDisabled = !isChecked && maxReached;
+                
+                return (
+                  <label key={option} className={`flex items-center ${isDisabled ? 'opacity-50' : ''}`}>
+                    <input
+                      type="checkbox"
+                      value={option}
+                      checked={isChecked}
+                      disabled={isDisabled}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          if (!maxReached) {
+                            handleFieldChange(question.id, [...currentValues, option]);
+                          }
+                        } else {
+                          handleFieldChange(question.id, currentValues.filter(v => v !== option));
+                        }
+                      }}
+                      onFocus={() => handleFieldFocus(question.id)}
+                      onBlur={() => handleFieldBlur(question.id)}
+                      className="mr-2"
+                    />
+                    <span className="text-black">{option}</span>
+                  </label>
+                );
+              })}
             </div>
             {error && <p className="text-xs md:text-sm mt-1 text-red-600">{error}</p>}
-            </div>
-          );
+          </div>
+        );
         
       case 'date':
           return (
@@ -941,15 +964,25 @@ export default function ContactForm({
               </div>
 
         {/* Questions */}
-              <div>
+        <div>
           {currentSection.questions.map(question => (
             <div key={question.id}>
               {renderQuestion(question)}
               {/* Render conditional questions */}
-              {getConditionalQuestions(question).map(cq => renderQuestion(cq))}
-              </div>
-          ))}
+              {getConditionalQuestions(question).map(cq => (
+                <div key={cq.id} className="ml-4 pl-4 border-l-2 border-gray-200">
+                  {renderQuestion(cq)}
+                  {/* Render nested conditional questions */}
+                  {getConditionalQuestions(cq).map(nestedCq => (
+                    <div key={nestedCq.id} className="ml-4 pl-4 border-l-2 border-gray-300">
+                      {renderQuestion(nestedCq)}
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
+          ))}
+        </div>
 
         {/* Status Message */}
             {message && (
@@ -964,7 +997,7 @@ export default function ContactForm({
             type="button"
             onClick={handlePrevious}
             disabled={currentSectionIndex === 0}
-            className="px-4 py-2 border rounded disabled:opacity-50"
+            className="button_dark disabled:opacity-50"
             style={{
               borderColor: '#d1d5db',
               color: 'var(--deep-grey)'
@@ -977,7 +1010,7 @@ export default function ContactForm({
             type="button"
             onClick={handleNext}
                 disabled={status === 'loading'}
-            className="button px-6 py-2"
+            className="button_dark"
               >
             {status === 'loading' ? 'Processing...' : 
              currentSectionIndex === sectionsData.sections.length - 1 ? 'Submit' : 'Next'}

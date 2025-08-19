@@ -60,7 +60,7 @@ body {
   /* Typography Styles */
   h1, h2, h3, h4, h5, h6 {
     margin-bottom: 10px;
-    font-weight: 700;
+    font-weight: 500;
   }
 
   h1 {
@@ -128,16 +128,75 @@ body {
 }
 
 .button {
+    /* Base styling */
     border: 1px solid var(--base-color-neutral--white);
     border-radius: var(--border-radius--round);
     background-color: var(--base-color-neutral--white);
     color: var(--base-color-neutral--black);
     text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    
+    /* Standardized sizing */
+    padding: 0.5rem 1.5rem; /* py-3 px-6 equivalent */
+    font-size: 1rem; /* text-base equivalent */
+    line-height: 1.2;
+    
+    /* Spacing */
     margin-left: 0;
     margin-right: 0;
-    padding: .5rem .75rem;
-    line-height: 1.2;
+    
+    /* Transitions */
+    transition: all 0.2s ease-in-out;
+    
+    /* Flex properties for icons */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.button:hover {
+    background-color: var(--button-primary) !important;
+    color: var(--base-color-neutral--black) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.button_dark {
+    /* Base styling */
+    border: 1px solid var(--base-color-neutral--black);
+    border-radius: var(--border-radius--round);
+    background-color: var(--base-color-neutral--black);
+    color: var(--base-color-neutral--white);
+    text-align: center;
     text-decoration: none;
+    cursor: pointer;
+    
+    /* Standardized sizing */
+    padding: 0.5rem 1.5rem; /* py-3 px-6 equivalent */
+    font-size: 1rem; /* text-base equivalent */
+    line-height: 1.2;
+    
+    /* Spacing */
+    margin-left: 0;
+    margin-right: 0;
+    
+    /* Transitions */
+    transition: all 0.2s ease-in-out;
+    
+    /* Flex properties for icons */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.button_dark:hover {
+    background-color: var(--button-primary) !important;
+    color: var(--base-color-neutral--black) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes marquee-left {

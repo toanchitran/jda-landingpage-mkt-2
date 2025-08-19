@@ -177,11 +177,11 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
   return (
     <div className="text-primary-text rounded-3xl" style={{backgroundColor: 'var(--primary-bg)'}}>
       <div className="mb-8 padding-global text-left items-center justify-center">
-        <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 pt-6">Your Simple 3-Step Plan to a Compelling Story</h3>
+        <h3 className="text-2xl sm:text-3xl md:text-4xl mb-3 pt-6">Your Simple 3-Step Plan to a Compelling Story</h3>
         <p className="mb-6" style={{color: 'var(--medium-grey)'}}> Stop scrambling for content and start commanding investor attention.</p>
         <button 
           onClick={() => onBookCall('workflow_section')}
-          className="button hover:!bg-yellow-400 hover:!text-black transition-colors"
+          className="button"
         >
           Book a call
         </button>
@@ -191,7 +191,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
       <div className="hidden md:block padding-global">
         {/* Product UI Screenshot */}
         <div className="w-full mb-8">
-          <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden">
+          <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden mb-12">
             <Image
               src={features[activeFeature as keyof typeof features].image}
               alt={features[activeFeature as keyof typeof features].imageText}
@@ -203,19 +203,25 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
           </div>
         </div>
         
-        {/* Feature Columns */}
-        <div className="grid md:grid-cols-3 gap-12">
+        {/* Feature Columns - Improved for better visibility */}
+        <div className="grid md:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto">
           {Object.entries(features).map(([key, feature]) => (
             <div 
               key={key}
-              className={`p-6 cursor-pointer transition-all duration-300 ${
-                activeFeature === key ? 'opacity-100' : 'opacity-50'
+              className={`p-2 cursor-pointer transition-all duration-300 border-t-2 mb-12 ${
+                activeFeature === key 
+                  ? 'opacity-100 border-t-accent-elements bg-card-elevated shadow-lg transform scale-105' 
+                  : 'opacity-70 border-t-transparent bg-card-elevated/50 hover:opacity-90 hover:bg-card-elevated/70'
               }`}
               onClick={() => setActiveFeature(key)}
             >
-              <div className="w-full h-0.5 bg-black mb-3"></div>
-              <h4 className="text-xl font-bold mb-2 text-left">{feature.title}</h4>
-              <p className="text-sm text-left" style={{color: 'var(--secondary-text-80)'}}>
+              <div 
+                className={`w-full h-0.5 mb-3 transition-colors duration-300 ${
+                  activeFeature === key ? 'bg-accent-elements' : 'bg-secondary-text-80'
+                }`}
+              ></div>
+              <h4 className="text-xl font-bold mb-2 text-left text-white">{feature.title}</h4>
+              <p className="text-sm text-left leading-relaxed" style={{color: 'var(--medium-grey)'}}>
                 {feature.description}
               </p>
             </div>
@@ -228,9 +234,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
         {Object.entries(features).map(([key, feature]) => (
           <div 
             key={key}
-            className={`cursor-pointer transition-all duration-300 ${
-              activeFeature === key ? 'opacity-100' : 'opacity-50'
-            }`}
+            className="cursor-pointer transition-all duration-300 opacity-100"
             onClick={() => setActiveFeature(key)}
           >
             {/* Feature Image */}
@@ -265,6 +269,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Carousel state variables
   const cardRef = useRef<HTMLDivElement>(null);
@@ -277,6 +282,33 @@ export default function Home() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Handle scroll detection for nav transparency
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const isDesktop = window.innerWidth >= 768;
+      
+      if (isDesktop) {
+        setIsScrolled(scrollTop > 50); // Change transparency after 50px scroll on desktop
+      } else {
+        setIsScrolled(true); // Always show background on mobile
+      }
+    };
+
+    if (mounted) {
+      window.addEventListener('scroll', handleScroll);
+      window.addEventListener('resize', handleScroll);
+      // Check initial scroll position
+      handleScroll();
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [mounted]);
+
   // Marquee tags source
   const marqueeTags = useMemo(() => [
     'Access Top-Tier Capital',
@@ -470,7 +502,14 @@ export default function Home() {
         </div>
         
         {/* Navigation */}
-        <nav className="fixed top-0 left-0 right-0 z-50 padding-global py-4 sm:py-6 backdrop-blur-md" style={{backgroundColor: 'rgba(3, 3, 46, 0.9)'}}>
+        <nav 
+          className={`fixed top-0 left-0 right-0 z-50 padding-global py-2 sm:py-4 transition-all duration-300 ${
+            isScrolled ? 'backdrop-blur-md' : 'md:backdrop-blur-none'
+          }`} 
+          style={{
+            backgroundColor: isScrolled ? 'rgba(3, 3, 46, 0.9)' : 'transparent'
+          }}
+        >
           <div className="max-w-6xl mx-auto flex justify-between items-center">
             <div className="text-white font-bold text-xl">
               <button 
@@ -501,7 +540,7 @@ export default function Home() {
                   trackSiteDeckClick();
                   window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
                 }}
-                className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors text-sm sm:text-base px-3 sm:px-4 py-2 sm:py-3"
+                className="button relative z-10"
               >
                 Free Assessment
               </button>
@@ -519,7 +558,7 @@ export default function Home() {
             <p className="text-lg sm:text-xl md:text-2xl leading-relaxed mb-6 sm:mb-8" style={{color: 'var(--light-grey)'}}>
             Attract the funding you deserve by shaping your company&apos;s narrative, and make your insights scalable.
             </p>
-            <button onClick={handleBookCallHero} className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors text-sm sm:text-base px-4 sm:px-6 py-3 sm:py-4">
+            <button onClick={handleBookCallHero} className="button relative z-10">
               Book a call
             </button>
           </div>
@@ -547,15 +586,24 @@ export default function Home() {
           
           <div className="max-w-6xl mx-auto relative z-10 padding-global">
             <div className="text-center mb-6 sm:mb-8">
-             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
+             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
               <p className="max-w-3xl mx-auto" style={{color: 'var(--medium-grey)'}}>
               You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
               </p>
             </div>
           <div className="max-w-4xl mx-auto">
             <div className="rounded-2xl p-4 bg-white shadow-lg">
-                <AudioPlayer src="/audio_podcast.MP3" />
-              <p className="text-center text-gray-600 text-sm mt-2">Listen to our podcast</p>
+              <div className="aspect-video rounded-xl overflow-hidden">
+                <video
+                  controls
+                  poster="/Podcast_thumbnail.png"
+                  className="w-full h-full object-cover"
+                >
+                  <source src="/Jay-David-Podcast.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <p className="text-center text-gray-600 text-sm mt-2">Watch our podcast</p>
             </div>
           </div>
         </div>
@@ -565,7 +613,7 @@ export default function Home() {
       <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: 'var(--primary-bg)'}}>
         <div className="max-w-6xl mx-auto padding-global">
           <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
             <p className="max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
             You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat. What you need isn&apos;t another AI tool or agency; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.  
             </p>
@@ -690,13 +738,13 @@ export default function Home() {
       <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: 'var(--secondary-bg)'}}>
         <div className="w-full padding-global">
           <div className="text-center mb-8 padding-global">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary-text"> The Funded Future You Can Build</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text"> The Funded Future You Can Build</h1>
             <p className="max-w-4xl mx-auto mb-6" style={{color: 'var(--medium-grey)'}}>
             This is the transformation you&apos;ve been working for - a clear, compelling narrative that changes your trajectory. Our strategic guidance fundamentally rewrites how investors see your company, leading to powerful business outcomes that define your legacy.
             </p>
             <button 
               onClick={handleBookCallConsider}
-              className="button mb-8 hover:!bg-yellow-400 hover:!text-black transition-colors"
+              className="button mb-8"
             >
               Book a call
             </button>
@@ -754,26 +802,29 @@ export default function Home() {
 
             {/* Carousel Section */}
             <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
+        {/* Header Content - Centered */}
         <div className="max-w-6xl mx-auto padding-global">
           <div className="text-center mb-8 sm:mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary-text">The Unfair Advantage of a<br/>Strategic Story</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">The Unfair Advantage of <br/>a Strategic Story</h1>
             <p className="max-w-4xl mx-auto mb-6 text-sm sm:text-base" style={{color: 'var(--medium-grey)'}}>
             In a crowded market, your story is your most powerful asset. It&apos;s the key to building credibility and earning the trust of investors. It&apos;s not just about what you say, but how you say it—and when. 
             </p>
             <button
               onClick={handleBookCallCarousel}
-              className="button hover:!bg-yellow-400 hover:!text-black transition-colors"
+              className="button"
             >
               Book a call
             </button>
           </div>
+        </div>
 
-          {/* Carousel Container */}
-            <div 
-              className="relative overflow-hidden max-w-[1088px] mx-auto px-4 md:px-0"
-              onMouseEnter={() => setIsCarouselHovered(true)}
-              onMouseLeave={() => setIsCarouselHovered(false)}
-            >
+        {/* Carousel Container - Full Width */}
+        <div 
+          className="relative overflow-hidden w-full mx-auto px-4 md:px-8"
+          style={{ maxWidth: '1600px' }}
+          onMouseEnter={() => setIsCarouselHovered(true)}
+          onMouseLeave={() => setIsCarouselHovered(false)}
+        >
             <div
               className="flex gap-1.5 transition-transform duration-700 ease-in-out"
               style={{ 
@@ -823,11 +874,10 @@ export default function Home() {
                 ></button>
               ))}
             </div>
-          </div>
         </div>
       </section>
 
-      {/* CTA Lead Magnet Section - Deep Purple */}
+      {/* Lead Magnet Section - Deep Purple */}
       <section className="relative min-h-screen flex items-center justify-center">
         <div className="absolute inset-0">
           <Image
@@ -843,33 +893,33 @@ export default function Home() {
         </div>
         
                 {/* Modal Card - Top Right */}
-        <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global">
-          <div className="rounded-3xl p-10 shadow-2xl text-center bg-white border border-gray-200">
+                 <div className="relative z-10 w-full max-w-5xl mx-auto md:ml-auto md:mr-0 padding-global md:min-w-[1000px]">
+          <div className="rounded-3xl p-10 shadow-2xl bg-white border border-gray-200 ">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-black">
-              Does Your Pitch Deck Tell<br/>a Story Worth Funding?
+              Does Your Pitch Deck Tell a Story Worth Funding?
             </h2>
             <p className="text-lg leading-relaxed text-left" style={{color: 'var(--deep-grey)'}}>
             This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
             </p>
-            <div className="flex justify-center z-10">
+            <div className="z-10 rounded-lg">
                               <Image
-                  src="/lead_magnet_previw.png"
+                  src="/Lead_Magnet_Teaser.png"
                   alt="Lead Magnet Preview"
                   width={800}
                   height={150}
-                  className="rounded-lg"
+                  className="rounded-lg w-full h-auto"
                   unoptimized={true}
                 />
             </div>
-            <div onClick={() => {
+            <button onClick={() => {
               trackSiteDeckClick();
               window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
-            }} className="text-blue-600 font-semibold text-lg flex items-center justify-center cursor-pointer hover:text-blue-700 transition-colors">
+            }} className="button_dark mt-6">
               Analyze My Deck Now
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
               </svg>
-            </div>
+            </button>
           </div>
         </div>
       </section>
@@ -880,7 +930,7 @@ export default function Home() {
       <section className="py-16 sm:py-20 padding-global" style={{backgroundColor: '#03032e'}}>
         <div className="w-full">
           <div className="text-center padding-global">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary-text">Trusted by Smart Founders</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Trusted by Smart Founders</h1>
           </div>
           
                     {/* Masonry Grid */}
@@ -967,23 +1017,22 @@ export default function Home() {
             src="/CTA BG.jpeg"
             alt="Bottom CTA Background"
             fill
-            className="object-cover"
+            className="object-cover object-top"
             priority
-            unoptimized={true}
           />
         </div>
-        <div className="max-w-6xl mx-auto padding-global relative z-10" >
+                 <div className="max-w-6xl mx-auto padding-global relative z-10 md:min-w-[1000px]" >
           <div className="rounded-3xl p-12 bg-white backdrop-blur-md border border-white shadow-2xl" >
             <div className="grid md:grid-cols-2 gap-12 items-center" >
               <div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-black"> By Application Only</h1>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-black"> By Application Only</h1>
                 <p className="mb-6 leading-relaxed" style={{color: 'var(--deep-grey)'}}>
                 Our highly personalized approach means we partner with a select group of founders each month. We&apos;re not a content factory - we&apos;re your strategic partner in building a funded future.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button 
                     onClick={handleBookCallBottom}
-                    className="button hover:!bg-yellow-400 hover:!text-blue-600 transition-colors"
+                    className="button_dark"
                   >
                     Secure My Strategy Call Now
                   </button>

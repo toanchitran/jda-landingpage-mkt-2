@@ -139,22 +139,16 @@
         {
           "id": "capitalRaised",
           "label": "Capital raised to date (USD)",
-          "type": "number",
+          "type": "select",
           "required": true,
-          "validation": {
-            "type": "min_value",
-            "minValue": 0
-          }
+          "options": ["$0", "<$250k", "$250k–$1M", "$1–3M", "$3–10M", ">$10M"]
         },
         {
           "id": "targetRoundSize",
           "label": "Target round size (USD)",
-          "type": "number",
+          "type": "select",
           "required": true,
-          "validation": {
-            "type": "min_value",
-            "minValue": 0
-          }
+          "options": ["<$500k", "$500k–$1.5M", "$1.5–3M", "$3–7M", "$7–15M", ">$15M"]
         },
         {
           "id": "leadCommitmentStatus",
@@ -172,8 +166,9 @@
               "question": {
                 "id": "commitmentAmount",
                 "label": "Approximate amount (USD)",
-                "type": "number",
-                "required": true
+                "type": "select",
+                "required": true,
+                "options": ["<$250k", "$250–500k", "$500k–$1M", "$1–3M", ">$3M"]
               }
             }
           ]
@@ -200,10 +195,41 @@
                 "value": "ARR/MRR"
               },
               "question": {
-                "id": "arrMrrValue",
-                "label": "Current MRR or ARR",
-                "type": "number",
-                "required": true
+                "id": "metricUnit",
+                "label": "Metric unit",
+                "type": "select",
+                "required": true,
+                "options": ["ARR", "MRR"],
+                "conditionalQuestions": [
+                  {
+                    "condition": {
+                      "field": "metricUnit",
+                      "operator": "equals",
+                      "value": "MRR"
+                    },
+                    "question": {
+                      "id": "mrrLevel",
+                      "label": "Current MRR level",
+                      "type": "select",
+                      "required": true,
+                      "options": ["$0", "<$10k", "$10–50k", "$50–200k", ">$200k"]
+                    }
+                  },
+                  {
+                    "condition": {
+                      "field": "metricUnit",
+                      "operator": "equals",
+                      "value": "ARR"
+                    },
+                    "question": {
+                      "id": "arrLevel",
+                      "label": "Current ARR level",
+                      "type": "select",
+                      "required": true,
+                      "options": ["$0", "<$150k", "$150–600k", "$600k–$2.4M", ">$2.4M"]
+                    }
+                  }
+                ]
               }
             },
             {
@@ -213,10 +239,41 @@
                 "value": "Usage"
               },
               "question": {
-                "id": "dauMau",
-                "label": "DAU/MAU",
-                "type": "text",
-                "required": true
+                "id": "primaryScale",
+                "label": "Primary scale",
+                "type": "select",
+                "required": true,
+                "options": ["DAU", "MAU"],
+                "conditionalQuestions": [
+                  {
+                    "condition": {
+                      "field": "primaryScale",
+                      "operator": "equals",
+                      "value": "DAU"
+                    },
+                    "question": {
+                      "id": "dauUsers",
+                      "label": "DAU users",
+                      "type": "select",
+                      "required": true,
+                      "options": ["<1k", "1–5k", "5–20k", "20–100k", ">100k"]
+                    }
+                  },
+                  {
+                    "condition": {
+                      "field": "primaryScale",
+                      "operator": "equals",
+                      "value": "MAU"
+                    },
+                    "question": {
+                      "id": "mauUsers",
+                      "label": "MAU users",
+                      "type": "select",
+                      "required": true,
+                      "options": ["<5k", "5–25k", "25–100k", "100–500k", ">500k"]
+                    }
+                  }
+                ]
               }
             },
             {
@@ -227,9 +284,10 @@
               },
               "question": {
                 "id": "growthRate",
-                "label": "30-day growth %",
-                "type": "number",
-                "required": true
+                "label": "30-day growth",
+                "type": "select",
+                "required": true,
+                "options": ["<5%", "5–15%", "15–30%", ">30%"]
               }
             },
             {
@@ -241,8 +299,9 @@
               "question": {
                 "id": "paidPilots",
                 "label": "Number of paid pilots / LOIs",
-                "type": "number",
-                "required": true
+                "type": "select",
+                "required": true,
+                "options": ["0", "1", "2–3", "4–7", ">7"]
               }
             },
             {
@@ -254,8 +313,9 @@
               "question": {
                 "id": "waitlistCount",
                 "label": "Number on waitlist/reservations",
-                "type": "number",
-                "required": true
+                "type": "select",
+                "required": true,
+                "options": ["<1k", "1–5k", "5–20k", "20–100k", ">100k"]
               }
             }
           ]
@@ -269,18 +329,100 @@
       "airtableMapping": "Question 5",
       "questions": [
         {
-          "id": "targetInvestorsList",
-          "label": "List up to 10 target investors (firms or angels).",
-          "type": "textarea",
-          "required": false,
-          "placeholder": "Example: Sequoia Capital, Andreessen Horowitz, First Round Capital..."
+          "id": "investorTypes",
+          "label": "Which investor types are you currently in contact with? (select up to 10)",
+          "type": "checkbox",
+          "required": true,
+          "maxSelections": 10,
+          "options": [
+            "Friends & Family",
+            "Solo Angels",
+            "Angel Syndicates",
+            "Family Offices",
+            "Tier-1 VC",
+            "Tier-2/3 VC",
+            "Micro-VC (≤$50M)",
+            "Corporate VC (CVC)",
+            "Strategic Corporate/BU",
+            "Government/DFI/Sovereign",
+            "Venture Debt/Lenders",
+            "Accelerators/Incubators",
+            "Crowdfunding Platforms",
+            "Fund of Funds",
+            "Other (specify)"
+          ],
+          "conditionalQuestions": [
+            {
+              "condition": {
+                "field": "investorTypes",
+                "operator": "includes",
+                "value": "Other (specify)"
+              },
+              "question": {
+                "id": "investorTypesOther",
+                "label": "Please specify other investor types",
+                "type": "text",
+                "required": true
+              }
+            }
+          ]
         },
         {
-          "id": "investorThesis",
-          "label": "Describe the precise investor thesis (geo, check size, sector).",
-          "type": "textarea",
-          "required": true,
-          "placeholder": "Examples: \"US deeptech seed, $1–2M lead\" / \"APAC SaaS Series A, $5–10M, PLG\""
+          "id": "geographyFocus",
+          "label": "Geography focus (optional but recommended)",
+          "type": "checkbox",
+          "required": false,
+          "options": [
+            "US",
+            "Canada",
+            "UK",
+            "EU (DACH)",
+            "EU (Nordics)",
+            "EU (Southern)",
+            "CEE",
+            "LATAM",
+            "MENA",
+            "India",
+            "SE Asia",
+            "ANZ",
+            "East Asia",
+            "Africa",
+            "Global"
+          ]
+        },
+        {
+          "id": "typicalCheckSize",
+          "label": "Typical check size (USD)",
+          "type": "select",
+          "required": false,
+          "options": ["<$250k", "$250–750k", "$750k–$2M", "$2–5M", ">$5M"]
+        },
+        {
+          "id": "sectors",
+          "label": "Sectors (optional but recommended)",
+          "type": "checkbox",
+          "required": false,
+          "options": [
+            "SaaS/DevTools",
+            "AI/ML",
+            "Fintech",
+            "Healthtech",
+            "Biotech",
+            "Deeptech/Hardtech",
+            "Climate/Energy",
+            "Consumer/Social",
+            "Marketplaces",
+            "Gaming",
+            "Industrial/Robotics",
+            "Gov/Defense",
+            "Mobility/Logistics",
+            "Agtech",
+            "Edtech",
+            "Cybersecurity",
+            "Proptech",
+            "Web3/Crypto",
+            "Other"
+          ]
         }
       ]
     },

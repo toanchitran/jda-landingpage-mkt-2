@@ -83,7 +83,7 @@ export default function BookACallPage() {
           </div>
           <div className="flex space-x-2 sm:space-x-4">
             <button
-              className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors text-sm sm:text-base px-3 sm:px-4 py-2 sm:py-3"
+              className="button"
               onClick={() => router.back()}
             >
             Back &larr;
@@ -98,7 +98,7 @@ export default function BookACallPage() {
       >
         <div className="relative max-w-6xl mx-auto pt-32 pb-16 z-10">
           <div className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl mb-6 leading-tight">
               Schedule Your Personalized<br/>Discovery Call
             </h1>
             <p className="text-xl md:text-2xl leading-relaxed mb-12 max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
