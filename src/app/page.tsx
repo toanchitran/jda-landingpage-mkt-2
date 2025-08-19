@@ -175,9 +175,9 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
   };
 
   return (
-    <div className="text-primary-text" style={{backgroundColor: 'var(--primary-bg)'}}>
-      <div className="mb-8 padding-global text-center items-center justify-center">
-        <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">Your Simple 3-Step Plan to a Compelling Story</h3>
+    <div className="text-primary-text rounded-3xl" style={{backgroundColor: 'var(--primary-bg)'}}>
+      <div className="mb-8 padding-global text-left items-center justify-center">
+        <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 pt-6">Your Simple 3-Step Plan to a Compelling Story</h3>
         <p className="mb-6" style={{color: 'var(--medium-grey)'}}> Stop scrambling for content and start commanding investor attention.</p>
         <button 
           onClick={() => onBookCall('workflow_section')}
@@ -191,7 +191,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
       <div className="hidden md:block padding-global">
         {/* Product UI Screenshot */}
         <div className="w-full mb-8">
-          <div className="aspect-video bg-card-accent-2 rounded-lg flex items-center justify-center overflow-hidden">
+          <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden">
             <Image
               src={features[activeFeature as keyof typeof features].image}
               alt={features[activeFeature as keyof typeof features].imageText}
@@ -529,19 +529,20 @@ export default function Home() {
              {/*  Is Your Genius Getting Lost in the Noise - Fullscreen with Podcast Background */}
         <section 
           className="relative min-h-screen flex items-center justify-center"
+          style={{backgroundColor: 'var(--secondary-bg)'}}
         >
-          <div className="absolute inset-0">
-            <Image
+          {/* <div className="absolute inset-0"> */}
+            {/* <Image
               src="/Podcast_Audio_BG.png"
               alt="Podcast Audio Background"
               fill
               className="object-cover"
               priority
               unoptimized={true}
-            />
+            /> */}
             
             {/* <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.7)'}}></div> */}
-          </div>
+          {/* </div> */}
           
           
           <div className="max-w-6xl mx-auto relative z-10 padding-global">
@@ -885,10 +886,10 @@ export default function Home() {
                     {/* Masonry Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6 padding-global py-16">
             {/* Top Left Card - Logo Only */}
-            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
+            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: 'var(--kavecon)', height: '250px'}}>
               <Image
                 src="/Logo (3).png"
-                alt="Logo 3"
+                alt="Kavecon Logo"
                 width={120}
                 height={40}
                 className="object-contain"
@@ -900,7 +901,7 @@ export default function Home() {
             <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
               <Image
                 src="/Logo (4).png"
-                alt="Logo 4"
+                alt="Superworks Logo"
                 width={120}
                 height={40}
                 className="object-contain"
@@ -909,7 +910,7 @@ export default function Home() {
             </div>
             
             {/* Top Right Card - Logo Only */}
-            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
+            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: 'var(--digicon)', height: '250px'}}>
               <Image
                 src="/Logo (1).png"
                 alt="Digicon Logo"
@@ -921,10 +922,10 @@ export default function Home() {
             </div>
             
             {/* Bottom Left Card - Logo Only */}
-            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
+            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: 'var(--custom-village)', height: '250px'}}>
               <Image
                 src="/Logo (5).png"
-                alt="Logo 5"
+                alt="Custom Village Logo"
                 width={120}
                 height={40}
                 className="object-contain"
@@ -936,7 +937,7 @@ export default function Home() {
                 <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
               <Image
                 src="/Logo (6).png"
-                alt="Logo 6"
+                alt="Dreamcense Logo"
                 width={120}
                 height={40}
                 className="object-contain"
@@ -945,7 +946,7 @@ export default function Home() {
             </div>
             
             {/* Bottom Right Card - Logo Only */}
-            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
+            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: 'var(--maco)', height: '250px'}}>
               <Image
                 src="/Logo (2).png"
                 alt="Maco Logo"

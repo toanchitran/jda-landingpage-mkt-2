@@ -49,6 +49,12 @@ body {
     --base-color-neutral--white: #ffffff;
     --border-radius--round: 9999px;
     --border-radius--padding--global--regular: 5vw;
+
+    /* Custom Colors For Card Backgrounds*/
+    --kavecon: #d2c29f;
+    --maco: #f2ede3;
+    --custom-village: #e2cfb9;
+    --digicon: #c1ab93 ;
 }
 
   /* Typography Styles */
@@ -167,8 +173,29 @@ body {
 }
 
 .padding-global {
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+@media (min-width: 640px) {
+  .padding-global {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .padding-global {
+    padding-right: 3rem;
+    padding-left: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .padding-global {
     padding-right: var(--border-radius--padding--global--regular);
     padding-left: var(--border-radius--padding--global--regular);
+  }
 }
 
 h1.is-hero {
