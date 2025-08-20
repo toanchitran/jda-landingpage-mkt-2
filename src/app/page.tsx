@@ -379,10 +379,13 @@ export default function Home() {
         setTimeout(forceStyleRecalculation, 100);
         setTimeout(forceStyleRecalculation, 500);
         
-        // Auto-reload after 5 seconds to ensure proper styling
-        setTimeout(() => {
-          window.location.reload();
-        }, 5000);
+        // Auto-reload after 5 seconds to ensure proper styling (only once)
+        if (!sessionStorage.getItem('ios-reloaded')) {
+          sessionStorage.setItem('ios-reloaded', 'true');
+          setTimeout(() => {
+            window.location.reload();
+          }, 5000);
+        }
         
         return () => {
           window.removeEventListener('resize', handleViewportChange);
