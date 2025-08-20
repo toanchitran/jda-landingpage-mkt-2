@@ -349,26 +349,30 @@ h1.is-hero {
   }
 }
 
-/* Force Safari to respect safe area changes immediately - Multiple selectors for reliability */
-.ios-device .carousel-section-ios-fix,
-html.ios-device .carousel-section-ios-fix,
-body.ios-device .carousel-section-ios-fix {
-  /* Use same padding as Android, accounting for safe area */
-  padding-bottom: calc(5rem - env(safe-area-inset-bottom, 0px)) !important;
-  /* Force hardware acceleration to prevent caching */
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
+/* Force Safari to use consistent spacing - Override safe area for carousel */
+.carousel-section-ios-fix {
+  /* Set consistent padding for all devices */
+  padding-bottom: 5rem !important;
 }
 
 @media (max-width: 640px) {
-  .ios-device .carousel-section-ios-fix,
-  html.ios-device .carousel-section-ios-fix,
-  body.ios-device .carousel-section-ios-fix {
-    /* Use same padding as Android, accounting for safe area */
-    padding-bottom: calc(4rem - env(safe-area-inset-bottom, 0px)) !important;
-    /* Force hardware acceleration to prevent caching */
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
+  .carousel-section-ios-fix {
+    padding-bottom: 4rem !important;
+  }
+}
+
+/* iOS-specific override to prevent extra spacing */
+@supports (-webkit-touch-callout: none) {
+  .carousel-section-ios-fix {
+    padding-bottom: 5rem !important;
+    margin-bottom: 0 !important;
+  }
+  
+  @media (max-width: 640px) {
+    .carousel-section-ios-fix {
+      padding-bottom: 4rem !important;
+      margin-bottom: 0 !important;
+    }
   }
 }
 

@@ -379,6 +379,11 @@ export default function Home() {
         setTimeout(forceStyleRecalculation, 100);
         setTimeout(forceStyleRecalculation, 500);
         
+        // Auto-reload after 5 seconds to ensure proper styling
+        setTimeout(() => {
+          window.location.reload();
+        }, 5000);
+        
         return () => {
           window.removeEventListener('resize', handleViewportChange);
           window.removeEventListener('orientationchange', handleViewportChange);
