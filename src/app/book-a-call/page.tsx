@@ -73,13 +73,20 @@ export default function BookACallPage() {
       <nav className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-8 py-4 sm:py-6">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="text-white font-bold text-xl">
-            <Image
-              src="/ff_logo.png"
-              alt="Fundraising Flywheel"
-              width={210}
-              height={65}
-              className="h-8 sm:h-12 w-auto"
-            />
+            <button 
+                onClick={() => {
+                  window.open('https://jdalchemy.com', '_blank');
+                }}
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                <Image
+                  src="/ff_logo.png"
+                  alt="Fundraising Flywheel"
+                  width={210}
+                  height={65}
+                  className="h-8 sm:h-12 w-auto"
+                />
+              </button>
           </div>
           <div className="flex space-x-2 sm:space-x-4">
             <button

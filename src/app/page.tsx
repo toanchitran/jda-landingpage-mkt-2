@@ -302,6 +302,9 @@ export default function Home() {
     if (mounted) {
       const videos = document.querySelectorAll('video[autoplay]');
       
+      // Specific handling for hero background video
+      const heroVideo = document.getElementById('hero-background-video') as HTMLVideoElement;
+      
       const handleUserInteraction = () => {
         videos.forEach((video) => {
           const videoElement = video as HTMLVideoElement;
@@ -312,10 +315,25 @@ export default function Home() {
           }
         });
         
+        // Specific attempt for hero video
+        if (heroVideo && heroVideo.paused) {
+          heroVideo.play().catch(() => {
+            console.log('Hero video autoplay failed, will play on interaction');
+          });
+        }
+        
         // Remove event listeners after first interaction
         document.removeEventListener('touchstart', handleUserInteraction);
         document.removeEventListener('click', handleUserInteraction);
       };
+
+      // Try to play hero video immediately on iOS
+      if (heroVideo) {
+        heroVideo.play().catch(() => {
+          // If immediate play fails, wait for user interaction
+          console.log('Hero video immediate play failed, waiting for user interaction');
+        });
+      }
 
       // Add event listeners for user interaction
       document.addEventListener('touchstart', handleUserInteraction, { passive: true });
@@ -640,6 +658,8 @@ export default function Home() {
             webkit-playsinline="true"
             preload="metadata"
             className="w-full h-full object-cover"
+            id="hero-background-video"
+            data-testid="hero-video"
           >
             <source src="/Hero_BG_video.mp4" type="video/mp4" />
           </video>
