@@ -861,9 +861,9 @@ export default function Home() {
           </div>
           
           {/* Interactive Workflow */}
-          <div className="padding-global">
+          {/* <div className="padding-global"> */}
             <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
-          </div>
+          {/* </div> */}
         </div>
       </section>
 
