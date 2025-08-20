@@ -315,6 +315,35 @@ export default function Home() {
     }
   }, [mounted]);
 
+  // iOS safe area and viewport handling
+  useEffect(() => {
+    if (mounted) {
+      // Detect iOS devices
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      
+      if (isIOS) {
+        // Add iOS-specific class to body for additional styling
+        document.body.classList.add('ios-device');
+        
+        // Handle viewport height changes (iOS Safari address bar)
+        const setVH = () => {
+          const vh = window.innerHeight * 0.01;
+          document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+        
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
+        
+        return () => {
+          window.removeEventListener('resize', setVH);
+          window.removeEventListener('orientationchange', setVH);
+        };
+      }
+    }
+  }, [mounted]);
+
   // Handle scroll detection for nav transparency
   useEffect(() => {
     const handleScroll = () => {
@@ -583,13 +612,13 @@ export default function Home() {
         </nav>
 
         {/* Hero Content */}
-        <div className="relative max-w-6xl mx-auto pt-24 sm:pt-28 pb-16 sm:pb-24 flex items-center min-h-screen z-10 padding-global">
-          <div className="text-primary-text">
+        <div className="hero-container">
+          <div className="hero-content">
             <h1 className="is-hero font-bold mb-4 leading-tight">
               Triple Your<br/>Investor Engagement Without Becoming a Content Slave
             </h1>
             {/* <div className="w-80 h-0.5 bg-accent-elements mb-6"></div> */}
-            <p className="text-lg sm:text-xl md:text-2xl leading-relaxed mb-6 sm:mb-8" style={{color: 'var(--light-grey)'}}>
+            <p className="text-lg md:text-2xl leading-relaxed mb-6 sm:mb-8" style={{color: 'var(--light-grey)'}}>
             Attract the funding you deserve by shaping your company&apos;s narrative, and make your insights scalable.
             </p>
             <button onClick={handleBookCallHero} className="button relative z-10">
@@ -839,7 +868,7 @@ export default function Home() {
       </section>
 
             {/* Carousel Section */}
-            <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
+            <section className="pt-16 sm:pt-20 carousel-section-ios-fix" style={{backgroundColor: 'var(--primary-bg)'}}>
         {/* Header Content - Centered */}
         <div className="max-w-6xl mx-auto padding-global">
           <div className="text-center mb-8 sm:mb-12">
