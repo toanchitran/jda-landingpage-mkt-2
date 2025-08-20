@@ -33,6 +33,7 @@ interface ContactData {
   companyWebsite: string;
   applicantRole: string;
   pitchDeckUrl: string | null;
+  pitchDeckAnalysisReportLink: string | null;
   calendlyScheduledTime: string | null;
   calendlyScheduledTimeRaw: string | null;
   meetingLink: string | null;
@@ -323,6 +324,51 @@ export default async function LeadQualificationAnswerPage({
                         </a>
                       ))}
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pitch Deck Analysis Section */}
+          {contactData.pitchDeckAnalysisReportLink && (
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold mb-6 text-black border-b border-gray-200 pb-2">
+                Pitch Deck Analysis
+              </h2>
+              <div className="bg-purple-50 rounded-lg p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-lg font-semibold text-black mb-2">Automated Analysis Report</h3>
+                    <p className="text-gray-600 text-sm mb-4">
+                      Our AI system has analyzed the submitted pitch deck and generated a comprehensive report with scoring and recommendations.
+                    </p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="flex items-center gap-2 text-sm text-purple-700 bg-purple-100 px-3 py-1 rounded-full">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Analysis Complete
+                      </div>
+                    </div>
+                    <a
+                      href={contactData.pitchDeckAnalysisReportLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      View Analysis Report
+                    </a>
                   </div>
                 </div>
               </div>

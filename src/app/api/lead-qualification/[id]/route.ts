@@ -242,6 +242,7 @@ export async function GET(
       companyWebsite: fields['Company Website'] || '',
       applicantRole: fields['Applicant role'] || '',
       pitchDeckUrl: fields['Pitch Deck URL'] || null,
+      pitchDeckAnalysisReportLink: fields['Pitch Deck Analysis Report Link'] || null,
       calendlyScheduledTime: fields['Calendly Scheduled Time'] ? convertToGMTPlus7(fields['Calendly Scheduled Time']) : null,
       calendlyScheduledTimeRaw: fields['Calendly Scheduled Time'] || null,
       meetingLink: fields['Meeting link'] || null,

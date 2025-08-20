@@ -9,13 +9,19 @@ interface PitchDeckUploadProps {
   title?: string;
   description?: string;
   acceptedTypes?: string[];
+  contactRecordId?: string;
+  questionId?: string;
+  onPitchDeckFileUpload?: (questionId: string, file: File, url: string) => void;
 }
 
 export default function PitchDeckUpload({ 
   onUploadComplete, 
   title = "Upload Your Pitch Deck",
   description = "Please upload your teaser deck or pitch deck here to increase your chance of being selected for our program",
-  acceptedTypes = ['.pdf']
+  acceptedTypes = ['.pdf'],
+  contactRecordId,
+  questionId,
+  onPitchDeckFileUpload
 }: Omit<PitchDeckUploadProps, 'onSkip'>) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [currentView, setCurrentView] = useState<'upload' | 'uploading'>('upload');
@@ -25,6 +31,8 @@ export default function PitchDeckUpload({
   const [isUploading, setIsUploading] = useState(false);
 
   const { trackAnalyzeClick } = useGoogleAnalytics();
+
+
 
   const uploadFileWithProgress = async (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -119,6 +127,22 @@ export default function PitchDeckUpload({
       
       // Upload complete
       setUploadProgress(100);
+      
+      console.log('File upload complete, checking for pitch deck analysis...');
+      console.log('Question ID:', questionId);
+      console.log('Title:', title);
+      console.log('Contact Record ID:', contactRecordId);
+      
+      // Check if this is a pitch deck question
+      const isPitchDeckQuestion = title.toLowerCase().includes('pitch deck') || 
+                                 title.toLowerCase().includes('teaser') ||
+                                 questionId === 'pitchDeckUpload';
+      
+      if (isPitchDeckQuestion && questionId && onPitchDeckFileUpload) {
+        console.log('This is a pitch deck upload, storing for later analysis');
+        onPitchDeckFileUpload(questionId, file, fileUrl);
+      }
+      
       setTimeout(() => {
         console.log('Upload complete, calling onUploadComplete with:', fileUrl);
         onUploadComplete(fileUrl);

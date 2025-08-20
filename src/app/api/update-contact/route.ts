@@ -7,14 +7,16 @@ const AIRTABLE_TABLE_ID = 'tblP52B81ccH8jICa';
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { recordId, pitchDeckUrl, joinLink, calendlyEventScheduledTime } = body;
+    const { recordId, pitchDeckUrl, joinLink, calendlyEventScheduledTime, pitchDeckAnalysisReportLink } = body;
 
     console.log('=== UPDATE CONTACT API ===');
     console.log('Record ID:', recordId);
     console.log('Pitch Deck URL:', pitchDeckUrl);
     console.log('Join Link:', joinLink);
+    console.log('Pitch Deck Analysis Report Link:', pitchDeckAnalysisReportLink);
     console.log('Base ID:', AIRTABLE_BASE_ID);
     console.log('Table ID:', AIRTABLE_TABLE_ID);
+    console.log('Full request body:', JSON.stringify(body, null, 2));
 
     if (!recordId) {
       console.error('Missing record ID');
@@ -22,7 +24,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // At least one field must be provided
-    if (!pitchDeckUrl && !joinLink && !calendlyEventScheduledTime) {
+    if (!pitchDeckUrl && !joinLink && !calendlyEventScheduledTime && !pitchDeckAnalysisReportLink) {
       console.error('No updatable fields provided');
       return NextResponse.json({ error: 'No fields provided to update' }, { status: 400 });
     }
@@ -38,6 +40,17 @@ export async function PATCH(request: NextRequest) {
       }
     }
 
+    // Validate pitch deck analysis report link URL format if provided
+    if (pitchDeckAnalysisReportLink) {
+      try {
+        new URL(pitchDeckAnalysisReportLink);
+        console.log('Pitch deck analysis report link validation passed:', pitchDeckAnalysisReportLink);
+      } catch {
+        console.error('Invalid pitch deck analysis report link URL format:', pitchDeckAnalysisReportLink);
+        return NextResponse.json({ error: 'Invalid pitch deck analysis report link URL format' }, { status: 400 });
+      }
+    }
+
     // Construct the URL
     const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}/${recordId}`;
     console.log('Airtable URL:', url);
@@ -46,6 +59,12 @@ export async function PATCH(request: NextRequest) {
     if (pitchDeckUrl) updateFields["Pitch Deck URL"] = pitchDeckUrl;
     if (joinLink) updateFields["Meeting link"] = String(joinLink);
     if (calendlyEventScheduledTime) updateFields["Calendly Scheduled Time"] = String(calendlyEventScheduledTime);
+    if (pitchDeckAnalysisReportLink) {
+      console.log('Adding pitch deck analysis report link to update fields:', pitchDeckAnalysisReportLink);
+      // Try the exact field name we expect
+      updateFields["Pitch Deck Analysis Report Link"] = pitchDeckAnalysisReportLink;
+      console.log('Field name used:', "Pitch Deck Analysis Report Link");
+    }
 
     const updateData = { fields: updateFields };
 
