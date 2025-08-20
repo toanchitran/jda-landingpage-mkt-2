@@ -287,6 +287,10 @@ export default function Home() {
   const [gapSize, setGapSize] = useState(6); // Default gap (0.375rem = 6px)
   const [isMobile, setIsMobile] = useState(false);
   const [isCarouselHovered, setIsCarouselHovered] = useState(false);
+  
+  // Touch/swipe state for mobile
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -384,7 +388,7 @@ export default function Home() {
           sessionStorage.setItem('ios-reloaded', 'true');
           setTimeout(() => {
             window.location.reload();
-          }, 5000);
+          }, 1000);
         }
         
         return () => {
@@ -534,6 +538,33 @@ export default function Home() {
 
   const handleCardClick = (index: number) => {
     setCurrentSlide(index);
+  };
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      // Swipe left - next slide
+      setCurrentSlide(current => (current + 1) % totalSlides);
+    }
+    if (isRightSwipe) {
+      // Swipe right - previous slide
+      setCurrentSlide(current => current === 0 ? totalSlides - 1 : current - 1);
+    }
   };
 
   // Auto-advance carousel every 2 seconds (pause when hovered)
@@ -942,6 +973,9 @@ export default function Home() {
           style={{ maxWidth: '1600px' }}
           onMouseEnter={() => setIsCarouselHovered(true)}
           onMouseLeave={() => setIsCarouselHovered(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
             <div
               className="flex gap-1.5 transition-transform duration-700 ease-in-out"
@@ -983,8 +1017,8 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Carousel Navigation */}
-            <div className="flex justify-center mt-6 sm:mt-8 space-x-2">
+            {/* Carousel Navigation - Hidden on mobile */}
+            <div className="hidden md:flex justify-center mt-6 sm:mt-8 space-x-2">
               {[...Array(totalSlides).keys()].map((index) => (
                 <button
                   key={index}
