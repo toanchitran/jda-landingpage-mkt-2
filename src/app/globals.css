@@ -349,8 +349,10 @@ h1.is-hero {
   }
 }
 
-/* Force Safari to respect safe area changes immediately */
-.ios-device .carousel-section-ios-fix {
+/* Force Safari to respect safe area changes immediately - Multiple selectors for reliability */
+.ios-device .carousel-section-ios-fix,
+html.ios-device .carousel-section-ios-fix,
+body.ios-device .carousel-section-ios-fix {
   /* Use same padding as Android, accounting for safe area */
   padding-bottom: calc(5rem - env(safe-area-inset-bottom, 0px)) !important;
   /* Force hardware acceleration to prevent caching */
@@ -359,7 +361,9 @@ h1.is-hero {
 }
 
 @media (max-width: 640px) {
-  .ios-device .carousel-section-ios-fix {
+  .ios-device .carousel-section-ios-fix,
+  html.ios-device .carousel-section-ios-fix,
+  body.ios-device .carousel-section-ios-fix {
     /* Use same padding as Android, accounting for safe area */
     padding-bottom: calc(4rem - env(safe-area-inset-bottom, 0px)) !important;
     /* Force hardware acceleration to prevent caching */

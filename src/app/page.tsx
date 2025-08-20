@@ -271,6 +271,16 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Immediate iOS detection - runs synchronously to prevent layout shift
+  if (typeof window !== 'undefined' && !document.body.classList.contains('ios-device')) {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS) {
+      document.body.classList.add('ios-device');
+      document.documentElement.classList.add('ios-device');
+    }
+  }
+
   // Carousel state variables
   const cardRef = useRef<HTMLDivElement>(null);
   const [cardWidth, setCardWidth] = useState(500); // Default width
@@ -323,8 +333,11 @@ export default function Home() {
                     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       
       if (isIOS) {
-        // Add iOS-specific class to body for additional styling
+        // Add iOS-specific class to body IMMEDIATELY to prevent layout shift
         document.body.classList.add('ios-device');
+        
+        // Also add it to HTML element for more specific targeting
+        document.documentElement.classList.add('ios-device');
         
         // Force Safari to recalculate styles immediately
         const forceStyleRecalculation = () => {
