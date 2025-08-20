@@ -315,7 +315,7 @@ export default function Home() {
     }
   }, [mounted]);
 
-  // iOS safe area and viewport handling
+  // iOS safe area and viewport handling with Safari style refresh
   useEffect(() => {
     if (mounted) {
       // Detect iOS devices
@@ -326,19 +326,49 @@ export default function Home() {
         // Add iOS-specific class to body for additional styling
         document.body.classList.add('ios-device');
         
-        // Handle viewport height changes (iOS Safari address bar)
-        const setVH = () => {
+        // Force Safari to recalculate styles immediately
+        const forceStyleRecalculation = () => {
           const vh = window.innerHeight * 0.01;
           document.documentElement.style.setProperty('--vh', `${vh}px`);
+          
+          // Force Safari to recalculate carousel section styles
+          const carouselSection = document.querySelector('.carousel-section-ios-fix') as HTMLElement;
+          if (carouselSection) {
+            // Trigger reflow by accessing offsetHeight
+            void carouselSection.offsetHeight;
+            
+            // Force style recalculation by temporarily changing and reverting a property
+            carouselSection.style.transform = 'translateZ(0)';
+            
+            // Use requestAnimationFrame to ensure the change is applied
+            requestAnimationFrame(() => {
+              carouselSection.style.transform = '';
+              
+              // Additional force recalculation for safe area
+              document.documentElement.style.setProperty('--safe-area-recalc', Date.now().toString());
+            });
+          }
         };
         
-        setVH();
-        window.addEventListener('resize', setVH);
-        window.addEventListener('orientationchange', setVH);
+        // Initial setup
+        forceStyleRecalculation();
+        
+        // Handle viewport changes
+        const handleViewportChange = () => {
+          forceStyleRecalculation();
+        };
+        
+        // Add event listeners
+        window.addEventListener('resize', handleViewportChange);
+        window.addEventListener('orientationchange', handleViewportChange);
+        
+        // Force recalculation after a short delay (Safari sometimes needs this)
+        setTimeout(forceStyleRecalculation, 100);
+        setTimeout(forceStyleRecalculation, 500);
         
         return () => {
-          window.removeEventListener('resize', setVH);
-          window.removeEventListener('orientationchange', setVH);
+          window.removeEventListener('resize', handleViewportChange);
+          window.removeEventListener('orientationchange', handleViewportChange);
         };
       }
     }
@@ -861,9 +891,9 @@ export default function Home() {
           </div>
           
           {/* Interactive Workflow */}
-          {/* <div className="padding-global"> */}
+          <div className="padding-global">
             <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
-          {/* </div> */}
+          </div>
         </div>
       </section>
 

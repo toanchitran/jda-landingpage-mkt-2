@@ -333,13 +333,38 @@ h1.is-hero {
     /* Ensure consistent spacing by removing extra iOS padding */
     padding-bottom: 5rem !important;
     margin-bottom: 0 !important;
+    /* Force Safari to recalculate styles */
+    transform: translateZ(0);
+    will-change: padding-bottom;
   }
   
   @media (max-width: 640px) {
     .carousel-section-ios-fix {
       padding-bottom: 4rem !important;
       margin-bottom: 0 !important;
+      /* Force Safari to recalculate styles */
+      transform: translateZ(0);
+      will-change: padding-bottom;
     }
+  }
+}
+
+/* Force Safari to respect safe area changes immediately */
+.ios-device .carousel-section-ios-fix {
+  /* Use same padding as Android, accounting for safe area */
+  padding-bottom: calc(5rem - env(safe-area-inset-bottom, 0px)) !important;
+  /* Force hardware acceleration to prevent caching */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+@media (max-width: 640px) {
+  .ios-device .carousel-section-ios-fix {
+    /* Use same padding as Android, accounting for safe area */
+    padding-bottom: calc(4rem - env(safe-area-inset-bottom, 0px)) !important;
+    /* Force hardware acceleration to prevent caching */
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
   }
 }
 
