@@ -273,15 +273,15 @@ h1.is-hero {
     padding-top: max(env(safe-area-inset-top), 1rem);
   }
   
-  /* Carousel Section iOS Fix */
+  /* Carousel Section iOS Fix - Base spacing */
   .carousel-section-ios-fix {
-    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: 5rem;
   }
   
   /* Small screens carousel fix */
   @media (max-width: 640px) {
     .carousel-section-ios-fix {
-      padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+      padding-bottom: 4rem;
     }
   }
 }
@@ -313,14 +313,33 @@ h1.is-hero {
   -webkit-text-size-adjust: 100%;
 }
 
-/* iOS device specific carousel spacing */
+/* iOS device specific carousel spacing - normalize to match Android */
 .ios-device .carousel-section-ios-fix {
-  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  /* Use same padding as Android, accounting for safe area */
+  padding-bottom: calc(5rem - env(safe-area-inset-bottom, 0px));
 }
 
 @media (max-width: 640px) {
   .ios-device .carousel-section-ios-fix {
-    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+    /* Use same padding as Android, accounting for safe area */
+    padding-bottom: calc(4rem - env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Additional iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Target iOS Safari specifically */
+  .carousel-section-ios-fix {
+    /* Ensure consistent spacing by removing extra iOS padding */
+    padding-bottom: 5rem !important;
+    margin-bottom: 0 !important;
+  }
+  
+  @media (max-width: 640px) {
+    .carousel-section-ios-fix {
+      padding-bottom: 4rem !important;
+      margin-bottom: 0 !important;
+    }
   }
 }
 
