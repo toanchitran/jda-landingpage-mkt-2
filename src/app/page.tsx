@@ -177,7 +177,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
   return (
     <div className="text-primary-text rounded-3xl" style={{backgroundColor: 'var(--primary-bg)'}}>
       <div className="mb-8 padding-global text-left items-center justify-center">
-        <h3 className="text-2xl sm:text-3xl md:text-4xl mb-3 pt-6">Your Simple 3-Step Plan to a Compelling Story</h3>
+        <h2 className="text-4xl sm:text-4xl md:text-5xl mb-3 pt-6">Your Simple 3-Step Plan to a Compelling Story</h2>
         <p className="mb-6" style={{color: 'var(--medium-grey)'}}> Stop scrambling for content and start commanding investor attention.</p>
         <button 
           onClick={() => onBookCall('workflow_section')}
@@ -267,7 +267,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
 }
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(2); // Start with 3rd card (index 2)
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 

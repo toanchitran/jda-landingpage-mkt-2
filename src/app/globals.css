@@ -263,6 +263,11 @@ h1.is-hero {
   line-height: 1.15;
 }
 
+/* Custom font size for workflow section heading */
+.workflow-heading {
+  font-size: 3.5rem !important;
+}
+
 /* iOS Safe Area Support */
 @supports (padding: max(0px)) {
   .safe-area-inset-bottom {
