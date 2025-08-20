@@ -283,6 +283,38 @@ export default function Home() {
     setMounted(true);
   }, []);
 
+  // iOS video autoplay fallback - ensure videos play on user interaction
+  useEffect(() => {
+    if (mounted) {
+      const videos = document.querySelectorAll('video[autoplay]');
+      
+      const handleUserInteraction = () => {
+        videos.forEach((video) => {
+          const videoElement = video as HTMLVideoElement;
+          if (videoElement.paused) {
+            videoElement.play().catch(() => {
+              // Silently handle autoplay failures
+            });
+          }
+        });
+        
+        // Remove event listeners after first interaction
+        document.removeEventListener('touchstart', handleUserInteraction);
+        document.removeEventListener('click', handleUserInteraction);
+      };
+
+      // Add event listeners for user interaction
+      document.addEventListener('touchstart', handleUserInteraction, { passive: true });
+      document.addEventListener('click', handleUserInteraction, { passive: true });
+
+      // Cleanup
+      return () => {
+        document.removeEventListener('touchstart', handleUserInteraction);
+        document.removeEventListener('click', handleUserInteraction);
+      };
+    }
+  }, [mounted]);
+
   // Handle scroll detection for nav transparency
   useEffect(() => {
     const handleScroll = () => {
@@ -491,9 +523,11 @@ export default function Home() {
         <div className="absolute inset-0">
           <video
             autoPlay
-            loop
             muted
+            loop
             playsInline
+            webkit-playsinline="true"
+            preload="metadata"
             className="w-full h-full object-cover"
           >
             <source src="/Hero_BG_video.mp4" type="video/mp4" />
@@ -584,14 +618,14 @@ export default function Home() {
           {/* </div> */}
           
           
-          <div className="max-w-6xl mx-auto relative z-10 padding-global">
+          <div className="max-w-6xl mx-auto relative z-10">
             <div className="text-center mb-6 sm:mb-8">
              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
               <p className="max-w-3xl mx-auto" style={{color: 'var(--medium-grey)'}}>
               You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
               </p>
             </div>
-          <div className="max-w-4xl mx-auto padding-global">
+          <div className="max-w-4xl mx-auto">
             <div className="rounded-2xl p-4 bg-white shadow-lg">
               <div className="aspect-video rounded-xl overflow-hidden">
                 <video
@@ -632,6 +666,8 @@ export default function Home() {
                     muted
                     loop
                     playsInline
+                    webkit-playsinline="true"
+                    preload="metadata"
                       />
                       
                       {/* Overlay Tags */}
@@ -687,6 +723,8 @@ export default function Home() {
                     muted
                     loop
                     playsInline
+                    webkit-playsinline="true"
+                    preload="metadata"
                   />
                       
                       {/* Overlay Tags */}
@@ -846,9 +884,11 @@ export default function Home() {
                     <div className="aspect-[4/3] rounded-xl mb-6 flex items-center justify-center overflow-hidden" style={{backgroundColor: '#f5f5f5'}}>
                       <video
                         autoPlay
-                        loop
                         muted
+                        loop
                         playsInline
+                        webkit-playsinline="true"
+                        preload="metadata"
                         className="w-full h-full object-cover"
                       >
                         <source src={card.videoSrc} type="video/mp4" />
@@ -1045,9 +1085,11 @@ export default function Home() {
               <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden">
                 <video
                   autoPlay
-                  loop
                   muted
+                  loop
                   playsInline
+                  webkit-playsinline="true"
+                  preload="metadata"
                   className="w-full h-full object-cover"
                 >
                   <source src="/CTA video.mp4" type="video/mp4" />
