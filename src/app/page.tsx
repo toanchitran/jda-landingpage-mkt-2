@@ -680,7 +680,7 @@ export default function Home() {
               <button 
                 onClick={() => {
                   trackLogoClick();
-                  window.open('https://jdalchemy.com', '_blank');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="cursor-pointer hover:opacity-80 transition-opacity"
               >
@@ -694,12 +694,15 @@ export default function Home() {
               </button>
             </div>
             <div className="flex space-x-2 sm:space-x-4">
-              {/* <button 
-                onClick={handleBookCall}
-                className="button relative z-10 cursor-pointer hover:!bg-yellow-400 hover:!text-black transition-colors"
+              <button 
+                onClick={() => {
+                  trackLogoClick();
+                  window.open('https://jdalchemy.com', '_blank');
+                }}
+                className="button relative z-10 hidden sm:block"
               >
-                Book a call
-              </button> */}
+                About Us
+              </button>
               <button 
                 onClick={() => {
                   trackSiteDeckClick();
@@ -806,7 +809,7 @@ export default function Home() {
                         {/* Top Tag */}
                         <div className="absolute top-4 left-4">
                           <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
-                          Jay Jin, Strategic Architect
+                          Jay Jin, Influence Architect
                           </div>
                         </div>
                         

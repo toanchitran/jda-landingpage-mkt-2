@@ -74,9 +74,7 @@ export default function BookACallPage() {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="text-white font-bold text-xl">
             <button 
-                onClick={() => {
-                  window.open('https://jdalchemy.com', '_blank');
-                }}
+                onClick={() => router.back()}
                 className="cursor-pointer hover:opacity-80 transition-opacity"
               >
                 <Image
@@ -91,9 +89,12 @@ export default function BookACallPage() {
           <div className="flex space-x-2 sm:space-x-4">
             <button
               className="button"
-              onClick={() => router.back()}
+              
+              onClick={() => {
+                window.open('https://jdalchemy.com', '_blank');
+              }}
             >
-            Back &larr;
+            About Us
             </button>
           </div>
         </div>
@@ -108,7 +109,7 @@ export default function BookACallPage() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl mb-6 leading-tight">
               Schedule Your Personalized<br/>Discovery Call
             </h1>
-            <p className="text-xl md:text-2xl leading-relaxed mb-12 max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
+            <p className="text-lg md:text-xl leading-relaxed mb-12 max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
               If you&apos;re a startup founder struggling to get investor attention, you might just be one strategic narrative away from transforming from &quot;unrecognized&quot; to &quot;industry authority that investors seek out.&quot;
             </p>
           </div>
@@ -118,7 +119,7 @@ export default function BookACallPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl sm:text-4xl font-bold mb-6">Watch This Quick Video</h2>
               <p className="text-lg mb-8" style={{color: 'var(--medium-grey)'}}>
-                To book your discovery call: 1) Watch this video to completion 2) Fill out your information 3) Schedule your call
+                To book your discovery call: 1) Watch this video to completion for pop fill-out form 2) Fill out your information<br/>3) Schedule your call
               </p>
             </div>
 
