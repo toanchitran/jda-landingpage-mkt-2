@@ -645,7 +645,7 @@ export default async function LeadQualificationAnswerPage({
 
                   <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
                     <p className="text-xs sm:text-sm text-yellow-800">
-                      <strong>Note:</strong> These questions will be covered during the 90-minute discovery call interview.
+                      <strong>Note:</strong> These questions will be covered during the 60-minute discovery call interview.
                     </p>
                   </div>
                 </div>
