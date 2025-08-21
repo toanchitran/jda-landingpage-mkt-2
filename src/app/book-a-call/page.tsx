@@ -1,20 +1,45 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import ContactForm from "@/components/ContactForm";
 import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
 
 export default function BookACallPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [videoCompleted, setVideoCompleted] = useState(false);
   const [showQualificationSection, setShowQualificationSection] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { trackVideoPlay, trackVideoStop, trackVideoComplete, trackLeadQualificationShow } = useGoogleAnalytics();
 
+  // Get URL parameters
+  const recordId = searchParams.get('recordId');
+  const email = searchParams.get('email');
+  const name = searchParams.get('name');
+
+  // Check if we have the required parameters to skip video and show booking directly
+  const hasBookingParams = recordId && email && name;
+
   useEffect(() => {
-    if (videoCompleted && !showQualificationSection) {
+    // If we have booking parameters, show the booking section immediately
+    if (hasBookingParams) {
+      setShowQualificationSection(true);
+      setVideoCompleted(true);
+      trackLeadQualificationShow();
+      
+      // Auto scroll to booking section after a short delay
+      setTimeout(() => {
+        const qualificationSection = document.getElementById('qualification-section');
+        if (qualificationSection) {
+          qualificationSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 500);
+    } else if (videoCompleted && !showQualificationSection) {
       setShowQualificationSection(true);
       trackLeadQualificationShow();
       
@@ -29,7 +54,7 @@ export default function BookACallPage() {
         }
       }, 500); // 500ms delay to ensure the section has rendered
     }
-  }, [videoCompleted, showQualificationSection, trackLeadQualificationShow]);
+  }, [videoCompleted, showQualificationSection, trackLeadQualificationShow, hasBookingParams]);
 
   const handleVideoPlay = () => {
     if (videoRef.current) {
@@ -107,50 +132,55 @@ export default function BookACallPage() {
         <div className="relative max-w-6xl mx-auto pt-32 pb-16 z-10">
           <div className="text-center mb-16">
             <h1 className="text-4xl sm:text-5xl md:text-6xl mb-6 leading-tight">
-              Schedule Your Personalized<br/>Discovery Call
+              {hasBookingParams ? 'Schedule Your Discovery Call' : 'Schedule Your Personalized Discovery Call'}
             </h1>
             <p className="text-lg md:text-xl leading-relaxed mb-12 max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
-              If you&apos;re a startup founder struggling to get investor attention, you might just be one strategic narrative away from transforming from &quot;unrecognized&quot; to &quot;industry authority that investors seek out.&quot;
+              {hasBookingParams 
+                ? `Ready to book your discovery call, ${name}? Let's get you scheduled.`
+                : 'If you\'re a startup founder struggling to get investor attention, you might just be one strategic narrative away from transforming from "unrecognized" to "industry authority that investors seek out."'
+              }
             </p>
           </div>
 
-          {/* Video Placeholder */}
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6">Watch This Quick Video</h2>
-              <p className="text-lg mb-8" style={{color: 'var(--medium-grey)'}}>
-                To book your discovery call: 1) Watch this video to completion for pop fill-out form 2) Fill out your information<br/>3) Schedule your call
-              </p>
-            </div>
+          {/* Video Section - Only show if no booking parameters */}
+          {!hasBookingParams && (
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">Watch This Quick Video</h2>
+                <p className="text-lg mb-8" style={{color: 'var(--medium-grey)'}}>
+                  To book your discovery call: 1) Watch this video to completion for pop fill-out form 2) Fill out your information<br/>3) Schedule your call
+                </p>
+              </div>
 
-            <div className="rounded-xl overflow-hidden bg-[#1a1a2e] aspect-video mb-8">
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                onPlay={handleVideoPlay}
-                onPause={handleVideoPause}
-                onEnded={handleVideoEnded}
-                controls
-                controlsList="nodownload nofullscreen noremoteplayback"
-                style={{
-                  '--webkit-media-controls-timeline': 'none',
-                  '--webkit-media-controls-current-time-display': 'none',
-                  '--webkit-media-controls-time-remaining-display': 'none'
-                } as React.CSSProperties}
-              >
-                <source src="/optimized_brandbeam.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
+              <div className="rounded-xl overflow-hidden bg-[#1a1a2e] aspect-video mb-8">
+                <video
+                  ref={videoRef}
+                  className="w-full h-full object-cover"
+                  onPlay={handleVideoPlay}
+                  onPause={handleVideoPause}
+                  onEnded={handleVideoEnded}
+                  controls
+                  controlsList="nodownload nofullscreen noremoteplayback"
+                  style={{
+                    '--webkit-media-controls-timeline': 'none',
+                    '--webkit-media-controls-current-time-display': 'none',
+                    '--webkit-media-controls-time-remaining-display': 'none'
+                  } as React.CSSProperties}
+                >
+                  <source src="/optimized_brandbeam.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
 
-            <div className="text-center">
-              <p className="text-secondary-text-80 text-sm">📹 Video Explanation - 3 minutes that could change your business forever</p>
+              <div className="text-center">
+                <p className="text-secondary-text-80 text-sm">📹 Video Explanation - 3 minutes that could change your business forever</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
-      {/* Lead Qualification Section - Only show after video completion */}
+      {/* Lead Qualification Section - Only show after video completion or if booking parameters exist */}
       {showQualificationSection && (
         <section id="qualification-section" className="py-16 px-4 sm:px-6 lg:px-8" style={{backgroundColor: 'var(--primary-bg)'}}>
           <div className="max-w-4xl mx-auto">
@@ -159,6 +189,11 @@ export default function BookACallPage() {
                 appearance="light" 
                 calendlyHeight={600}
                 showFormHeader={true}
+                prefilledData={hasBookingParams ? {
+                  recordId: recordId || undefined,
+                  email: email || undefined,
+                  name: name || undefined
+                } : undefined}
               />
             </div>
           </div>

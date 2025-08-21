@@ -77,6 +77,11 @@ interface ContactFormProps {
   appearance?: 'light' | 'dark';
   calendlyHeight?: number;
   showFormHeader?: boolean;
+  prefilledData?: {
+    recordId?: string;
+    email?: string;
+    name?: string;
+  };
 }
 
 export default function ContactForm({ 
@@ -84,7 +89,8 @@ export default function ContactForm({
   prefillEmail = '', 
   onCalendlyStart, 
   calendlyHeight = 900, 
-  showFormHeader = false 
+  showFormHeader = false,
+  prefilledData
 }: ContactFormProps) {
   const [sectionsData, setSectionsData] = useState<SectionsData>({ sections: [] });
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
@@ -136,6 +142,13 @@ export default function ContactForm({
         if (prefillName) initialData.fullName = prefillName;
         if (prefillEmail) initialData.email = prefillEmail;
         
+        // Set prefilled data from URL parameters
+        if (prefilledData) {
+          if (prefilledData.name) initialData.fullName = prefilledData.name;
+          if (prefilledData.email) initialData.email = prefilledData.email;
+          if (prefilledData.recordId) setContactRecordId(prefilledData.recordId);
+        }
+        
         setFormData(initialData);
       } catch (error) {
         console.error('Error loading sections:', error);
@@ -143,7 +156,14 @@ export default function ContactForm({
     };
 
     loadSections();
-  }, [prefillName, prefillEmail]);
+  }, [prefillName, prefillEmail, prefilledData]);
+
+  // Show Calendly immediately if prefilledData is provided
+  useEffect(() => {
+    if (prefilledData && prefilledData.recordId && prefilledData.email && prefilledData.name) {
+      setShowCalendly(true);
+    }
+  }, [prefilledData]);
 
   // Calendly script loader and inline embed setup
   const calendlyContainerRef = useRef<HTMLDivElement | null>(null);
@@ -206,8 +226,8 @@ export default function ContactForm({
       calendlyContainerRef.current.innerHTML = '';
         
         const prefillData = {
-          name: prefillName || getContactName(),
-          email: prefillEmail || getContactEmail(),
+          name: prefilledData?.name || prefillName || getContactName(),
+          email: prefilledData?.email || prefillEmail || getContactEmail(),
         };
         
       window.Calendly.initInlineWidget({
