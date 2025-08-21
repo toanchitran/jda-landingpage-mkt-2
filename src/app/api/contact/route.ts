@@ -106,6 +106,55 @@ export async function POST(request: NextRequest) {
       console.error('Failed to update record with lead qualification URL');
     }
 
+    // Schedule a background task to check if Calendly was completed
+    // If not completed within 5 minutes, send the webhook
+    setTimeout(async () => {
+      try {
+        // Check if Calendly was completed by looking for the scheduled time in Airtable
+        const checkResponse = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}/${recordId}`, {
+          headers: {
+            'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          }
+        });
+
+        if (checkResponse.ok) {
+          const record = await checkResponse.json();
+          const calendlyScheduledTime = record.fields['Calendly Event Scheduled Time'];
+          
+          // If no Calendly event was scheduled, send the webhook
+          if (!calendlyScheduledTime) {
+            console.log(`🔄 Sending webhook for record ${recordId} - Calendly not completed`);
+            
+            const webhookUrl = 'https://hook.eu2.make.com/cvc8wkpqb8fi6ebhzqgn2xfq2m3guhs6';
+            const webhookData = {
+              recordId: recordId,
+              event: 'form_submitted_calendly_not_completed',
+              timestamp: new Date().toISOString(),
+              reason: 'server_timeout_check'
+            };
+
+            const webhookResponse = await fetch(webhookUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(webhookData)
+            });
+
+            if (webhookResponse.ok) {
+              console.log(`✅ Webhook sent successfully for record ${recordId}`);
+            } else {
+              console.error(`❌ Webhook failed for record ${recordId}:`, webhookResponse.status);
+            }
+          } else {
+            console.log(`✅ Calendly was completed for record ${recordId}, no webhook needed`);
+          }
+        }
+              } catch (error) {
+          console.error(`❌ Error checking Calendly status for record ${recordId}:`, error);
+        }
+      }, 30 * 60 * 1000); // 30 minutes
+
     return NextResponse.json({ 
       success: true, 
       message: 'Contact information submitted successfully',

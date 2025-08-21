@@ -103,6 +103,8 @@ export default function ContactForm({
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, { url: string; fileName: string }>>({});
   const [contactRecordId, setContactRecordId] = useState<string>('');
   const [pitchDeckFiles, setPitchDeckFiles] = useState<Array<{ questionId: string; file: File; url: string }>>([]);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [calendlyCompleted, setCalendlyCompleted] = useState(false);
 
 
   const { trackFormFieldInteraction } = useGoogleAnalytics();
@@ -164,6 +166,109 @@ export default function ContactForm({
       setShowCalendly(true);
     }
   }, [prefilledData]);
+
+  // Track page unload for users who submitted form but didn't complete Calendly
+  useEffect(() => {
+    // Use sendBeacon for reliable delivery during page unload
+    const handlePageHide = () => {
+      if (formSubmitted && !calendlyCompleted && !prefilledData && contactRecordId) {
+        console.log('🔄 Page hide detected - sending webhook...', {
+          formSubmitted,
+          calendlyCompleted,
+          contactRecordId,
+          prefilledData
+        });
+        
+        const data = JSON.stringify({
+          recordId: contactRecordId,
+          event: 'form_submitted_calendly_not_completed',
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+        });
+        
+        // Try both methods for maximum reliability
+        const webhookUrl = 'https://hook.eu2.make.com/cvc8wkpqb8fi6ebhzqgn2xfq2m3guhs6';
+        
+        // Method 1: sendBeacon with data in body
+        const beaconResult = navigator.sendBeacon(webhookUrl, data);
+        console.log('📡 sendBeacon result:', beaconResult);
+        
+        // Method 2: sendBeacon with data as query parameter
+        const queryData = new URLSearchParams({
+          recordId: contactRecordId,
+          event: 'form_submitted_calendly_not_completed',
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+        }).toString();
+        
+        const beaconQueryResult = navigator.sendBeacon(`${webhookUrl}?${queryData}`);
+        console.log('📡 sendBeacon query result:', beaconQueryResult);
+      }
+    };
+
+    // Also try to send on beforeunload as backup
+    const handleBeforeUnload = () => {
+      if (formSubmitted && !calendlyCompleted && !prefilledData && contactRecordId) {
+        console.log('🔄 Before unload detected - sending webhook...', {
+          formSubmitted,
+          calendlyCompleted,
+          contactRecordId,
+          prefilledData
+        });
+        
+        const data = JSON.stringify({
+          recordId: contactRecordId,
+          event: 'form_submitted_calendly_not_completed',
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+        });
+        
+        const webhookUrl = 'https://hook.eu2.make.com/cvc8wkpqb8fi6ebhzqgn2xfq2m3guhs6';
+        
+        // Try both methods
+        const beaconResult = navigator.sendBeacon(webhookUrl, data);
+        console.log('📡 sendBeacon result (beforeunload):', beaconResult);
+        
+        const queryData = new URLSearchParams({
+          recordId: contactRecordId,
+          event: 'form_submitted_calendly_not_completed',
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+        }).toString();
+        
+        const beaconQueryResult = navigator.sendBeacon(`${webhookUrl}?${queryData}`);
+        console.log('📡 sendBeacon query result (beforeunload):', beaconQueryResult);
+      }
+    };
+
+    // Also try on visibility change
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden' && formSubmitted && !calendlyCompleted && !prefilledData && contactRecordId) {
+        console.log('🔄 Visibility change detected - sending webhook...');
+        
+        const data = JSON.stringify({
+          recordId: contactRecordId,
+          event: 'form_submitted_calendly_not_completed',
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+        });
+        
+        const webhookUrl = 'https://hook.eu2.make.com/cvc8wkpqb8fi6ebhzqgn2xfq2m3guhs6';
+        const beaconResult = navigator.sendBeacon(webhookUrl, data);
+        console.log('📡 sendBeacon result (visibility):', beaconResult);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handlePageHide);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handlePageHide);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [formSubmitted, calendlyCompleted, prefilledData, contactRecordId]);
 
   // Calendly script loader and inline embed setup
   const calendlyContainerRef = useRef<HTMLDivElement | null>(null);
@@ -276,6 +381,9 @@ export default function ContactForm({
       if (data.event === 'calendly.event_scheduled') {
         const scheduledAt = pickTime(data.payload) || data.payload?.scheduled_at;
         console.log('Calendly event scheduled:', scheduledAt, data.payload);
+        
+        // Mark Calendly as completed
+        setCalendlyCompleted(true);
         if (contactRecordId) {
           try {
             let finalStart = scheduledAt;
@@ -341,7 +449,7 @@ export default function ContactForm({
       cancelled = true;
       window.removeEventListener('message', handleCalendlyMessage);
     };
-  }, [showCalendly, prefillName, prefillEmail, contactRecordId, getContactName, getContactEmail]);
+  }, [showCalendly, prefillName, prefillEmail, contactRecordId, getContactName, getContactEmail, prefilledData?.email, prefilledData?.name]);
 
   const handleFieldFocus = useCallback((fieldId: string) => {
     trackFormFieldInteraction(fieldId, 'focus');
@@ -721,6 +829,11 @@ export default function ContactForm({
           console.warn('Failed to trigger n8n webhook:', webhookError);
     }
 
+        // Mark form as submitted (only for users who went through the form, not URL parameters)
+        if (!prefilledData) {
+          setFormSubmitted(true);
+        }
+        
         // Automatically show Calendly instead of pitch deck prompt
     setShowCalendly(true);
         onCalendlyStart?.();
