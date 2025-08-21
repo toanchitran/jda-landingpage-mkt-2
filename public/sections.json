@@ -108,7 +108,7 @@
           "label": "When do you aim to close your current/next round?",
           "type": "select",
           "required": true,
-          "options": ["In ≤ 14 days", "In 15–45 days", "In 46–90 days", "> 90 days / No active round"]
+          "options": ["In ≤ 14 days", "In 15–45 days", "In 46–90 days", "3-6 months", "6-9 months", "> 9 months / No active round"]
         },
         {
           "id": "targetCloseDate",
@@ -118,7 +118,7 @@
           "conditionalDisplay": {
             "field": "roundCloseTiming",
             "operator": "not_equals",
-            "value": "> 90 days / No active round"
+            "value": "> 9 months / No active round"
           }
         }
       ]
