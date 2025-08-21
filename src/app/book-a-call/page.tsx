@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import ContactForm from "@/components/ContactForm";
 import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
 
-export default function BookACallPage() {
+function BookACallContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [videoCompleted, setVideoCompleted] = useState(false);
@@ -202,6 +202,14 @@ export default function BookACallPage() {
 
       {/* Calendly booking is handled inside ContactForm; no separate Calendly section here */}
     </div>
+  );
+}
+
+export default function BookACallPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BookACallContent />
+    </Suspense>
   );
 }
 
