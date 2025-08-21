@@ -359,8 +359,10 @@ export default function ContactForm({
         const formData = new FormData();
         formData.append('pitchDeckFile', pitchDeckFile.file);
 
-        console.log('Sending request to analysis API...');
-        const response = await fetch('https://deckanalysis.fundraisingflywheel.io/api/pitch-deck-analysis', {
+        console.log('Sending request to analysis API via proxy...');
+        console.log('Proxy API URL:', '/api/analyze-pitch-deck');
+        
+        const response = await fetch('/api/analyze-pitch-deck', {
           method: 'POST',
           body: formData,
         });
@@ -371,6 +373,7 @@ export default function ContactForm({
         if (!response.ok) {
           const errorText = await response.text();
           console.error('Analysis API error response:', errorText);
+          console.error('Response headers:', Object.fromEntries(response.headers.entries()));
           throw new Error(`Analysis API returned ${response.status}: ${errorText}`);
         }
 
@@ -412,7 +415,15 @@ export default function ContactForm({
           console.log('Result:', result);
         }
       } catch (error) {
-        console.error(`Pitch deck analysis failed for ${pitchDeckFile.file.name}:`, error);
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            console.error(`Pitch deck analysis timed out for ${pitchDeckFile.file.name} (60 seconds)`);
+          } else {
+            console.error(`Pitch deck analysis failed for ${pitchDeckFile.file.name}:`, error.message);
+          }
+        } else {
+          console.error(`Pitch deck analysis failed for ${pitchDeckFile.file.name}:`, error);
+        }
         // Continue with other files even if one fails
       }
     }

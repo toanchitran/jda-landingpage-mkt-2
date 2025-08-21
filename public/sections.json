@@ -85,7 +85,7 @@
       "questions": [
         {
           "id": "founderAvailability",
-          "label": "The Founder/CEO can join a 90-minute discovery call within 7 days.",
+          "label": "The Founder/CEO can join a 60-minute discovery call within 7 days.",
           "type": "radio",
           "required": true,
           "options": ["Yes", "No"],
