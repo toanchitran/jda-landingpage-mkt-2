@@ -96,6 +96,7 @@ export const useGoogleAnalytics = () => {
     });
   }, [trackEvent]);
 
+  // Send page_view explicitly (so your custom param is on it)
   const trackPageView = useCallback((pageTitle: string, pagePath: string) => {
     if (typeof window !== 'undefined' && window.gtag) {
       // Get UTM parameters from URL
@@ -106,26 +107,25 @@ export const useGoogleAnalytics = () => {
       const utmTerm = urlParams.get('utm_term');
       const utmContent = urlParams.get('utm_content');
 
-      // Create custom parameters object
-      const customParams: Record<string, unknown> = {
+      // Get session ID
+      const sessionId = getSessionId();
+
+      // Create event parameters
+      const eventParams: Record<string, unknown> = {
         page_title: pageTitle,
         page_location: pagePath,
+        session_id_custom: sessionId || undefined,
+        debug_mode: true,
       };
 
-      // Add session ID if available
-      const sessionId = getSessionId();
-      if (sessionId) {
-        customParams.session_id_custom = sessionId;
-      }
-
       // Add UTM parameters if they exist
-      if (utmSource) customParams.utm_source = utmSource;
-      if (utmMedium) customParams.utm_medium = utmMedium;
-      if (utmCampaign) customParams.utm_campaign = utmCampaign;
-      if (utmTerm) customParams.utm_term = utmTerm;
-      if (utmContent) customParams.utm_content = utmContent;
+      if (utmSource) eventParams.utm_source = utmSource;
+      if (utmMedium) eventParams.utm_medium = utmMedium;
+      if (utmCampaign) eventParams.utm_campaign = utmCampaign;
+      if (utmTerm) eventParams.utm_term = utmTerm;
+      if (utmContent) eventParams.utm_content = utmContent;
 
-      window.gtag('config', 'G-16WV2WNMXF', customParams);
+      window.gtag('event', 'page_view', eventParams);
     }
   }, [getSessionId]);
 

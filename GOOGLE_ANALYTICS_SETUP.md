@@ -67,9 +67,11 @@ The enhanced video tracking implementation sends the following custom metrics to
 2. Click **Create Custom Dimension**
 3. **Dimension name:** `Session ID Custom`
 4. **Scope:** `Event`
-5. **Event parameter:** `session_id_custom`
+5. **Event parameter:** `session_id_custom` (type this exactly, even if not in suggestions)
 6. **Description:** `Individual user session identifier`
 7. Click **Save**
+
+> **Important:** The dropdown only suggests parameters GA4 has already observed. It's fine to type `session_id_custom` manually. If the UI complains, it's usually because the name is reserved or you've hit your property's custom-dimension limit.
 
 ## Session ID Tracking Implementation
 
@@ -80,34 +82,41 @@ The session ID tracking implementation:
 1. **Captures GA Session ID**: Uses `gtag('get', 'G-16WV2WNMXF', 'session_id', callback)` to retrieve the current session ID
 2. **Stores Globally**: Makes the session ID available via `window.GA_SESSION_ID`
 3. **Attaches to Events**: Automatically includes `session_id_custom` parameter in all tracking events
-4. **Enables Journey Analysis**: Allows you to track individual user sessions through the Data API
+4. **Sends Explicit Page Views**: Sends page_view events with session ID included
+5. **Enables Journey Analysis**: Allows you to track individual user sessions through the Data API
 
 ### Implementation Details
 
 #### Session ID Script (Added to layout.tsx)
 
 ```javascript
-// Wait for gtag to be available
+// Wait for gtag to be available and capture session ID
 function initializeSessionTracking() {
   if (typeof gtag !== 'undefined') {
     // Get the session ID and store it
     gtag('get', 'G-16WV2WNMXF', 'session_id', function(sid) {
-      window.dataLayer.push({
-        event: 'session_id_ready',
-        session_id_custom: sid
-      });
-      
-      // Store session ID globally for use in tracking functions
-      window.GA_SESSION_ID = sid;
+      if (sid) {
+        window.GA_SESSION_ID = String(sid);
+        console.log('Session ID captured:', window.GA_SESSION_ID);
+        
+        // Send initial page view with session ID
+        gtag('event', 'page_view', {
+          page_title: document.title,
+          page_location: window.location.href,
+          session_id_custom: window.GA_SESSION_ID,
+          debug_mode: true
+        });
+      }
     });
-  } else {
-    // Retry after a short delay if gtag is not yet available
-    setTimeout(initializeSessionTracking, 100);
+    return true;
   }
+  return false;
 }
 
-// Initialize session tracking
-initializeSessionTracking();
+// Retry until gtag is ready
+const id = setInterval(() => { 
+  if (initializeSessionTracking()) clearInterval(id); 
+}, 200);
 ```
 
 #### Enhanced Tracking Functions
@@ -124,6 +133,25 @@ const trackEvent = useCallback((eventName: string, parameters: Record<string, un
     }
     
     window.gtag('event', eventName, parameters);
+  }
+}, [getSessionId]);
+```
+
+#### Explicit Page View Tracking
+
+```javascript
+// Send page_view explicitly (so your custom param is on it)
+const trackPageView = useCallback((pageTitle: string, pagePath: string) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    const sessionId = getSessionId();
+    
+    window.gtag('event', 'page_view', {
+      page_title: pageTitle,
+      page_location: pagePath,
+      session_id_custom: sessionId || undefined,
+      debug_mode: true,
+      // UTM parameters...
+    });
   }
 }, [getSessionId]);
 ```
@@ -236,7 +264,7 @@ The implementation tracks the following video events, all with session ID:
   "dimensionFilter": {
     "filter": {
       "fieldName": "customEvent:session_id_custom",
-      "stringFilter": {"matchType": "EXACT", "value": "{{bundle.session_id_custom}}"}
+      "stringFilter": {"matchType": "EXACT", "value": "{{session_id_custom}}"}
     }
   },
   "orderBys": [{"dimension": {"dimensionName": "dateHourMinute"}}],
@@ -280,7 +308,7 @@ The implementation tracks the following video events, all with session ID:
 ### 2. Verify Events
 
 Check that the following events appear in DebugView:
-- `session_id_ready` (should appear first)
+- `page_view` (with session_id_custom)
 - `video_start`
 - `video_progress`
 - `video_pause`
@@ -299,6 +327,17 @@ In each event, verify that the custom parameters are present:
 1. Refresh the page and verify a new session ID is generated
 2. Interact with the video and verify all events have the same session ID
 3. Check that the session ID persists throughout the user's session
+
+### 5. Quick Test Event
+
+If you don't see `session_id_custom` in events, send a quick test:
+
+```javascript
+gtag('event', 'sid_test', { 
+  session_id_custom: window.GA_SESSION_ID, 
+  debug_mode: true 
+});
+```
 
 ## Important Notes
 
@@ -332,6 +371,7 @@ In each event, verify that the custom parameters are present:
 2. Verify `gtag` is available when the session tracking initializes
 3. Check browser console for any JavaScript errors
 4. Ensure the measurement ID matches your GA4 property
+5. Check browser console for "Session ID captured:" log message
 
 ### Duplicate Tracking
 - The implementation includes milestone tracking prevention to avoid duplicate milestone events

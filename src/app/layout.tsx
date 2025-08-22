@@ -48,7 +48,9 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-16WV2WNMXF');
+              gtag('config', 'G-16WV2WNMXF', {
+                send_page_view: false
+              });
             `,
           }}
         />
@@ -59,27 +61,33 @@ export default function RootLayout({
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              // Wait for gtag to be available
+              // Wait for gtag to be available and capture session ID
               function initializeSessionTracking() {
                 if (typeof gtag !== 'undefined') {
                   // Get the session ID and store it
                   gtag('get', 'G-16WV2WNMXF', 'session_id', function(sid) {
-                    window.dataLayer.push({
-                      event: 'session_id_ready',
-                      session_id_custom: sid
-                    });
-                    
-                    // Store session ID globally for use in tracking functions
-                    window.GA_SESSION_ID = sid;
+                    if (sid) {
+                      window.GA_SESSION_ID = String(sid);
+                      console.log('Session ID captured:', window.GA_SESSION_ID);
+                      
+                      // Send initial page view with session ID
+                      gtag('event', 'page_view', {
+                        page_title: document.title,
+                        page_location: window.location.href,
+                        session_id_custom: window.GA_SESSION_ID,
+                        debug_mode: true
+                      });
+                    }
                   });
-                } else {
-                  // Retry after a short delay if gtag is not yet available
-                  setTimeout(initializeSessionTracking, 100);
+                  return true;
                 }
+                return false;
               }
               
-              // Initialize session tracking
-              initializeSessionTracking();
+              // Retry until gtag is ready
+              const id = setInterval(() => { 
+                if (initializeSessionTracking()) clearInterval(id); 
+              }, 200);
             `,
           }}
         />
