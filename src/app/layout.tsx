@@ -48,9 +48,28 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-16WV2WNMXF', {
+              
+              // Extract UTM parameters for GA4 configuration
+              const urlParams = new URLSearchParams(window.location.search);
+              const utmSource = urlParams.get('utm_source');
+              const utmMedium = urlParams.get('utm_medium');
+              const utmCampaign = urlParams.get('utm_campaign');
+              const utmTerm = urlParams.get('utm_term');
+              const utmContent = urlParams.get('utm_content');
+              
+              // Configure GA4 with UTM parameters if they exist
+              const gaConfig = {
                 send_page_view: false
-              });
+              };
+              
+              if (utmSource) gaConfig.utm_source = utmSource;
+              if (utmMedium) gaConfig.utm_medium = utmMedium;
+              if (utmCampaign) gaConfig.utm_campaign = utmCampaign;
+              if (utmTerm) gaConfig.utm_term = utmTerm;
+              if (utmContent) gaConfig.utm_content = utmContent;
+              
+              console.log('GA4 config with UTM parameters:', gaConfig);
+              gtag('config', 'G-16WV2WNMXF', gaConfig);
             `,
           }}
         />
@@ -70,13 +89,46 @@ export default function RootLayout({
                       window.GA_SESSION_ID = String(sid);
                       console.log('Session ID captured:', window.GA_SESSION_ID);
                       
-                      // Send initial page view with session ID
-                      gtag('event', 'page_view', {
+                      // Extract UTM parameters from URL
+                      const urlParams = new URLSearchParams(window.location.search);
+                      const utmSource = urlParams.get('utm_source');
+                      const utmMedium = urlParams.get('utm_medium');
+                      const utmCampaign = urlParams.get('utm_campaign');
+                      const utmTerm = urlParams.get('utm_term');
+                      const utmContent = urlParams.get('utm_content');
+                      
+                      // Store UTM parameters in session storage
+                      if (utmSource || utmMedium || utmCampaign || utmTerm || utmContent) {
+                        const utmData = {
+                          utm_source: utmSource,
+                          utm_medium: utmMedium,
+                          utm_campaign: utmCampaign,
+                          utm_term: utmTerm,
+                          utm_content: utmContent,
+                          timestamp: new Date().toISOString(),
+                          page_url: window.location.href,
+                        };
+                        sessionStorage.setItem('utm_parameters', JSON.stringify(utmData));
+                        console.log('UTM parameters stored in session storage:', utmData);
+                      }
+                      
+                      // Send initial page view with session ID and UTM parameters
+                      const pageViewParams = {
                         page_title: document.title,
                         page_location: window.location.href,
                         session_id_custom: window.GA_SESSION_ID,
                         debug_mode: true
-                      });
+                      };
+                      
+                      // Add UTM parameters if they exist
+                      if (utmSource) pageViewParams.utm_source = utmSource;
+                      if (utmMedium) pageViewParams.utm_medium = utmMedium;
+                      if (utmCampaign) pageViewParams.utm_campaign = utmCampaign;
+                      if (utmTerm) pageViewParams.utm_term = utmTerm;
+                      if (utmContent) pageViewParams.utm_content = utmContent;
+                      
+                      console.log('Sending initial page_view with UTM parameters:', pageViewParams);
+                      gtag('event', 'page_view', pageViewParams);
                     }
                   });
                   return true;
