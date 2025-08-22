@@ -30,7 +30,7 @@ export default function PitchDeckUpload({
 
   const [isUploading, setIsUploading] = useState(false);
 
-  const { trackAnalyzeClick } = useGoogleAnalytics();
+  const { trackPitchDeckUpload } = useGoogleAnalytics();
 
 
 
@@ -76,7 +76,7 @@ export default function PitchDeckUpload({
 
   const handleFileUpload = async (file: File) => {
     // Track analyze button click
-    trackAnalyzeClick(file.name, file.size);
+    trackPitchDeckUpload(file.name, file.size);
     
     // File validation
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB in bytes

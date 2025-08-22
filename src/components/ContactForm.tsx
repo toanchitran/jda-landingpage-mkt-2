@@ -107,7 +107,7 @@ export default function ContactForm({
   const [calendlyCompleted, setCalendlyCompleted] = useState(false);
 
 
-  const { trackFormFieldInteraction } = useGoogleAnalytics();
+  const { trackFormFieldInteraction, trackCalendlyComplete } = useGoogleAnalytics();
 
   // Load sections data
   useEffect(() => {
@@ -384,6 +384,13 @@ export default function ContactForm({
         
         // Mark Calendly as completed
         setCalendlyCompleted(true);
+        
+        // Track Calendly completion
+        trackCalendlyComplete({
+          eventType: 'discovery_call',
+          eventDate: scheduledAt ? new Date(scheduledAt).toLocaleDateString() : undefined,
+          eventTime: scheduledAt ? new Date(scheduledAt).toLocaleTimeString() : undefined,
+        });
         if (contactRecordId) {
           try {
             let finalStart = scheduledAt;

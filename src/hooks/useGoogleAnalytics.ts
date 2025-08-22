@@ -85,6 +85,18 @@ export const useGoogleAnalytics = () => {
     });
   }, [trackEvent]);
 
+  const trackCalendlyComplete = useCallback((bookingDetails?: { eventType?: string; eventDate?: string; eventTime?: string }) => {
+    trackEvent('calendly_complete', {
+      event_category: 'booking',
+      event_label: 'calendly_booking_completed',
+      event_type: bookingDetails?.eventType || 'booking_discovery_call',
+      event_date: bookingDetails?.eventDate || undefined,
+      event_time: bookingDetails?.eventTime || undefined,
+      value: 1,
+      custom_parameter: 'calendly_booking_completed',
+    });
+  }, [trackEvent]);
+
   const trackFormFieldInteraction = useCallback((fieldName: string, action: 'focus' | 'blur' | 'change') => {
     trackEvent('form_field_interaction', {
       event_category: 'form_interaction',
@@ -129,8 +141,8 @@ export const useGoogleAnalytics = () => {
     }
   }, [getSessionId]);
 
-  const trackAnalyzeClick = useCallback((fileName: string, fileSize: number) => {
-    trackEvent('analyze_click', {
+  const trackPitchDeckUpload = useCallback((fileName: string, fileSize: number) => {
+    trackEvent('pitch_deck_upload', {
       event_category: 'file_upload',
       event_label: 'pitch_deck_upload',
       file_name: fileName,
@@ -354,9 +366,10 @@ export const useGoogleAnalytics = () => {
     trackContactFormStart,
     trackContactFormComplete,
     trackCalendlyStart,
+    trackCalendlyComplete,
     trackFormFieldInteraction,
     trackPageView,
-    trackAnalyzeClick,
+    trackPitchDeckUpload,
     trackUTMParameters,
     trackVideoPlay,
     trackVideoStop,
