@@ -126,10 +126,55 @@ function BookACallContent() {
         video::-webkit-media-controls-time-remaining-display {
           display: none !important;
         }
+        video::-webkit-media-controls-play-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-volume-slider {
+          display: none !important;
+        }
+        video::-webkit-media-controls-mute-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-seek-back-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-seek-forward-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-fullscreen-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-rewind-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-return-to-realtime-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-toggle-closed-captions-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-picture-in-picture-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-overlay-play-button {
+          display: none !important;
+        }
+        video::-webkit-media-controls-overlay-enclosure {
+          display: none !important;
+        }
+        video::-webkit-media-controls-overlay-cast-button {
+          display: none !important;
+        }
         video::-moz-progress-bar {
           display: none !important;
         }
         video::-webkit-progress-bar {
+          display: none !important;
+        }
+        video::-webkit-media-controls-panel {
+          display: none !important;
+        }
+        video::-webkit-media-controls {
           display: none !important;
         }
       `}</style>
@@ -200,11 +245,24 @@ function BookACallContent() {
                   onPause={handleVideoPause}
                   onEnded={handleVideoEnded}
                   controls
-                  controlsList="nodownload nofullscreen noremoteplayback"
+                  controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
                   style={{
-                    '--webkit-media-controls-timeline': 'none',
-                    '--webkit-media-controls-current-time-display': 'none',
-                    '--webkit-media-controls-time-remaining-display': 'none'
+                    '--webkit-media-controls-timeline': 'none !important',
+                    '--webkit-media-controls-current-time-display': 'none !important',
+                    '--webkit-media-controls-time-remaining-display': 'none !important',
+                    '--webkit-media-controls-play-button': 'none !important',
+                    '--webkit-media-controls-volume-slider': 'none !important',
+                    '--webkit-media-controls-mute-button': 'none !important',
+                    '--webkit-media-controls-seek-back-button': 'none !important',
+                    '--webkit-media-controls-seek-forward-button': 'none !important',
+                    '--webkit-media-controls-fullscreen-button': 'none !important',
+                    '--webkit-media-controls-rewind-button': 'none !important',
+                    '--webkit-media-controls-return-to-realtime-button': 'none !important',
+                    '--webkit-media-controls-toggle-closed-captions-button': 'none !important',
+                    '--webkit-media-controls-picture-in-picture-button': 'none !important',
+                    '--webkit-media-controls-overlay-play-button': 'none !important',
+                    '--webkit-media-controls-overlay-enclosure': 'none !important',
+                    '--webkit-media-controls-overlay-cast-button': 'none !important'
                   } as React.CSSProperties}
                 >
                   <source src="/optimized_brandbeam.mp4" type="video/mp4" />
