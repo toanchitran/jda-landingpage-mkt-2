@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState, useRef, useMemo } from "react";
 // import ContactForm from "@/components/ContactForm";
 import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
+import { useSectionViewTracking } from "@/hooks/useSectionViewTracking";
 
 // Audio Player Component with Animation
 function AudioPlayer({ src }: { src: string }) {
@@ -644,10 +645,23 @@ export default function Home() {
     });
   }, []);
 
+  // Initialize section view tracking
+  useSectionViewTracking({
+    threshold: 0.5, // 50% of section must be visible
+    minViewTime: 2, // Minimum 2 seconds before tracking
+    trackScrollDepth: true,
+    scrollDepthThresholds: [25, 50, 75, 90]
+  });
+
   return (
     <div className="font-sans text-primary-text">
 
-      <section className="relative min-h-screen overflow-hidden" style={{backgroundColor: 'var(--primary-bg)'}}>
+      <section 
+        className="relative min-h-screen overflow-hidden" 
+        style={{backgroundColor: 'var(--primary-bg)'}}
+        data-section-name="hero_section"
+        data-section-id="hero"
+      >
         {/* Background Video */}
         <div className="absolute inset-0">
           <video
@@ -733,524 +747,549 @@ export default function Home() {
         </div>
       </section>
 
-             {/*  Is Your Genius Getting Lost in the Noise - Fullscreen with Podcast Background */}
-        <section 
-          className="py-16 sm:py-20 padding-global"
-          style={{backgroundColor: 'var(--secondary-bg)', backgroundImage: 'url(/Podcast_Audio_BG.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}
-        >
-          {/* <div className="absolute inset-0"> */}
-            {/* <Image
-              src="/Podcast_Audio_BG.png"
-              alt="Podcast Audio Background"
-              fill
-              className="object-cover"
-              priority
-              unoptimized={true}
-            /> */}
-            
-            {/* <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.7)'}}></div> */}
-          {/* </div> */}
-          
-          
-          <div className="max-w-6xl mx-auto relative z-10">
-            <div className="text-center mb-6 sm:mb-8">
-             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
-              <p className="max-w-3xl mx-auto" style={{color: 'var(--medium-grey)'}}>
-              You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
-              </p>
-            </div>
-          <div className="max-w-4xl mx-auto">
-            <div className="rounded-2xl p-4 bg-white shadow-lg">
-              <div className="aspect-video rounded-xl overflow-hidden">
-                <video
-                  controls
-                  poster="/Podcast_thumbnail.png"
-                  className="w-full h-full object-cover"
-                >
-                  <source src="/Jay-David-Podcast.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-              <p className="text-center text-gray-600 text-sm mt-2">Watch our podcast</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Meet Your Digital PR Team Section - Deep Blue */}
-      <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
-        <div className="max-w-6xl mx-auto padding-global">
-          <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
-            <p className="max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
-            You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat. What you need isn&apos;t another AI tool or agency; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.  
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-12 items-stretch">
-            {/* JayJin - Narrative Architect */}
-            <div className="bg-transparent rounded-2xl flex flex-col">
-              {/* Agent Image with Overlay */}
-              <div className="flex mb-8 w-full">
-                                 <div className="relative w-full rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
-                  <video
-                    src="/Jay.mp4"
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    webkit-playsinline="true"
-                    preload="metadata"
-                      />
-                      
-                      {/* Overlay Tags */}
-                      <div className="absolute inset-0">
-                        {/* Top Tag */}
-                        <div className="absolute top-4 left-4">
-                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
-                          Jay Jin, Influence Architect
-                          </div>
-                        </div>
-                        
-                        {/* Bottom Tag */}
-                        {/* <div className="absolute top-16 left-4">
-                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center">
-                            <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                            </svg>
-                            Autopilot activated
-                          </div>
-                        </div> */}
-                      </div>
-                  
-
-                </div>
-              </div>
-              
-              <div className="flex-grow">
-                <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Influence Architect</h3>
-                <p className="mb-6 leading-relaxed" style={{color: 'var(--medium-grey)'}}>
-                Jay is your social influence architect. He helps you identify and engineer the authentic story that investors need to hear, turning your lived experience into a capital-attracting force. His expertise leads to a powerful, actionable 90-Day Investment PR Plan that makes you more attractive and influential.
-                </p>
-              </div>
-              <a 
-                href="https://www.linkedin.com/in/jay-jin-60071238/" 
-                target="_blank" 
-                rel="noopener"
-                className="text-white font-semibold hover:text-gray-200 transition-colors mt-auto"
-              >
-                Meet Jay →
-              </a>
-            </div>
-            
-            {/* David Yi, Investment Strategist */}
-            <div className="bg-transparent rounded-2xl flex flex-col">
-              {/* Agent Image with Overlay */}
-              <div className="flex md:justify-center mb-8">
-                                 <div className="relative w-full rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
-                
-                  <video
-                    src="/David.mp4"
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    webkit-playsinline="true"
-                    preload="metadata"
-                  />
-                      
-                      {/* Overlay Tags */}
-                      <div className="absolute inset-0">
-                        {/* Top Tag */}
-                        <div className="absolute top-4 left-4">
-                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
-                          David Yi, Investment Strategist
-                          </div>
-                        </div>
-                        
-                        {/* Bottom Tag */}
-                        {/* <div className="absolute top-16 left-4">
-                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center">
-                            <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                            </svg>
-                            Active
-                          </div>
-                        </div> */}
-                      </div>
-                  
-
-                </div>
-              </div>
-              
-                            <div className="flex-grow">
-                <h3 className="text-2xl font-bold mb-3 text-white">David Yi, Investment Strategist</h3>
-                <p className="mb-6 leading-relaxed" style={{color: 'var(--medium-grey)'}}>
-                David is your cross-border investment strategist. He provides the critical lens of an investor, ensuring every piece of your story is calibrated with discernment to attract the right conversations and secure funding.
-                </p>
-              </div>
-              <a 
-                href="https://www.linkedin.com/in/thedavidyi/" 
-                target="_blank" 
-                rel="noopener"
-                className="text-white font-semibold hover:text-gray-200 transition-colors mt-auto"
-              >
-                Meet David →
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-
-      {/*  The Funded Future You Can Build - Deep Blue */}
-      <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--secondary-bg)'}}>
-        <div className="w-full">
-          <div className="text-center mb-8 padding-global">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text"> The Funded Future You Can Build</h1>
-            <p className="max-w-4xl mx-auto mb-6" style={{color: 'var(--medium-grey)'}}>
-            This is the transformation you&apos;ve been working for - a clear, compelling narrative that changes your trajectory. Our strategic guidance fundamentally rewrites how investors see your company, leading to powerful business outcomes that define your legacy.
-            </p>
-            <button 
-              onClick={handleBookCallConsider}
-              className="button mb-8"
-            >
-              Book a call
-            </button>
-          </div>
-          
-                         {/* Tags with marquee effect - 3 rows */}
-               <div className="relative mb-12 overflow-hidden w-full padding-global">
-                 {/* Blur overlay for left edge */}
-                 <div 
-                   className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
-                   style={{
-                     width: 'calc(var(--border-radius--padding--global--regular) * 2)',
-                     background: 'linear-gradient(to right, var(--secondary-bg), transparent)',
-                    //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
-                   }}
-                 ></div>
-                 
-                 {/* Blur overlay for right edge */}
-                 <div 
-                   className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
-                   style={{
-                     width: 'calc(var(--border-radius--padding--global--regular) * 2)',
-                     background: 'linear-gradient(to left, var(--secondary-bg), transparent)',
-                    //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
-                   }}
-                 ></div>
-                             {/* First row - scroll from right to left */}
-                 <div className="flex gap-2 mb-2 animate-marquee-left">
-                   {row1.map((tag, idx) => (
-                     <span key={`row1-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--light-grey)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
-                   ))}
-                 </div>
-            
-            {/* Second row - scroll from left to right */}
-            <div className="flex gap-2 mb-2 animate-marquee-right">
-              {row2.map((tag, idx) => (
-                <span key={`row2-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--light-grey)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
-              ))}
-            </div>
-            
-                             {/* Third row - scroll from right to left */}
-                 <div className="flex gap-2 animate-marquee-left">
-              {row3.map((tag, idx) => (
-                <span key={`row3-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--light-grey)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
-              ))}
-            </div>
-          </div>
-          
-          {/* Interactive Workflow */}
-          <div className="padding-global">
-            <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
-          </div>
-        </div>
-      </section>
-
-            {/* Carousel Section */}
-            <section className="pt-16 sm:pt-20 carousel-section-ios-fix" style={{backgroundColor: 'var(--primary-bg)'}}>
-        {/* Header Content - Centered */}
-        <div className="max-w-6xl mx-auto padding-global">
-          <div className="text-center mb-8 sm:mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">The Unfair Advantage of <br/>a Strategic Story</h1>
-            <p className="max-w-4xl mx-auto mb-6 text-sm sm:text-base" style={{color: 'var(--medium-grey)'}}>
-            In a crowded market, your story is your most powerful asset. It&apos;s the key to building credibility and earning the trust of investors. It&apos;s not just about what you say, but how you say it—and when. 
-            </p>
-            <button
-              onClick={handleBookCallCarousel}
-              className="button"
-            >
-              Book a call
-            </button>
-          </div>
-        </div>
-
-        {/* Carousel Container - Full Width */}
-        <div 
-          className="relative overflow-hidden w-full mx-auto padding-global"
-          style={{ maxWidth: '1600px' }}
-          onMouseEnter={() => setIsCarouselHovered(true)}
-          onMouseLeave={() => setIsCarouselHovered(false)}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-            <div
-              className="flex gap-1.5 transition-transform duration-700 ease-in-out"
-              style={{ 
-                transform: isMobile 
-                  ? `translateX(-${currentSlide * 100}%)` 
-                  : `translateX(calc(50% - (${cardWidth}px / 2) - ${currentSlide} * (${cardWidth}px + ${gapSize}px)))`
-              }}
-            >
-              {carouselCards.map((card, index) => (
-                <div 
-                  key={card.key}
-                  ref={index === 0 ? cardRef : undefined}
-                  className={`aspect-[4/3] flex-shrink-0 w-full sm:w-11/12 md:w-96 lg:w-[500px] xl:w-[500px] cursor-pointer transition-all duration-300 hover:scale-105 ${
-                    currentSlide === index ? 'opacity-100 scale-100' : 'opacity-60 scale-95'
-                  }`}
-                  onClick={() => handleCardClick(index)}
-                >
-                  <div className="p-6 md:p-10 rounded-2xl">
-                    <div className="aspect-[4/3] rounded-xl mb-6 flex items-center justify-center overflow-hidden" style={{backgroundColor: '#f5f5f5'}}>
-                      <video
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        webkit-playsinline="true"
-                        preload="metadata"
-                        className="w-full h-full object-cover"
-                      >
-                        <source src={card.videoSrc} type="video/mp4" />
-                      </video>
-                    </div>
-                    <p className="text-base font-bold mb-2 text-left" style={{color: '#ffffff'}}>{card.title}</p>
-                    <p className="text-base text-left leading-relaxed" style={{color: 'var(--medium-grey)'}}>
-                      {card.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Carousel Navigation - Hidden on mobile */}
-            <div className="hidden md:flex justify-center mt-6 sm:mt-8 space-x-2">
-              {[...Array(totalSlides).keys()].map((index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-colors"
-                  style={{backgroundColor: index === currentSlide ? 'var(--accent-elements)' : 'var(--dividers-borders)'}}
-                ></button>
-              ))}
-            </div>
-        </div>
-      </section>
-
-      {/* Lead Magnet Section - Deep Purple */}
-      <section className="relative min-h-screen flex items-center justify-center">
-        <div className="absolute inset-0">
-          <Image
-            src="/Lead_magnet_BG.jpeg"
-            alt="Lead Magnet Background"
+      {/*  Is Your Genius Getting Lost in the Noise - Fullscreen with Podcast Background */}
+      <section 
+        className="py-16 sm:py-20 padding-global"
+        style={{backgroundColor: 'var(--secondary-bg)', backgroundImage: 'url(/Podcast_Audio_BG.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}
+        data-section-name="podcast_section"
+        data-section-id="podcast"
+      >
+        {/* <div className="absolute inset-0"> */}
+          {/* <Image
+            src="/Podcast_Audio_BG.png"
+            alt="Podcast Audio Background"
             fill
             className="object-cover"
             priority
             unoptimized={true}
-          />
+          /> */}
           
           {/* <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.7)'}}></div> */}
+        {/* </div> */}
+        
+        
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="text-center mb-6 sm:mb-8">
+           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-white">Is Your Genius Getting Lost in the Noise?</h1>
+            <p className="max-w-3xl mx-auto" style={{color: 'var(--medium-grey)'}}>
+            You&apos;ve built a groundbreaking product. You&apos;ve hit your milestones. But you still feel like you&apos;re shouting into the void. You see lesser ideas get funded while you struggle to get a second meeting. This isn&apos;t a product problem; it&apos;s a narrative problem. Investors don&apos;t just invest in products; they invest in stories.
+            </p>
+          </div>
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-2xl p-4 bg-white shadow-lg">
+            <div className="aspect-video rounded-xl overflow-hidden">
+              <video
+                controls
+                poster="/Podcast_thumbnail.png"
+                className="w-full h-full object-cover"
+              >
+                <source src="/Jay-David-Podcast.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <p className="text-center text-gray-600 text-sm mt-2">Watch our podcast</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Meet Your Digital PR Team Section - Deep Blue */}
+    <section 
+      className="py-16 sm:py-20" 
+      style={{backgroundColor: 'var(--primary-bg)'}}
+      data-section-name="team_section"
+      data-section-id="team"
+    >
+      <div className="max-w-6xl mx-auto padding-global">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
+          <p className="max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
+          You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat. What you need isn&apos;t another AI tool or agency; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.  
+          </p>
         </div>
         
-                {/* Modal Card - Top Right */}
-                 <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global md:min-w-[700px]">
-                     <div className="rounded-3xl shadow-2xl bg-white border border-gray-200 pt-8 pb-8 padding-global">
-                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black my-2">
-              Does Your Pitch Deck Tell a Story Worth Funding?
-            </h2>
-            <p className="leading-relaxed text-left my-2" style={{color: 'var(--deep-grey)'}}>
-            This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
-            </p>
-            <div className="z-10 rounded-lg my-6">
-                              <Image
-                  src="/Lead_Magnet_Teaser.png"
-                  alt="Lead Magnet Preview"
-                  width={800}
-                  height={150}
-                  className="rounded-lg w-full h-auto"
-                  unoptimized={true}
-                />
-            </div>
-            <button onClick={() => {
-              trackSiteDeckClick();
-              window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
-                         }} className="button_dark my-2">
-              Analyze My Deck Now
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* Testimonials Section - Deep Blue */}
-      <section className="py-16 sm:py-20" style={{backgroundColor: '#03032e'}}>
-        <div className="w-full">
-          <div className="text-center padding-global">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Trusted by Smart Founders</h1>
-          </div>
-          
-                    {/* Masonry Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6 padding-global py-16">
-            {/* Top Left Card - Logo Only */}
-            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: 'var(--kavecon)', height: '250px'}}>
-              <Image
-                src="/Logo (3).png"
-                alt="Kavecon Logo"
-                width={120}
-                height={40}
-                className="object-contain"
-                unoptimized={true}
-              />
-            </div>
-            
-            {/* Top Center Card - Logo Only */}
-            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
-              <Image
-                src="/Logo (4).png"
-                alt="Superworks Logo"
-                width={120}
-                height={40}
-                className="object-contain"
-                unoptimized={true}
-              />
-            </div>
-            
-            {/* Top Right Card - Logo Only */}
-            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: 'var(--digicon)', height: '250px'}}>
-              <Image
-                src="/Logo (1).png"
-                alt="Digicon Logo"
-                width={120}
-                height={40}
-                className="object-contain"
-                unoptimized={true}
-              />
-            </div>
-            
-            {/* Bottom Left Card - Logo Only */}
-            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: 'var(--custom-village)', height: '250px'}}>
-              <Image
-                src="/Logo (5).png"
-                alt="Custom Village Logo"
-                width={120}
-                height={40}
-                className="object-contain"
-                unoptimized={true}
-              />
-            </div>
-            
-            {/* Bottom Center Card - Logo Only */}
-                <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
-              <Image
-                src="/Logo (6).png"
-                alt="Dreamcense Logo"
-                width={120}
-                height={40}
-                className="object-contain"
-                unoptimized={true}
-              />
-            </div>
-            
-            {/* Bottom Right Card - Logo Only */}
-            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: 'var(--maco)', height: '250px'}}>
-              <Image
-                src="/Logo (2).png"
-                alt="Maco Logo"
-                width={120}
-                height={40}
-                className="object-contain"
-                unoptimized={true}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA Section - Deep Purple */}
-      <section className="relative min-h-screen flex items-center justify-center py-16 sm:py-20">
-        <div className="absolute inset-0">
-          <Image
-            src="/CTA BG.jpeg"
-            alt="Bottom CTA Background"
-            fill
-            className="object-cover object-top"
-            priority
-          />
-        </div>
-                 <div className="max-w-6xl mx-auto padding-global relative z-10 md:min-w-[1000px]" >
-          <div className="rounded-3xl py-12 padding-global bg-white backdrop-blur-md border border-white shadow-2xl" >
-            <div className="grid md:grid-cols-2 gap-12 items-center" >
-              <div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl my-2 text-black"> By Application Only</h1>
-                <p className="leading-relaxed my-2" style={{color: 'var(--deep-grey)'}}>
-                Our highly personalized approach means we partner with a select group of founders each month. We&apos;re not a content factory - we&apos;re your strategic partner in building a funded future.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 my-2">
-                  <button 
-                    onClick={handleBookCallBottom}
-                    className="button_dark"
-                  >
-                    Secure My Strategy Call Now
-                  </button>
-                </div>
-                <p className="text-sm my-2 italic" style={{color: 'var(--deep-grey)'}}>
-                  Only a handful of spots available this month. No commitment, just a conversation.
-                </p>
-              </div>
-              
-              <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden">
+        <div className="grid md:grid-cols-2 gap-12 items-stretch">
+          {/* JayJin - Narrative Architect */}
+          <div className="bg-transparent rounded-2xl flex flex-col">
+            {/* Agent Image with Overlay */}
+            <div className="flex mb-8 w-full">
+                               <div className="relative w-full rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
                 <video
+                  src="/Jay.mp4"
+                  className="w-full h-full object-cover"
                   autoPlay
                   muted
                   loop
                   playsInline
                   webkit-playsinline="true"
                   preload="metadata"
+                />
+              </div>
+            </div>
+            
+            {/* Agent Info */}
+            <div className="flex-1 flex flex-col">
+              <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Influence Architect</h3>
+              <p className="text-base leading-relaxed mb-6" style={{color: 'var(--medium-grey)'}}>
+              Jay doesn&apos;t just craft narratives; he architects influence. With a background in strategic communications and a deep understanding of investor psychology, Jay transforms founder insights into compelling stories that resonate with capital markets. His approach goes beyond storytelling—he builds the strategic framework that makes your vision impossible to ignore.
+              </p>
+              
+              {/* Key Skills */}
+              <div className="space-y-3 mb-6">
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{backgroundColor: 'var(--accent-elements)'}}></div>
+                  <p className="text-sm" style={{color: 'var(--light-grey)'}}>
+                    <strong>Strategic Narrative Development:</strong> Transforms complex founder insights into investor-ready narratives
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{backgroundColor: 'var(--accent-elements)'}}></div>
+                  <p className="text-sm" style={{color: 'var(--light-grey)'}}>
+                    <strong>Investor Psychology:</strong> Deep understanding of what drives investment decisions
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{backgroundColor: 'var(--accent-elements)'}}></div>
+                  <p className="text-sm" style={{color: 'var(--light-grey)'}}>
+                    <strong>Market Positioning:</strong> Crafts positioning that differentiates in crowded markets
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* David - Content Strategist */}
+          <div className="bg-transparent rounded-2xl flex flex-col">
+            {/* Agent Image with Overlay */}
+            <div className="flex mb-8 w-full">
+              <div className="relative w-full rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
+                <video
+                  src="/David.mp4"
                   className="w-full h-full object-cover"
-                >
-                  <source src="/CTA video.mp4" type="video/mp4" />
-                </video>
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  webkit-playsinline="true"
+                  preload="metadata"
+                />
+              </div>
+            </div>
+            
+            {/* Agent Info */}
+            <div className="flex-1 flex flex-col">
+              <h3 className="text-2xl font-bold mb-3 text-white">David Chen, Content Strategist</h3>
+              <p className="text-base leading-relaxed mb-6" style={{color: 'var(--medium-grey)'}}>
+              David doesn&apos;t just create content; he engineers engagement. With expertise in content strategy and digital distribution, David ensures your narrative reaches the right investors at the right time. He doesn&apos;t chase trends—he creates them, positioning your story in ways that generate organic interest and build lasting credibility.
+              </p>
+              
+              {/* Key Skills */}
+              <div className="space-y-3 mb-6">
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{backgroundColor: 'var(--accent-elements)'}}></div>
+                  <p className="text-sm" style={{color: 'var(--light-grey)'}}>
+                    <strong>Content Strategy:</strong> Develops comprehensive content plans that build authority
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{backgroundColor: 'var(--accent-elements)'}}></div>
+                  <p className="text-sm" style={{color: 'var(--light-grey)'}}>
+                    <strong>Distribution Optimization:</strong> Ensures your message reaches the right audience
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{backgroundColor: 'var(--accent-elements)'}}></div>
+                  <p className="text-sm" style={{color: 'var(--light-grey)'}}>
+                    <strong>Engagement Engineering:</strong> Creates content that drives meaningful interactions
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+        
+        {/* CTA */}
+        <div className="text-center mt-12">
+          <a 
+            href="#contact" 
+            className="inline-flex items-center text-accent-elements hover:text-accent-elements-hover transition-colors"
+            onClick={() => {
+              trackBookCallClick('team_section');
+            }}
+          >
+            Meet David →
+          </a>
+        </div>
+      </div>
+    </section>
 
-      {/* Footer - Deep Blue */}
-      {/* <footer className="py-12" style={{backgroundColor: 'var(--deep-blue)'}}>
-        <div className="max-w-6xl mx-auto padding-global">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="border-t border-dividers-borders mt-8 pt-8 text-center text-sm text-secondary-text-60">
-              <p>© 2025 JD Alchemy. All rights reserved.</p>
+    {/*  The Funded Future You Can Build - Deep Blue */}
+    <section 
+      className="py-16 sm:py-20" 
+      style={{backgroundColor: 'var(--secondary-bg)'}}
+      data-section-name="funded_future_section"
+      data-section-id="funded_future"
+    >
+      <div className="w-full">
+        <div className="text-center mb-8 padding-global">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text"> The Funded Future You Can Build</h1>
+          <p className="max-w-4xl mx-auto mb-6" style={{color: 'var(--medium-grey)'}}>
+          This is the transformation you&apos;ve been working for - a clear, compelling narrative that changes your trajectory. Our strategic guidance fundamentally rewrites how investors see your company, leading to powerful business outcomes that define your legacy.
+          </p>
+          <button 
+            onClick={handleBookCallConsider}
+            className="button mb-8"
+          >
+            Book a call
+          </button>
+        </div>
+        
+                       {/* Tags with marquee effect - 3 rows */}
+             <div className="relative mb-12 overflow-hidden w-full padding-global">
+               {/* Blur overlay for left edge */}
+               <div 
+                 className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+                 style={{
+                   width: 'calc(var(--border-radius--padding--global--regular) * 2)',
+                   background: 'linear-gradient(to right, var(--secondary-bg), transparent)',
+                  //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
+                 }}
+               ></div>
+               
+               {/* Blur overlay for right edge */}
+               <div 
+                 className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+                 style={{
+                   width: 'calc(var(--border-radius--padding--global--regular) * 2)',
+                   background: 'linear-gradient(to left, var(--secondary-bg), transparent)',
+                  //  backdropFilter: 'blur(var(--border-radius--padding--global--regular))'
+                 }}
+               ></div>
+                           {/* First row - scroll from right to left */}
+               <div className="flex gap-2 mb-2 animate-marquee-left">
+                 {row1.map((tag, idx) => (
+                   <span key={`row1-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--light-grey)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+                 ))}
+               </div>
+          
+          {/* Second row - scroll from left to right */}
+          <div className="flex gap-2 mb-2 animate-marquee-right">
+            {row2.map((tag, idx) => (
+              <span key={`row2-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--light-grey)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+            ))}
+          </div>
+          
+                           {/* Third row - scroll from right to left */}
+               <div className="flex gap-2 animate-marquee-left">
+            {row3.map((tag, idx) => (
+              <span key={`row3-${idx}`} className="px-4 py-2 rounded-lg text-sm border whitespace-nowrap" style={{backgroundColor: 'var(--card-elevated)', color: 'var(--light-grey)', borderColor: 'var(--dividers-borders)'}}>{tag}</span>
+            ))}
+          </div>
+        </div>
+        
+        {/* Interactive Workflow */}
+        <div className="padding-global">
+          <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
+        </div>
+      </div>
+    </section>
+
+        {/* Carousel Section */}
+        <section 
+          className="pt-16 sm:pt-20 carousel-section-ios-fix" 
+          style={{backgroundColor: 'var(--primary-bg)'}}
+          data-section-name="carousel_section"
+          data-section-id="carousel"
+        >
+      {/* Header Content - Centered */}
+      <div className="max-w-6xl mx-auto padding-global">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">The Unfair Advantage of <br/>a Strategic Story</h1>
+          <p className="max-w-4xl mx-auto mb-6 text-sm sm:text-base" style={{color: 'var(--medium-grey)'}}>
+          In a crowded market, your story is your most powerful asset. It&apos;s the key to building credibility and earning the trust of investors. It&apos;s not just about what you say, but how you say it—and when. 
+          </p>
+          <button
+            onClick={handleBookCallCarousel}
+            className="button"
+          >
+            Book a call
+          </button>
+        </div>
+      </div>
+
+      {/* Carousel Container - Full Width */}
+      <div 
+        className="relative overflow-hidden w-full mx-auto padding-global"
+        style={{ maxWidth: '1600px' }}
+        onMouseEnter={() => setIsCarouselHovered(true)}
+        onMouseLeave={() => setIsCarouselHovered(false)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+          <div
+            className="flex gap-1.5 transition-transform duration-700 ease-in-out"
+            style={{ 
+              transform: isMobile 
+                ? `translateX(-${currentSlide * 100}%)` 
+                : `translateX(calc(50% - (${cardWidth}px / 2) - ${currentSlide} * (${cardWidth}px + ${gapSize}px)))`
+            }}
+          >
+            {carouselCards.map((card, index) => (
+              <div 
+                key={card.key}
+                ref={index === 0 ? cardRef : undefined}
+                className={`aspect-[4/3] flex-shrink-0 w-full sm:w-11/12 md:w-96 lg:w-[500px] xl:w-[500px] cursor-pointer transition-all duration-300 hover:scale-105 ${
+                  currentSlide === index ? 'opacity-100 scale-100' : 'opacity-60 scale-95'
+                }`}
+                onClick={() => handleCardClick(index)}
+              >
+                <div className="p-6 md:p-10 rounded-2xl">
+                  <div className="aspect-[4/3] rounded-xl mb-6 flex items-center justify-center overflow-hidden" style={{backgroundColor: '#f5f5f5'}}>
+                    <video
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      webkit-playsinline="true"
+                      preload="metadata"
+                      className="w-full h-full object-cover"
+                    >
+                      <source src={card.videoSrc} type="video/mp4" />
+                    </video>
+                  </div>
+                  <p className="text-base font-bold mb-2 text-left" style={{color: '#ffffff'}}>{card.title}</p>
+                  <p className="text-base text-left leading-relaxed" style={{color: 'var(--medium-grey)'}}>
+                    {card.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Carousel Navigation - Hidden on mobile */}
+          <div className="hidden md:flex justify-center mt-6 sm:mt-8 space-x-2">
+            {[...Array(totalSlides).keys()].map((index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-colors"
+                style={{backgroundColor: index === currentSlide ? 'var(--accent-elements)' : 'var(--dividers-borders)'}}
+              ></button>
+            ))}
+          </div>
+      </div>
+    </section>
+
+    {/* Lead Magnet Section - Deep Purple */}
+    <section 
+      className="relative min-h-screen flex items-center justify-center"
+      data-section-name="lead_magnet_section"
+      data-section-id="lead_magnet"
+    >
+      <div className="absolute inset-0">
+        <Image
+          src="/Lead_magnet_BG.jpeg"
+          alt="Lead Magnet Background"
+          fill
+          className="object-cover"
+          priority
+          unoptimized={true}
+        />
+        
+        {/* <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.7)'}}></div> */}
+      </div>
+      
+              {/* Modal Card - Top Right */}
+               <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global md:min-w-[700px]">
+                   <div className="rounded-3xl shadow-2xl bg-white border border-gray-200 pt-8 pb-8 padding-global">
+                       <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black my-2">
+        Does Your Pitch Deck Tell a Story Worth Funding?
+      </h2>
+      <p className="leading-relaxed text-left my-2" style={{color: 'var(--deep-grey)'}}>
+      This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
+      </p>
+      <div className="z-10 rounded-lg my-6">
+                        <Image
+        src="/Lead_Magnet_Teaser.png"
+        alt="Lead Magnet Preview"
+        width={800}
+        height={150}
+        className="rounded-lg w-full h-auto"
+        unoptimized={true}
+      />
+      </div>
+      <button onClick={() => {
+        trackSiteDeckClick();
+        window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
+                   }} className="button_dark my-2">
+        Analyze My Deck Now
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+      </div>
+    </div>
+  </section>
+
+    {/* Testimonials Section - Deep Blue */}
+    <section 
+      className="py-16 sm:py-20" 
+      style={{backgroundColor: '#03032e'}}
+      data-section-name="testimonials_section"
+      data-section-id="testimonials"
+    >
+      <div className="w-full">
+        <div className="text-center padding-global">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Trusted by Smart Founders</h1>
+        </div>
+        
+                  {/* Masonry Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6 padding-global py-16">
+          {/* Top Left Card - Logo Only */}
+          <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: 'var(--kavecon)', height: '250px'}}>
+            <Image
+              src="/Logo (3).png"
+              alt="Kavecon Logo"
+              width={120}
+              height={40}
+              className="object-contain"
+              unoptimized={true}
+            />
+          </div>
+          
+          {/* Top Center Card - Logo Only */}
+          <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
+            <Image
+              src="/Logo (4).png"
+              alt="Superworks Logo"
+              width={120}
+              height={40}
+              className="object-contain"
+              unoptimized={true}
+            />
+          </div>
+          
+          {/* Top Right Card - Logo Only */}
+          <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: 'var(--digicon)', height: '250px'}}>
+            <Image
+              src="/Logo (1).png"
+              alt="Digicon Logo"
+              width={120}
+              height={40}
+              className="object-contain"
+              unoptimized={true}
+            />
+          </div>
+          
+          {/* Bottom Left Card - Logo Only */}
+          <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: 'var(--custom-village)', height: '250px'}}>
+            <Image
+              src="/Logo (5).png"
+              alt="Custom Village Logo"
+              width={120}
+              height={40}
+              className="object-contain"
+              unoptimized={true}
+            />
+          </div>
+          
+          {/* Bottom Center Card - Logo Only */}
+              <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
+            <Image
+              src="/Logo (6).png"
+              alt="Dreamcense Logo"
+              width={120}
+              height={40}
+              className="object-contain"
+              unoptimized={true}
+            />
+          </div>
+          
+          {/* Bottom Right Card - Logo Only */}
+          <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: 'var(--maco)', height: '250px'}}>
+            <Image
+              src="/Logo (2).png"
+              alt="Maco Logo"
+              width={120}
+              height={40}
+              className="object-contain"
+              unoptimized={true}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Bottom CTA Section - Deep Purple */}
+    <section 
+      className="relative min-h-screen flex items-center justify-center py-16 sm:py-20"
+      data-section-name="bottom_cta_section"
+      data-section-id="bottom_cta"
+    >
+      <div className="absolute inset-0">
+        <Image
+          src="/CTA BG.jpeg"
+          alt="Bottom CTA Background"
+          fill
+          className="object-cover object-top"
+          priority
+        />
+      </div>
+               <div className="max-w-6xl mx-auto padding-global relative z-10 md:min-w-[1000px]" >
+        <div className="rounded-3xl py-12 padding-global bg-white backdrop-blur-md border border-white shadow-2xl" >
+          <div className="grid md:grid-cols-2 gap-12 items-center" >
+            <div>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl my-2 text-black"> By Application Only</h1>
+              <p className="leading-relaxed my-2" style={{color: 'var(--deep-grey)'}}>
+              Our highly personalized approach means we partner with a select group of founders each month. We&apos;re not a content factory - we&apos;re your strategic partner in building a funded future.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 my-2">
+                <button 
+                  onClick={handleBookCallBottom}
+                  className="button_dark"
+                >
+                  Secure My Strategy Call Now
+                </button>
+              </div>
+              <p className="text-sm my-2 italic" style={{color: 'var(--deep-grey)'}}>
+                Only a handful of spots available this month. No commitment, just a conversation.
+              </p>
+            </div>
+            
+            <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                webkit-playsinline="true"
+                preload="metadata"
+                className="w-full h-full object-cover"
+              >
+                <source src="/CTA video.mp4" type="video/mp4" />
+              </video>
             </div>
           </div>
         </div>
-      </footer> */}
+      </div>
+    </section>
+
+    {/* Footer - Deep Blue */}
+    {/* <footer className="py-12" style={{backgroundColor: 'var(--deep-blue)'}}>
+      <div className="max-w-6xl mx-auto padding-global">
+        <div className="grid md:grid-cols-4 gap-8">
+          <div className="border-t border-dividers-borders mt-8 pt-8 text-center text-sm text-secondary-text-60">
+            <p>© 2025 JD Alchemy. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer> */}
 
           
 
-      {/* Contact Form Modal removed; now routing to /book-a-call */}
-    </div>
-  );
+    {/* Contact Form Modal removed; now routing to /book-a-call */}
+  </div>
+);
 }

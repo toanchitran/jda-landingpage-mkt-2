@@ -53,6 +53,55 @@ export default function RootLayout({
           }}
         />
         
+        {/* Session ID Tracking Script */}
+        <Script
+          id="session-id-tracking"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Wait for gtag to be available
+              function initializeSessionTracking() {
+                if (typeof gtag !== 'undefined') {
+                  // Get the session ID and store it
+                  gtag('get', 'G-16WV2WNMXF', 'session_id', function(sid) {
+                    window.dataLayer.push({
+                      event: 'session_id_ready',
+                      session_id_custom: sid
+                    });
+                    
+                    // Store session ID globally for use in tracking functions
+                    window.GA_SESSION_ID = sid;
+                  });
+                } else {
+                  // Retry after a short delay if gtag is not yet available
+                  setTimeout(initializeSessionTracking, 100);
+                }
+              }
+              
+              // Initialize session tracking
+              initializeSessionTracking();
+            `,
+          }}
+        />
+        
+        {/* Hotjar Tracking Code */}
+        <Script
+          id="hotjar-tracking"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(h,o,t,j,a,r){
+                  h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                  h._hjSettings={hjid:6500450,hjsv:6};
+                  a=o.getElementsByTagName('head')[0];
+                  r=o.createElement('script');r.async=1;
+                  r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                  a.appendChild(r);
+              })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+            `,
+          }}
+        />
+        
         {/* REB2B Tracking Script */}
         <Script
           id="reb2b-tracking"

@@ -12,7 +12,17 @@ function BookACallContent() {
   const [videoCompleted, setVideoCompleted] = useState(false);
   const [showQualificationSection, setShowQualificationSection] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { trackVideoPlay, trackVideoStop, trackVideoComplete, trackLeadQualificationShow } = useGoogleAnalytics();
+  const { 
+    trackVideoStart, 
+    trackVideoProgress, 
+    trackVideoPause, 
+    trackVideoEnd, 
+    trackVideoMilestone,
+    trackLeadQualificationShow 
+  } = useGoogleAnalytics();
+
+  // Track milestone progress to avoid duplicate tracking
+  const [trackedMilestones, setTrackedMilestones] = useState<Set<number>>(new Set());
 
   // Get URL parameters
   const recordId = searchParams.get('recordId');
@@ -58,19 +68,48 @@ function BookACallContent() {
 
   const handleVideoPlay = () => {
     if (videoRef.current) {
-      trackVideoPlay(videoRef.current.currentTime);
+      // Track video start with custom metric
+      trackVideoStart('book_call_discovery_video');
+    }
+  };
+
+  const handleVideoTimeUpdate = () => {
+    if (videoRef.current) {
+      const currentTime = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      
+      // Track video progress with custom play time metric
+      trackVideoProgress(currentTime, duration, 'book_call_discovery_video');
+      
+      // Track milestones (25%, 50%, 75%, 90%)
+      const progressPercentage = Math.round((currentTime / duration) * 100);
+      const milestones = [25, 50, 75, 90];
+      
+      milestones.forEach(milestone => {
+        if (progressPercentage >= milestone && !trackedMilestones.has(milestone)) {
+          trackVideoMilestone(milestone, currentTime, duration, 'book_call_discovery_video');
+          setTrackedMilestones(prev => new Set([...prev, milestone]));
+        }
+      });
     }
   };
 
   const handleVideoPause = () => {
     if (videoRef.current) {
-      trackVideoStop(videoRef.current.currentTime, videoRef.current.duration);
+      const currentTime = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      
+      // Track video pause with custom play time metric
+      trackVideoPause(currentTime, duration, 'book_call_discovery_video');
     }
   };
 
   const handleVideoEnded = () => {
     if (videoRef.current) {
-      trackVideoComplete(videoRef.current.duration);
+      const duration = videoRef.current.duration;
+      
+      // Track video end with custom play time metric
+      trackVideoEnd(duration, 'book_call_discovery_video');
       setVideoCompleted(true);
     }
   };
@@ -157,6 +196,7 @@ function BookACallContent() {
                   ref={videoRef}
                   className="w-full h-full object-cover"
                   onPlay={handleVideoPlay}
+                  onTimeUpdate={handleVideoTimeUpdate}
                   onPause={handleVideoPause}
                   onEnded={handleVideoEnded}
                   controls

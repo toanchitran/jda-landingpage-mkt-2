@@ -1,148 +1,352 @@
-# Google Analytics Setup for JD Alchemy Landing Page
+# Google Analytics 4 Custom Metrics Setup for Video Tracking
+
+This guide explains how to set up custom metrics in Google Analytics 4 to track video play time and engagement on the book-a-call page, based on the implementation from [Analytics Mania's guide](https://www.analyticsmania.com/post/custom-metrics-in-google-analytics-4/).
 
 ## Overview
-This document outlines the Google Analytics tracking implementation for the JD Alchemy landing page. The setup uses Google Analytics 4 (GA4) with the measurement ID `G-16WV2WNMXF`.
 
-## Implementation Details
+The enhanced video tracking implementation sends the following custom metrics to GA4:
 
-### 1. Google Analytics 4 Setup
-- **Measurement ID**: `G-16WV2WNMXF`
-- **Location**: Added to `src/app/layout.tsx` for site-wide tracking
-- **Script Strategy**: Uses Next.js `Script` component with `afterInteractive` strategy
-- **Implementation**: Direct GA4 gtag.js implementation
+1. **video_view** - Counts each video view (increments by 1)
+2. **video_play_time** - Tracks cumulative play time in seconds
+3. **session_id_custom** - Tracks individual user sessions for detailed analysis
 
-### 2. Custom Tracking Hook
-Created `src/hooks/useGoogleAnalytics.ts` with the following tracking functions:
+## Custom Metrics to Register in GA4
 
-#### Core Tracking Functions
-- `trackEvent(eventName, parameters)` - Generic event tracking
-- `trackPageView(pageTitle, pagePath)` - Page view tracking
+### 1. Video Views Metric
 
-#### Specific Event Tracking
-- `trackBookCallClick(location)` - Tracks "Book a call" button clicks
-- `trackSiteDeckClick()` - Tracks clicks to deckanalysis.fundraisingflywheel.io
-- `trackContactFormStart()` - Tracks when contact form is opened
-- `trackContactFormComplete()` - Tracks when contact form is successfully submitted
-- `trackCalendlyStart()` - Tracks when Calendly booking interface is shown
-- `trackFormFieldInteraction(fieldName, action)` - Tracks form field interactions
+**Metric Name:** Video Views  
+**Scope:** Event  
+**Event Parameter:** `video_view`  
+**Unit of Measurement:** Standard  
+**Description:** Counts the number of times videos are viewed
 
-### 3. Tracked User Interactions
+### 2. Video Play Time Metric
 
-#### Book a Call Button Clicks
-- **Event**: `book_call_click`
-- **Category**: `engagement`
-- **Locations Tracked**:
-  - Hero section (`hero_section`)
-  - Workflow section (`workflow_section`)
-  - Carousel section (`carousel_section`)
-  - Consider section (`consider_section`)
-  - Bottom CTA section (`bottom_cta_section`)
+**Metric Name:** Video Play Time  
+**Scope:** Event  
+**Event Parameter:** `video_play_time`  
+**Unit of Measurement:** Standard  
+**Description:** Tracks cumulative video play time in seconds
 
-#### Site Deck Button Clicks
-- **Event**: `site_deck_click`
-- **Category**: `engagement`
-- **Label**: `deckanalysis.fundraisingflywheel.io`
-- **Locations**: Navigation bar and lead magnet section
+### 3. Session ID Custom Dimension
 
-#### Contact Form Interactions
-- **Form Start**: `contact_form_start` (triggered when form modal opens)
-- **Form Complete**: `contact_form_complete` (triggered on successful submission)
-- **Field Interactions**: `form_field_interaction` with field name and action (focus/blur/change)
+**Dimension Name:** Session ID Custom  
+**Scope:** Event  
+**Event Parameter:** `session_id_custom`  
+**Description:** Tracks individual user sessions for detailed journey analysis
 
-#### Calendly Integration
-- **Event**: `calendly_start`
-- **Category**: `booking`
-- **Trigger**: When Calendly iframe is displayed after form submission
+## Setup Steps in Google Analytics 4
 
-### 4. Implementation Files
+### Step 1: Access Custom Definitions
 
-#### Modified Files
-1. **`src/app/layout.tsx`**
-   - Added GTM script tags
-   - Added noscript fallback
+1. Go to your GA4 property
+2. Navigate to **Admin** → **Custom Definitions** → **Custom Metrics**
+3. Click **Create Custom Metric**
 
-2. **`src/app/page.tsx`**
-   - Integrated tracking hook
-   - Added tracking to all "Book a call" buttons
-   - Added tracking to site deck buttons
-   - Added page view tracking
+### Step 2: Create Video Views Metric
 
-3. **`src/components/ContactForm.tsx`**
-   - Added form interaction tracking
-   - Added field-level tracking (focus, blur, change)
-   - Added form completion tracking
-   - Added Calendly start tracking
+1. **Metric name:** `Video Views`
+2. **Scope:** `Event`
+3. **Event parameter:** `video_view`
+4. **Unit of measurement:** `Standard`
+5. **Description:** `Counts video view events`
+6. Click **Save**
 
-#### New Files
-1. **`src/hooks/useGoogleAnalytics.ts`**
-   - Custom hook for all tracking functions
-   - TypeScript support with proper type definitions
+### Step 3: Create Video Play Time Metric
 
-### 5. Google Analytics 4 Configuration
+1. **Metric name:** `Video Play Time`
+2. **Scope:** `Event`
+3. **Event parameter:** `video_play_time`
+4. **Unit of measurement:** `Standard`
+5. **Description:** `Cumulative video play time in seconds`
+6. Click **Save**
 
-The implementation uses direct GA4 event tracking. All events are automatically sent to your GA4 property with the measurement ID `G-16WV2WNMXF`.
+### Step 4: Create Session ID Custom Dimension
 
-#### Events Automatically Tracked
-1. **Book Call Click** - `book_call_click`
-2. **Site Deck Click** - `site_deck_click`
-3. **Contact Form Start** - `contact_form_start`
-4. **Contact Form Complete** - `contact_form_complete`
-5. **Calendly Start** - `calendly_start`
-6. **Form Field Interaction** - `form_field_interaction`
-7. **Page Views** - Automatic page view tracking
+1. Go to **Admin** → **Custom Definitions** → **Custom Dimensions**
+2. Click **Create Custom Dimension**
+3. **Dimension name:** `Session ID Custom`
+4. **Scope:** `Event`
+5. **Event parameter:** `session_id_custom`
+6. **Description:** `Individual user session identifier`
+7. Click **Save**
 
-#### Custom Parameters
-Each event includes custom parameters for better analysis:
-- `event_category` - Event category (engagement, form_interaction, booking)
-- `event_label` - Specific event label
-- `custom_parameter` - Additional context for the event
-- `value` - Event value (1 for all events)
+## Session ID Tracking Implementation
 
-### 6. Testing
+### How It Works
 
-To verify the tracking is working:
+The session ID tracking implementation:
 
-1. Open browser developer tools
-2. Check the Console tab for any errors
-3. Check the Network tab for requests to Google Analytics
-4. Use Google Analytics Real-Time reports to verify events
-5. Check the GA4 DebugView for detailed event information
+1. **Captures GA Session ID**: Uses `gtag('get', 'G-16WV2WNMXF', 'session_id', callback)` to retrieve the current session ID
+2. **Stores Globally**: Makes the session ID available via `window.GA_SESSION_ID`
+3. **Attaches to Events**: Automatically includes `session_id_custom` parameter in all tracking events
+4. **Enables Journey Analysis**: Allows you to track individual user sessions through the Data API
 
-### 7. GA4 Event Structure
+### Implementation Details
 
-The implementation sends events directly to GA4 with the following structure:
+#### Session ID Script (Added to layout.tsx)
 
 ```javascript
-// Book a call click
-gtag('event', 'book_call_click', {
-  event_category: 'engagement',
-  event_label: 'hero_section',
-  value: 1,
-  custom_parameter: 'hero_section'
-});
+// Wait for gtag to be available
+function initializeSessionTracking() {
+  if (typeof gtag !== 'undefined') {
+    // Get the session ID and store it
+    gtag('get', 'G-16WV2WNMXF', 'session_id', function(sid) {
+      window.dataLayer.push({
+        event: 'session_id_ready',
+        session_id_custom: sid
+      });
+      
+      // Store session ID globally for use in tracking functions
+      window.GA_SESSION_ID = sid;
+    });
+  } else {
+    // Retry after a short delay if gtag is not yet available
+    setTimeout(initializeSessionTracking, 100);
+  }
+}
 
-// Form field interaction
-gtag('event', 'form_field_interaction', {
-  event_category: 'form_interaction',
-  event_label: 'fullName_focus',
-  field_name: 'fullName',
-  action: 'focus',
-  value: 1,
-  custom_parameter: 'fullName_focus'
-});
+// Initialize session tracking
+initializeSessionTracking();
 ```
 
-### 8. Privacy Considerations
+#### Enhanced Tracking Functions
 
-- All tracking is client-side only
-- No personally identifiable information is sent to Google Analytics
-- Form field tracking only tracks interaction patterns, not actual content
-- Users can opt out using browser privacy settings or ad blockers
+All tracking functions now automatically include the session ID:
 
-## Next Steps
+```javascript
+const trackEvent = useCallback((eventName: string, parameters: Record<string, unknown> = {}) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    // Add session ID to all events if available
+    const sessionId = getSessionId();
+    if (sessionId) {
+      parameters.session_id_custom = sessionId;
+    }
+    
+    window.gtag('event', eventName, parameters);
+  }
+}, [getSessionId]);
+```
 
-1. Verify your GA4 property is properly configured with measurement ID `G-16WV2WNMXF`
-2. Test the tracking using GA4 Real-Time reports
-3. Create custom reports in GA4 to analyze the tracked events
-4. Set up conversion goals based on the tracked events
-5. Monitor and optimize based on the collected data 
+## Events Being Tracked
+
+The implementation tracks the following video events, all with session ID:
+
+### 1. video_start
+- **Triggered:** When video starts playing
+- **Custom Metrics:**
+  - `video_view: 1`
+- **Parameters:**
+  - `video_title`: "book_call_discovery_video"
+  - `event_category`: "video_interaction"
+  - `session_id_custom`: [session_id]
+
+### 2. video_progress
+- **Triggered:** During video playback (onTimeUpdate)
+- **Custom Metrics:**
+  - `video_play_time`: current time in seconds
+- **Parameters:**
+  - `video_current_time`: current playback position
+  - `video_duration`: total video duration
+  - `progress_percentage`: percentage watched
+  - `session_id_custom`: [session_id]
+
+### 3. video_pause
+- **Triggered:** When video is paused
+- **Custom Metrics:**
+  - `video_play_time`: current time in seconds
+- **Parameters:**
+  - `video_current_time`: position when paused
+  - `video_duration`: total video duration
+  - `progress_percentage`: percentage watched
+  - `session_id_custom`: [session_id]
+
+### 4. video_end
+- **Triggered:** When video completes
+- **Custom Metrics:**
+  - `video_play_time`: total duration in seconds
+- **Parameters:**
+  - `video_duration`: total video duration
+  - `completion_percentage`: 100
+  - `session_id_custom`: [session_id]
+
+### 5. video_milestone
+- **Triggered:** At 25%, 50%, 75%, and 90% completion
+- **Custom Metrics:**
+  - `video_play_time`: current time in seconds
+- **Parameters:**
+  - `milestone_percentage`: milestone reached (25, 50, 75, 90)
+  - `video_current_time`: position at milestone
+  - `video_duration`: total video duration
+  - `session_id_custom`: [session_id]
+
+## Creating Reports in GA4
+
+### Exploration Report Setup
+
+1. Go to **Explore** → **Create new exploration**
+2. Add dimensions:
+   - **Event name**
+   - **Video title** (custom dimension)
+   - **Session ID Custom** (custom dimension)
+3. Add metrics:
+   - **Video Views** (custom metric)
+   - **Video Play Time** (custom metric)
+   - **Event count**
+
+### Sample Report Configuration
+
+**Dimensions:**
+- Event name
+- Video title
+- Session ID Custom
+
+**Metrics:**
+- Video Views
+- Video Play Time (seconds)
+- Event count
+
+**Filters:**
+- Event name contains "video"
+
+## Using GA4 Data API for Session Analysis
+
+### List All Sessions
+
+```json
+{
+  "dateRanges": [{"startDate": "2025-01-21", "endDate": "2025-01-22"}],
+  "dimensions": [{"name": "customEvent:session_id_custom"}],
+  "metrics": [{"name": "eventCount"}],
+  "limit": 250000
+}
+```
+
+### Per-Session Detail Analysis
+
+```json
+{
+  "dateRanges": [{"startDate": "2025-01-21", "endDate": "2025-01-22"}],
+  "dimensions": [
+    {"name": "eventName"},
+    {"name": "dateHourMinute"},
+    {"name": "pagePathPlusQueryString"}
+  ],
+  "metrics": [{"name": "eventCount"}],
+  "dimensionFilter": {
+    "filter": {
+      "fieldName": "customEvent:session_id_custom",
+      "stringFilter": {"matchType": "EXACT", "value": "{{bundle.session_id_custom}}"}
+    }
+  },
+  "orderBys": [{"dimension": {"dimensionName": "dateHourMinute"}}],
+  "limit": 10000
+}
+```
+
+### Video Engagement by Session
+
+```json
+{
+  "dateRanges": [{"startDate": "2025-01-21", "endDate": "2025-01-22"}],
+  "dimensions": [
+    {"name": "customEvent:session_id_custom"},
+    {"name": "eventName"}
+  ],
+  "metrics": [
+    {"name": "customEvent:video_play_time"},
+    {"name": "customEvent:video_view"}
+  ],
+  "dimensionFilter": {
+    "filter": {
+      "fieldName": "eventName",
+      "inListFilter": {
+        "values": ["video_start", "video_progress", "video_pause", "video_end", "video_milestone"]
+      }
+    }
+  },
+  "limit": 10000
+}
+```
+
+## Testing the Implementation
+
+### 1. Enable Debug Mode
+
+1. In GA4, go to **Configure** → **DebugView**
+2. Add your device to debug mode
+3. Visit the book-a-call page and interact with the video
+
+### 2. Verify Events
+
+Check that the following events appear in DebugView:
+- `session_id_ready` (should appear first)
+- `video_start`
+- `video_progress`
+- `video_pause`
+- `video_milestone`
+- `video_end`
+
+### 3. Verify Custom Metrics and Session ID
+
+In each event, verify that the custom parameters are present:
+- `video_view: 1` (in video_start events)
+- `video_play_time: [number]` (in progress/pause/end events)
+- `session_id_custom: [session_id]` (in all events)
+
+### 4. Test Session ID Consistency
+
+1. Refresh the page and verify a new session ID is generated
+2. Interact with the video and verify all events have the same session ID
+3. Check that the session ID persists throughout the user's session
+
+## Important Notes
+
+### GA4 Limits
+- You can register up to **50 event-scoped custom metrics** per property
+- You can register up to **50 event-scoped custom dimensions** per property
+- Plan strategically to track the most valuable metrics
+
+### Data Processing Time
+- Custom metrics and dimensions may take up to 24-48 hours to appear in reports
+- DebugView shows data immediately for testing
+- Session ID tracking starts from the moment you implement it
+
+### Best Practices
+1. **Consistent naming:** Use consistent parameter names across all events
+2. **Avoid over-tracking:** Only track meaningful milestones and interactions
+3. **Test thoroughly:** Use DebugView to verify implementation before going live
+4. **Monitor limits:** Keep track of your custom metric and dimension usage
+5. **Session analysis:** Use the Data API for detailed session journey analysis
+
+## Troubleshooting
+
+### Custom Metrics/Dimensions Not Appearing
+1. Verify the event parameter name matches exactly in GA4
+2. Check that events are firing in DebugView
+3. Wait 24-48 hours for data processing
+4. Ensure the metric/dimension is registered with the correct scope (Event)
+
+### Session ID Not Available
+1. Check that the session ID script loads after the GA4 configuration
+2. Verify `gtag` is available when the session tracking initializes
+3. Check browser console for any JavaScript errors
+4. Ensure the measurement ID matches your GA4 property
+
+### Duplicate Tracking
+- The implementation includes milestone tracking prevention to avoid duplicate milestone events
+- Each milestone (25%, 50%, 75%, 90%) is only tracked once per video session
+- Session ID ensures proper attribution across all events
+
+### Performance Considerations
+- `onTimeUpdate` events fire frequently (typically every 250ms)
+- Consider throttling progress tracking if performance becomes an issue
+- The current implementation tracks progress on every time update for accurate play time measurement
+- Session ID is retrieved once per page load and cached globally
+
+## References
+
+- [Custom Metrics in Google Analytics 4 - Analytics Mania](https://www.analyticsmania.com/post/custom-metrics-in-google-analytics-4/)
+- [GA4 Custom Definitions Documentation](https://support.google.com/analytics/answer/10075209)
+- [GA4 Event Parameters](https://developers.google.com/analytics/devguides/collection/ga4/events)
+- [GA4 Data API Documentation](https://developers.google.com/analytics/devguides/reporting/data/v1) 
