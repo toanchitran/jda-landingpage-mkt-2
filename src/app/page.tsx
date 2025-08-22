@@ -273,11 +273,7 @@ export default function Home() {
   
   // Podcast video tracking
   const podcastVideoRef = useRef<HTMLVideoElement>(null);
-  const { 
-    trackAudioPlay, 
-    trackAudioPause, 
-    trackAudioComplete
-  } = useGoogleAnalytics();
+  const { trackAudioPlay, trackAudioPause, trackAudioComplete } = useGoogleAnalytics();
 
   // Podcast video event handlers
   const handlePodcastVideoPlay = () => {
@@ -545,21 +541,15 @@ export default function Home() {
     trackLogoClick,
     trackPageView,
     trackUTMParameters,
-    storeUTMParameters,
   } = useGoogleAnalytics();
 
-  // Track UTM parameters on component mount - only on client
+  // Track page view and UTM parameters on component mount - only on client
   useEffect(() => {
     if (mounted) {
-      console.log('Page mounted, checking UTM parameters...');
-      console.log('Current URL:', window.location.href);
-      console.log('URL search params:', window.location.search);
-      
-      // Store UTM parameters for session persistence
-      storeUTMParameters();
+      trackPageView('JD Alchemy - Digital PR Specialists', window.location.pathname);
       trackUTMParameters();
     }
-  }, [trackUTMParameters, storeUTMParameters, mounted]);
+  }, [trackPageView, trackUTMParameters, mounted]);
 
   const handleBookCall = (location: string = 'hero_section') => {
     trackBookCallClick(location);

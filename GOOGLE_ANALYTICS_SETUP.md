@@ -103,66 +103,7 @@ The session ID tracking implementation:
 4. **Sends Explicit Page Views**: Sends page_view events with session ID included
 5. **Enables Journey Analysis**: Allows you to track individual user sessions through the Data API
 
-## UTM Parameter Persistence Implementation
-
-### How It Works
-
-The UTM parameter persistence implementation:
-
-1. **Captures UTM Parameters**: Extracts UTM parameters from the URL when a user first visits
-2. **Stores in Session Storage**: Saves UTM parameters to `sessionStorage` for the entire browser session
-3. **Attaches to All Events**: Automatically includes UTM parameters in all tracking events across all pages
-4. **Cross-Page Tracking**: Ensures UTM attribution persists even when users navigate between pages
-5. **Session-Based**: UTM parameters are cleared when the browser session ends
-
 ### Implementation Details
-
-#### UTM Parameter Storage
-
-```javascript
-// Store UTM parameters in session storage
-const storeUTMParameters = useCallback(() => {
-  if (typeof window !== 'undefined') {
-    const urlParams = new URLSearchParams(window.location.search);
-    const utmSource = urlParams.get('utm_source');
-    const utmMedium = urlParams.get('utm_medium');
-    const utmCampaign = urlParams.get('utm_campaign');
-    const utmTerm = urlParams.get('utm_term');
-    const utmContent = urlParams.get('utm_content');
-
-    // Only store if we have UTM parameters
-    if (utmSource || utmMedium || utmCampaign || utmTerm || utmContent) {
-      const utmData = {
-        utm_source: utmSource,
-        utm_medium: utmMedium,
-        utm_campaign: utmCampaign,
-        utm_term: utmTerm,
-        utm_content: utmContent,
-        timestamp: new Date().toISOString(),
-        page_url: window.location.href,
-      };
-      sessionStorage.setItem('utm_parameters', JSON.stringify(utmData));
-    }
-  }
-}, []);
-```
-
-#### Automatic UTM Attachment
-
-```javascript
-// Add UTM parameters to all events automatically
-const addUTMParametersToEvent = useCallback((parameters: Record<string, unknown>) => {
-  const utmParams = getUTMParameters();
-  if (utmParams) {
-    if (utmParams.utm_source) parameters.utm_source = utmParams.utm_source;
-    if (utmParams.utm_medium) parameters.utm_medium = utmParams.utm_medium;
-    if (utmParams.utm_campaign) parameters.utm_campaign = utmParams.utm_campaign;
-    if (utmParams.utm_term) parameters.utm_term = utmParams.utm_term;
-    if (utmParams.utm_content) parameters.utm_content = utmParams.utm_content;
-  }
-  return parameters;
-}, [getUTMParameters]);
-```
 
 #### Session ID Script (Added to layout.tsx)
 

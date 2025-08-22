@@ -18,8 +18,7 @@ function BookACallContent() {
     trackVideoPause, 
     trackVideoEnd, 
     trackVideoMilestone,
-    trackLeadQualificationShow,
-    storeUTMParameters
+    trackLeadQualificationShow 
   } = useGoogleAnalytics();
 
   // Track milestone progress to avoid duplicate tracking
@@ -34,9 +33,6 @@ function BookACallContent() {
   const hasBookingParams = recordId && email && name;
 
   useEffect(() => {
-    // Store UTM parameters for session persistence
-    storeUTMParameters();
-    
     // If we have booking parameters, show the booking section immediately
     if (hasBookingParams) {
       setShowQualificationSection(true);
@@ -68,7 +64,7 @@ function BookACallContent() {
         }
       }, 500); // 500ms delay to ensure the section has rendered
     }
-  }, [videoCompleted, showQualificationSection, trackLeadQualificationShow, hasBookingParams, storeUTMParameters]);
+  }, [videoCompleted, showQualificationSection, trackLeadQualificationShow, hasBookingParams]);
 
   const handleVideoPlay = () => {
     if (videoRef.current) {

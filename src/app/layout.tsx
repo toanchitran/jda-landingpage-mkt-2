@@ -42,22 +42,15 @@ export default function RootLayout({
         />
         <Script
           id="ga4-script"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              
-              // Debug UTM parameters
-              const urlParams = new URLSearchParams(window.location.search);
-              console.log('URL search params:', window.location.search);
-              console.log('UTM source:', urlParams.get('utm_source'));
-              console.log('UTM medium:', urlParams.get('utm_medium'));
-              console.log('UTM campaign:', urlParams.get('utm_campaign'));
-              
-              // Simple GA4 config - let GA4 handle UTM parameters automatically
-              gtag('config', 'G-16WV2WNMXF');
+              gtag('config', 'G-16WV2WNMXF', {
+                send_page_view: false
+              });
             `,
           }}
         />
@@ -77,31 +70,13 @@ export default function RootLayout({
                       window.GA_SESSION_ID = String(sid);
                       console.log('Session ID captured:', window.GA_SESSION_ID);
                       
-                      // Extract UTM parameters from URL
-                      const urlParams = new URLSearchParams(window.location.search);
-                      const utmSource = urlParams.get('utm_source');
-                      const utmMedium = urlParams.get('utm_medium');
-                      const utmCampaign = urlParams.get('utm_campaign');
-                      const utmTerm = urlParams.get('utm_term');
-                      const utmContent = urlParams.get('utm_content');
-                      
-                      // Store UTM parameters in session storage
-                      if (utmSource || utmMedium || utmCampaign || utmTerm || utmContent) {
-                        const utmData = {
-                          utm_source: utmSource,
-                          utm_medium: utmMedium,
-                          utm_campaign: utmCampaign,
-                          utm_term: utmTerm,
-                          utm_content: utmContent,
-                          timestamp: new Date().toISOString(),
-                          page_url: window.location.href,
-                        };
-                        sessionStorage.setItem('utm_parameters', JSON.stringify(utmData));
-                        console.log('UTM parameters stored in session storage:', utmData);
-                      }
-                      
-                      // Store UTM parameters for our custom tracking
-                      console.log('Session ID captured and UTM parameters stored');
+                      // Send initial page view with session ID
+                      gtag('event', 'page_view', {
+                        page_title: document.title,
+                        page_location: window.location.href,
+                        session_id_custom: window.GA_SESSION_ID,
+                        debug_mode: true
+                      });
                     }
                   });
                   return true;
