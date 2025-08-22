@@ -57,19 +57,42 @@ export default function RootLayout({
               const utmTerm = urlParams.get('utm_term');
               const utmContent = urlParams.get('utm_content');
               
+              // Debug: Log UTM parameters
+              console.log('UTM Parameters detected:', {
+                utm_source: utmSource,
+                utm_medium: utmMedium,
+                utm_campaign: utmCampaign,
+                utm_term: utmTerm,
+                utm_content: utmContent
+              });
+              
               // Create config parameters
               const configParams = {
                 send_page_view: false
               };
               
-              // Add UTM parameters if they exist
+              // Add UTM parameters to config for proper GA4 attribution
               if (utmSource) configParams.utm_source = utmSource;
               if (utmMedium) configParams.utm_medium = utmMedium;
               if (utmCampaign) configParams.utm_campaign = utmCampaign;
               if (utmTerm) configParams.utm_term = utmTerm;
               if (utmContent) configParams.utm_content = utmContent;
               
+              console.log('GA4 Config parameters:', configParams);
               gtag('config', 'G-16WV2WNMXF', configParams);
+              
+              // Also send UTM parameters as a separate event to ensure they're captured
+              if (utmSource || utmMedium || utmCampaign) {
+                const utmEventParams = {
+                  utm_source: utmSource || 'direct',
+                  utm_medium: utmMedium || 'none',
+                  utm_campaign: utmCampaign || 'none',
+                  utm_term: utmTerm || 'none',
+                  utm_content: utmContent || 'none'
+                };
+                console.log('Sending UTM event:', utmEventParams);
+                gtag('event', 'utm_parameters_detected', utmEventParams);
+              }
             `,
           }}
         />
@@ -105,7 +128,7 @@ export default function RootLayout({
                         debug_mode: true
                       };
                       
-                      // Add UTM parameters if they exist
+                      // Add UTM parameters to page view for proper GA4 attribution
                       if (utmSource) pageViewParams.utm_source = utmSource;
                       if (utmMedium) pageViewParams.utm_medium = utmMedium;
                       if (utmCampaign) pageViewParams.utm_campaign = utmCampaign;
@@ -114,6 +137,18 @@ export default function RootLayout({
                       
                       // Send initial page view with session ID and UTM parameters
                       gtag('event', 'page_view', pageViewParams);
+                      
+                      // Also send a dedicated UTM event to ensure proper attribution
+                      if (utmSource || utmMedium || utmCampaign) {
+                        gtag('event', 'session_start_with_utm', {
+                          utm_source: utmSource || 'direct',
+                          utm_medium: utmMedium || 'none',
+                          utm_campaign: utmCampaign || 'none',
+                          utm_term: utmTerm || 'none',
+                          utm_content: utmContent || 'none',
+                          session_id_custom: window.GA_SESSION_ID
+                        });
+                      }
                     }
                   });
                   return true;
