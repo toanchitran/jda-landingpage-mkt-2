@@ -345,54 +345,6 @@ export const useGoogleAnalytics = () => {
     });
   }, [trackEvent]);
 
-  // Section view time tracking functions
-  const trackSectionViewStart = useCallback((sectionName: string, sectionId?: string) => {
-    trackEvent('section_view_start', {
-      event_category: 'section_engagement',
-      event_label: sectionName,
-      section_name: sectionName,
-      section_id: sectionId || sectionName,
-      value: 1,
-      custom_parameter: `${sectionName}_view_start`,
-    });
-  }, [trackEvent]);
-
-  const trackSectionViewTime = useCallback((sectionName: string, viewTimeSeconds: number, sectionId?: string) => {
-    trackEvent('section_view_time', {
-      event_category: 'section_engagement',
-      event_label: sectionName,
-      section_name: sectionName,
-      section_id: sectionId || sectionName,
-      section_view_time: viewTimeSeconds, // Custom metric for section view time
-      value: 1,
-      custom_parameter: `${sectionName}_view_time`,
-    });
-  }, [trackEvent]);
-
-  const trackSectionViewEnd = useCallback((sectionName: string, totalViewTimeSeconds: number, sectionId?: string) => {
-    trackEvent('section_view_end', {
-      event_category: 'section_engagement',
-      event_label: sectionName,
-      section_name: sectionName,
-      section_id: sectionId || sectionName,
-      section_view_time: totalViewTimeSeconds, // Custom metric for total section view time
-      value: 1,
-      custom_parameter: `${sectionName}_view_end`,
-    });
-  }, [trackEvent]);
-
-  const trackSectionScrollDepth = useCallback((sectionName: string, scrollPercentage: number, sectionId?: string) => {
-    trackEvent('section_scroll_depth', {
-      event_category: 'section_engagement',
-      event_label: sectionName,
-      section_name: sectionName,
-      section_id: sectionId || sectionName,
-      scroll_percentage: scrollPercentage,
-      value: 1,
-      custom_parameter: `${sectionName}_scroll_${scrollPercentage}`,
-    });
-  }, [trackEvent]);
-
   return {
     trackEvent,
     getSessionId,
@@ -421,10 +373,5 @@ export const useGoogleAnalytics = () => {
     trackVideoPause,
     trackVideoEnd,
     trackVideoMilestone,
-    // Section view time tracking functions
-    trackSectionViewStart,
-    trackSectionViewTime,
-    trackSectionViewEnd,
-    trackSectionScrollDepth,
   };
 }; 
