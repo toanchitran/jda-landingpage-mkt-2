@@ -42,17 +42,22 @@ export default function RootLayout({
         />
         <Script
           id="ga4-script"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               
-              // Let GA4 handle UTM parameters automatically
-              gtag('config', 'G-16WV2WNMXF', {
-                send_page_view: true
-              });
+              // Debug UTM parameters
+              const urlParams = new URLSearchParams(window.location.search);
+              console.log('URL search params:', window.location.search);
+              console.log('UTM source:', urlParams.get('utm_source'));
+              console.log('UTM medium:', urlParams.get('utm_medium'));
+              console.log('UTM campaign:', urlParams.get('utm_campaign'));
+              
+              // Simple GA4 config - let GA4 handle UTM parameters automatically
+              gtag('config', 'G-16WV2WNMXF');
             `,
           }}
         />
