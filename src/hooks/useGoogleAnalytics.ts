@@ -19,6 +19,57 @@ export const useGoogleAnalytics = () => {
     return null;
   }, []);
 
+  // Helper function to get UTM parameters from session storage
+  const getUTMParameters = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      const utmParams = sessionStorage.getItem('utm_parameters');
+      if (utmParams) {
+        return JSON.parse(utmParams);
+      }
+    }
+    return null;
+  }, []);
+
+  // Helper function to store UTM parameters in session storage
+  const storeUTMParameters = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const utmSource = urlParams.get('utm_source');
+      const utmMedium = urlParams.get('utm_medium');
+      const utmCampaign = urlParams.get('utm_campaign');
+      const utmTerm = urlParams.get('utm_term');
+      const utmContent = urlParams.get('utm_content');
+
+      // Only store if we have UTM parameters
+      if (utmSource || utmMedium || utmCampaign || utmTerm || utmContent) {
+        const utmData = {
+          utm_source: utmSource,
+          utm_medium: utmMedium,
+          utm_campaign: utmCampaign,
+          utm_term: utmTerm,
+          utm_content: utmContent,
+          timestamp: new Date().toISOString(),
+          page_url: window.location.href,
+        };
+        sessionStorage.setItem('utm_parameters', JSON.stringify(utmData));
+        console.log('UTM parameters stored:', utmData);
+      }
+    }
+  }, []);
+
+  // Helper function to add UTM parameters to any event
+  const addUTMParametersToEvent = useCallback((parameters: Record<string, unknown>) => {
+    const utmParams = getUTMParameters();
+    if (utmParams) {
+      if (utmParams.utm_source) parameters.utm_source = utmParams.utm_source;
+      if (utmParams.utm_medium) parameters.utm_medium = utmParams.utm_medium;
+      if (utmParams.utm_campaign) parameters.utm_campaign = utmParams.utm_campaign;
+      if (utmParams.utm_term) parameters.utm_term = utmParams.utm_term;
+      if (utmParams.utm_content) parameters.utm_content = utmParams.utm_content;
+    }
+    return parameters;
+  }, [getUTMParameters]);
+
   const trackEvent = useCallback((eventName: string, parameters: Record<string, unknown> = {}) => {
     if (typeof window !== 'undefined' && window.gtag) {
       // Add session ID to all events if available
@@ -27,9 +78,12 @@ export const useGoogleAnalytics = () => {
         parameters.session_id_custom = sessionId;
       }
       
+      // Add UTM parameters to all events if available
+      addUTMParametersToEvent(parameters);
+      
       window.gtag('event', eventName, parameters);
     }
-  }, [getSessionId]);
+  }, [getSessionId, addUTMParametersToEvent]);
 
   const trackBookCallClick = useCallback((location: string) => {
     trackEvent('book_call_click', {
@@ -111,13 +165,8 @@ export const useGoogleAnalytics = () => {
   // Send page_view explicitly (so your custom param is on it)
   const trackPageView = useCallback((pageTitle: string, pagePath: string) => {
     if (typeof window !== 'undefined' && window.gtag) {
-      // Get UTM parameters from URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const utmSource = urlParams.get('utm_source');
-      const utmMedium = urlParams.get('utm_medium');
-      const utmCampaign = urlParams.get('utm_campaign');
-      const utmTerm = urlParams.get('utm_term');
-      const utmContent = urlParams.get('utm_content');
+      // Store UTM parameters if they exist in the URL
+      storeUTMParameters();
 
       // Get session ID
       const sessionId = getSessionId();
@@ -130,16 +179,12 @@ export const useGoogleAnalytics = () => {
         debug_mode: true,
       };
 
-      // Add UTM parameters if they exist
-      if (utmSource) eventParams.utm_source = utmSource;
-      if (utmMedium) eventParams.utm_medium = utmMedium;
-      if (utmCampaign) eventParams.utm_campaign = utmCampaign;
-      if (utmTerm) eventParams.utm_term = utmTerm;
-      if (utmContent) eventParams.utm_content = utmContent;
+      // Add UTM parameters from session storage (if available)
+      addUTMParametersToEvent(eventParams);
 
       window.gtag('event', 'page_view', eventParams);
     }
-  }, [getSessionId]);
+  }, [getSessionId, storeUTMParameters, addUTMParametersToEvent]);
 
   const trackPitchDeckUpload = useCallback((fileName: string, fileSize: number) => {
     trackEvent('pitch_deck_upload', {
@@ -364,6 +409,9 @@ export const useGoogleAnalytics = () => {
   return {
     trackEvent,
     getSessionId,
+    getUTMParameters,
+    storeUTMParameters,
+    addUTMParametersToEvent,
     trackBookCallClick,
     trackSiteDeckClick,
     trackLogoClick,
