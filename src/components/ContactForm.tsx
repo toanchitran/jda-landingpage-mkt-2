@@ -107,7 +107,7 @@ export default function ContactForm({
   const [calendlyCompleted, setCalendlyCompleted] = useState(false);
 
 
-  const { trackFormFieldInteraction, trackCalendlyComplete } = useGoogleAnalytics();
+  const { trackFormFieldInteraction, trackCalendlyComplete, trackContactFormStart, trackContactFormComplete, trackCalendlyStart } = useGoogleAnalytics();
 
   // Load sections data
   useEffect(() => {
@@ -116,6 +116,9 @@ export default function ContactForm({
         const response = await fetch('/sections.json');
         const data = await response.json();
         setSectionsData(data);
+        
+        // Track contact form start when sections are loaded
+        trackContactFormStart();
         
         // Initialize form data
         const initialData: FormData = {};
@@ -164,8 +167,10 @@ export default function ContactForm({
   useEffect(() => {
     if (prefilledData && prefilledData.recordId && prefilledData.email && prefilledData.name) {
       setShowCalendly(true);
+      // Track Calendly start for prefilled data users
+      trackCalendlyStart();
     }
-  }, [prefilledData]);
+  }, [prefilledData, trackCalendlyStart]);
 
   // Track page unload for users who submitted form but didn't complete Calendly
   useEffect(() => {
@@ -815,6 +820,9 @@ export default function ContactForm({
         setMessage('Thank you! Your qualification has been submitted successfully.');
         setContactRecordId(result.id);
         
+        // Track contact form completion
+        trackContactFormComplete();
+        
         // Start pitch deck analysis in background (don't await to avoid blocking UI)
         analyzePitchDeckFiles(result.id).catch(error => {
           console.error('Background pitch deck analysis failed:', error);
@@ -844,6 +852,9 @@ export default function ContactForm({
         // Automatically show Calendly instead of pitch deck prompt
     setShowCalendly(true);
         onCalendlyStart?.();
+        
+        // Track Calendly start for form submission users
+        trackCalendlyStart();
       } else {
         throw new Error('Submission failed');
       }
