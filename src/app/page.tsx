@@ -829,7 +829,7 @@ export default function Home() {
               </div>
               
               <div className="flex-grow">
-                <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Strategic Architect</h3>
+                <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Influence Architect</h3>
                 <p className="mb-6 leading-relaxed" style={{color: 'var(--medium-grey)'}}>
                 Jay is your social influence architect. He helps you identify and engineer the authentic story that investors need to hear, turning your lived experience into a capital-attracting force. His expertise leads to a powerful, actionable 90-Day Investment PR Plan that makes you more attractive and influential.
                 </p>
