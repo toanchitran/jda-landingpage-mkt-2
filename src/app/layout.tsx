@@ -48,9 +48,28 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-16WV2WNMXF', {
+              
+              // Get UTM parameters from URL
+              const urlParams = new URLSearchParams(window.location.search);
+              const utmSource = urlParams.get('utm_source');
+              const utmMedium = urlParams.get('utm_medium');
+              const utmCampaign = urlParams.get('utm_campaign');
+              const utmTerm = urlParams.get('utm_term');
+              const utmContent = urlParams.get('utm_content');
+              
+              // Create config parameters
+              const configParams = {
                 send_page_view: false
-              });
+              };
+              
+              // Add UTM parameters if they exist
+              if (utmSource) configParams.utm_source = utmSource;
+              if (utmMedium) configParams.utm_medium = utmMedium;
+              if (utmCampaign) configParams.utm_campaign = utmCampaign;
+              if (utmTerm) configParams.utm_term = utmTerm;
+              if (utmContent) configParams.utm_content = utmContent;
+              
+              gtag('config', 'G-16WV2WNMXF', configParams);
             `,
           }}
         />
@@ -70,13 +89,31 @@ export default function RootLayout({
                       window.GA_SESSION_ID = String(sid);
                       console.log('Session ID captured:', window.GA_SESSION_ID);
                       
-                      // Send initial page view with session ID
-                      gtag('event', 'page_view', {
+                      // Get UTM parameters from URL
+                      const urlParams = new URLSearchParams(window.location.search);
+                      const utmSource = urlParams.get('utm_source');
+                      const utmMedium = urlParams.get('utm_medium');
+                      const utmCampaign = urlParams.get('utm_campaign');
+                      const utmTerm = urlParams.get('utm_term');
+                      const utmContent = urlParams.get('utm_content');
+                      
+                      // Create page view parameters
+                      const pageViewParams = {
                         page_title: document.title,
                         page_location: window.location.href,
                         session_id_custom: window.GA_SESSION_ID,
                         debug_mode: true
-                      });
+                      };
+                      
+                      // Add UTM parameters if they exist
+                      if (utmSource) pageViewParams.utm_source = utmSource;
+                      if (utmMedium) pageViewParams.utm_medium = utmMedium;
+                      if (utmCampaign) pageViewParams.utm_campaign = utmCampaign;
+                      if (utmTerm) pageViewParams.utm_term = utmTerm;
+                      if (utmContent) pageViewParams.utm_content = utmContent;
+                      
+                      // Send initial page view with session ID and UTM parameters
+                      gtag('event', 'page_view', pageViewParams);
                     }
                   });
                   return true;

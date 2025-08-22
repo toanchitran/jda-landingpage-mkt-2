@@ -100,8 +100,17 @@ The session ID tracking implementation:
 1. **Captures GA Session ID**: Uses `gtag('get', 'G-16WV2WNMXF', 'session_id', callback)` to retrieve the current session ID
 2. **Stores Globally**: Makes the session ID available via `window.GA_SESSION_ID`
 3. **Attaches to Events**: Automatically includes `session_id_custom` parameter in all tracking events
-4. **Sends Explicit Page Views**: Sends page_view events with session ID included
+4. **Sends Explicit Page Views**: Sends page_view events with session ID and UTM parameters included
 5. **Enables Journey Analysis**: Allows you to track individual user sessions through the Data API
+
+### UTM Parameter Implementation
+
+The UTM parameter implementation ensures proper traffic source attribution:
+
+1. **GA4 Config Level**: UTM parameters are included in the initial `gtag('config')` call
+2. **Page View Level**: UTM parameters are also sent with the explicit `page_view` event
+3. **Default Dimensions**: This ensures GA4 properly populates the default Source/Medium dimensions
+4. **Session Persistence**: UTM parameters are captured from the URL and sent with the first page view
 
 ### Implementation Details
 
@@ -421,6 +430,23 @@ gtag('event', 'sid_test', {
 3. Check browser console for any JavaScript errors
 4. Ensure the measurement ID matches your GA4 property
 5. Check browser console for "Session ID captured:" log message
+
+### UTM Parameters Not Detected
+1. **Verify URL format**: Ensure UTM parameters are in the correct format: `?utm_source=google&utm_medium=cpc&utm_campaign=test`
+2. **Check GA4 Config**: Verify UTM parameters are included in the initial `gtag('config')` call
+3. **Check Page View**: Verify UTM parameters are included in the explicit `page_view` event
+4. **Wait for processing**: UTM parameters may take 24-48 hours to appear in reports
+5. **Test with DebugView**: Use GA4 DebugView to verify UTM parameters are being sent
+6. **Check browser console**: Look for UTM parameters in the network requests to Google Analytics
+
+### Testing UTM Parameters
+To test UTM parameter detection:
+
+1. **Create test URL**: `https://yoursite.com?utm_source=test&utm_medium=test&utm_campaign=test`
+2. **Open in incognito**: Use incognito mode to ensure fresh session
+3. **Check DebugView**: Verify UTM parameters appear in GA4 DebugView
+4. **Check network tab**: Look for UTM parameters in gtag requests
+5. **Wait for reports**: Check Acquisition reports after 24-48 hours
 
 ### Duplicate Tracking
 - The implementation includes milestone tracking prevention to avoid duplicate milestone events
