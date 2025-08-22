@@ -548,7 +548,7 @@ export default function Home() {
     storeUTMParameters,
   } = useGoogleAnalytics();
 
-  // Track page view and UTM parameters on component mount - only on client
+  // Track UTM parameters on component mount - only on client
   useEffect(() => {
     if (mounted) {
       console.log('Page mounted, checking UTM parameters...');
@@ -557,10 +557,9 @@ export default function Home() {
       
       // Store UTM parameters for session persistence
       storeUTMParameters();
-      trackPageView('JD Alchemy - Digital PR Specialists', window.location.pathname);
       trackUTMParameters();
     }
-  }, [trackPageView, trackUTMParameters, storeUTMParameters, mounted]);
+  }, [trackUTMParameters, storeUTMParameters, mounted]);
 
   const handleBookCall = (location: string = 'hero_section') => {
     trackBookCallClick(location);

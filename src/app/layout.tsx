@@ -49,27 +49,10 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               
-              // Extract UTM parameters for GA4 configuration
-              const urlParams = new URLSearchParams(window.location.search);
-              const utmSource = urlParams.get('utm_source');
-              const utmMedium = urlParams.get('utm_medium');
-              const utmCampaign = urlParams.get('utm_campaign');
-              const utmTerm = urlParams.get('utm_term');
-              const utmContent = urlParams.get('utm_content');
-              
-              // Configure GA4 with UTM parameters if they exist
-              const gaConfig = {
-                send_page_view: false
-              };
-              
-              if (utmSource) gaConfig.utm_source = utmSource;
-              if (utmMedium) gaConfig.utm_medium = utmMedium;
-              if (utmCampaign) gaConfig.utm_campaign = utmCampaign;
-              if (utmTerm) gaConfig.utm_term = utmTerm;
-              if (utmContent) gaConfig.utm_content = utmContent;
-              
-              console.log('GA4 config with UTM parameters:', gaConfig);
-              gtag('config', 'G-16WV2WNMXF', gaConfig);
+              // Let GA4 handle UTM parameters automatically
+              gtag('config', 'G-16WV2WNMXF', {
+                send_page_view: true
+              });
             `,
           }}
         />
@@ -112,23 +95,8 @@ export default function RootLayout({
                         console.log('UTM parameters stored in session storage:', utmData);
                       }
                       
-                      // Send initial page view with session ID and UTM parameters
-                      const pageViewParams = {
-                        page_title: document.title,
-                        page_location: window.location.href,
-                        session_id_custom: window.GA_SESSION_ID,
-                        debug_mode: true
-                      };
-                      
-                      // Add UTM parameters if they exist
-                      if (utmSource) pageViewParams.utm_source = utmSource;
-                      if (utmMedium) pageViewParams.utm_medium = utmMedium;
-                      if (utmCampaign) pageViewParams.utm_campaign = utmCampaign;
-                      if (utmTerm) pageViewParams.utm_term = utmTerm;
-                      if (utmContent) pageViewParams.utm_content = utmContent;
-                      
-                      console.log('Sending initial page_view with UTM parameters:', pageViewParams);
-                      gtag('event', 'page_view', pageViewParams);
+                      // Store UTM parameters for our custom tracking
+                      console.log('Session ID captured and UTM parameters stored');
                     }
                   });
                   return true;
