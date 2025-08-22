@@ -270,6 +270,29 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(2); // Start with 3rd card (index 2)
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  
+  // Podcast video tracking
+  const podcastVideoRef = useRef<HTMLVideoElement>(null);
+  const { trackAudioPlay, trackAudioPause, trackAudioComplete } = useGoogleAnalytics();
+
+  // Podcast video event handlers
+  const handlePodcastVideoPlay = () => {
+    if (podcastVideoRef.current) {
+      trackAudioPlay(podcastVideoRef.current.currentTime, '/Jay-David-Podcast.mp4');
+    }
+  };
+
+  const handlePodcastVideoPause = () => {
+    if (podcastVideoRef.current) {
+      trackAudioPause(podcastVideoRef.current.currentTime, podcastVideoRef.current.duration, '/Jay-David-Podcast.mp4');
+    }
+  };
+
+  const handlePodcastVideoEnded = () => {
+    if (podcastVideoRef.current) {
+      trackAudioComplete(podcastVideoRef.current.duration, '/Jay-David-Podcast.mp4');
+    }
+  };
 
   // Immediate iOS detection - runs synchronously to prevent layout shift
   if (typeof window !== 'undefined' && !document.body.classList.contains('ios-device')) {
@@ -763,9 +786,13 @@ export default function Home() {
             <div className="rounded-2xl p-4 bg-white shadow-lg">
               <div className="aspect-video rounded-xl overflow-hidden">
                 <video
+                  ref={podcastVideoRef}
                   controls
                   poster="/Podcast_thumbnail.png"
                   className="w-full h-full object-cover"
+                  onPlay={handlePodcastVideoPlay}
+                  onPause={handlePodcastVideoPause}
+                  onEnded={handlePodcastVideoEnded}
                 >
                   <source src="/Jay-David-Podcast.mp4" type="video/mp4" />
                   Your browser does not support the video tag.

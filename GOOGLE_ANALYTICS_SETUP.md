@@ -9,6 +9,7 @@ The enhanced video tracking implementation sends the following custom metrics to
 1. **video_view** - Counts each video view (increments by 1)
 2. **video_play_time** - Tracks cumulative play time in seconds
 3. **session_id_custom** - Tracks individual user sessions for detailed analysis
+4. **audio_duration_metric** - Tracks audio/video duration in seconds
 
 ## Custom Metrics to Register in GA4
 
@@ -34,6 +35,14 @@ The enhanced video tracking implementation sends the following custom metrics to
 **Scope:** Event  
 **Event Parameter:** `session_id_custom`  
 **Description:** Tracks individual user sessions for detailed journey analysis
+
+### 4. Audio Duration Metric
+
+**Metric Name:** Audio Duration  
+**Scope:** Event  
+**Event Parameter:** `audio_duration_metric`  
+**Unit of Measurement:** Standard  
+**Description:** Tracks audio/video duration in seconds
 
 ## Setup Steps in Google Analytics 4
 
@@ -70,6 +79,15 @@ The enhanced video tracking implementation sends the following custom metrics to
 5. **Event parameter:** `session_id_custom` (type this exactly, even if not in suggestions)
 6. **Description:** `Individual user session identifier`
 7. Click **Save**
+
+### Step 5: Create Audio Duration Metric
+
+1. **Metric name:** `Audio Duration`
+2. **Scope:** `Event`
+3. **Event parameter:** `audio_duration_metric`
+4. **Unit of measurement:** `Standard`
+5. **Description:** `Audio/video duration in seconds`
+6. Click **Save**
 
 > **Important:** The dropdown only suggests parameters GA4 has already observed. It's fine to type `session_id_custom` manually. If the UI complains, it's usually because the name is reserved or you've hit your property's custom-dimension limit.
 
@@ -206,6 +224,37 @@ The implementation tracks the following video events, all with session ID:
   - `milestone_percentage`: milestone reached (25, 50, 75, 90)
   - `video_current_time`: position at milestone
   - `video_duration`: total video duration
+  - `session_id_custom`: [session_id]
+
+### 6. audio_play
+- **Triggered:** When audio/video starts playing
+- **Custom Metrics:**
+  - `audio_duration_metric`: 0 (duration not yet available)
+- **Parameters:**
+  - `audio_src`: "/Jay-David-Podcast.mp4"
+  - `audio_current_time`: current playback position
+  - `audio_duration`: 0
+  - `session_id_custom`: [session_id]
+
+### 7. audio_pause
+- **Triggered:** When audio/video is paused
+- **Custom Metrics:**
+  - `audio_duration_metric`: total duration in seconds
+- **Parameters:**
+  - `audio_src`: "/Jay-David-Podcast.mp4"
+  - `audio_current_time`: position when paused
+  - `audio_duration`: total duration
+  - `completion_percentage`: percentage watched
+  - `session_id_custom`: [session_id]
+
+### 8. audio_complete
+- **Triggered:** When audio/video completes
+- **Custom Metrics:**
+  - `audio_duration_metric`: total duration in seconds
+- **Parameters:**
+  - `audio_src`: "/Jay-David-Podcast.mp4"
+  - `audio_duration`: total duration
+  - `completion_percentage`: 100
   - `session_id_custom`: [session_id]
 
 ## Creating Reports in GA4

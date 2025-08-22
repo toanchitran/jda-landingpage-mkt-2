@@ -324,36 +324,40 @@ export const useGoogleAnalytics = () => {
   const trackAudioPlay = useCallback((currentTime: number, audioSrc: string) => {
     trackEvent('audio_play', {
       event_category: 'audio_interaction',
-      event_label: 'home_page_audio',
+      event_label: 'podcast_audio_play',
       audio_src: audioSrc,
       audio_current_time: currentTime,
+      audio_duration: 0,
+      video_duration: 0, // Will be updated when duration is available
       value: 1,
-      custom_parameter: 'home_page_audio_play',
+      custom_parameter: 'podcast_audio_play',
     });
   }, [trackEvent]);
 
   const trackAudioPause = useCallback((currentTime: number, duration: number, audioSrc: string) => {
     trackEvent('audio_pause', {
       event_category: 'audio_interaction',
-      event_label: 'home_page_audio',
+      event_label: 'podcast_audio_pause',
       audio_src: audioSrc,
       audio_current_time: currentTime,
       audio_duration: duration,
+      video_duration: duration,
       completion_percentage: Math.round((currentTime / duration) * 100),
       value: 1,
-      custom_parameter: 'home_page_audio_pause',
+      custom_parameter: 'podcast_audio_pause',
     });
   }, [trackEvent]);
 
   const trackAudioComplete = useCallback((duration: number, audioSrc: string) => {
     trackEvent('audio_complete', {
       event_category: 'audio_interaction',
-      event_label: 'home_page_audio',
+      event_label: 'podcast_audio_complete',
       audio_src: audioSrc,
       audio_duration: duration,
+      video_duration: duration,
       completion_percentage: 100,
       value: 1,
-      custom_parameter: 'home_page_audio_complete',
+      custom_parameter: 'podcast_audio_complete',
     });
   }, [trackEvent]);
 
