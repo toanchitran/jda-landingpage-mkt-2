@@ -24,7 +24,11 @@ export const useGoogleAnalytics = () => {
     if (typeof window !== 'undefined') {
       const utmParams = sessionStorage.getItem('utm_parameters');
       if (utmParams) {
-        return JSON.parse(utmParams);
+        const parsed = JSON.parse(utmParams);
+        console.log('Retrieved UTM parameters from session storage:', parsed);
+        return parsed;
+      } else {
+        console.log('No UTM parameters found in session storage');
       }
     }
     return null;
@@ -66,6 +70,13 @@ export const useGoogleAnalytics = () => {
       if (utmParams.utm_campaign) parameters.utm_campaign = utmParams.utm_campaign;
       if (utmParams.utm_term) parameters.utm_term = utmParams.utm_term;
       if (utmParams.utm_content) parameters.utm_content = utmParams.utm_content;
+      console.log('UTM parameters added to event:', {
+        utm_source: utmParams.utm_source,
+        utm_medium: utmParams.utm_medium,
+        utm_campaign: utmParams.utm_campaign,
+        utm_term: utmParams.utm_term,
+        utm_content: utmParams.utm_content
+      });
     }
     return parameters;
   }, [getUTMParameters]);
@@ -182,6 +193,7 @@ export const useGoogleAnalytics = () => {
       // Add UTM parameters from session storage (if available)
       addUTMParametersToEvent(eventParams);
 
+      console.log('Sending page_view event with parameters:', eventParams);
       window.gtag('event', 'page_view', eventParams);
     }
   }, [getSessionId, storeUTMParameters, addUTMParametersToEvent]);
@@ -199,10 +211,21 @@ export const useGoogleAnalytics = () => {
 
   const trackUTMParameters = useCallback(() => {
     if (typeof window !== 'undefined' && window.gtag) {
+      // Get UTM parameters from session storage (our new system)
+      const utmParams = getUTMParameters();
+      
+      // Also check current URL for new UTM parameters
       const urlParams = new URLSearchParams(window.location.search);
-      const utmSource = urlParams.get('utm_source');
-      const utmMedium = urlParams.get('utm_medium');
-      const utmCampaign = urlParams.get('utm_campaign');
+      const currentUtmSource = urlParams.get('utm_source');
+      const currentUtmMedium = urlParams.get('utm_medium');
+      const currentUtmCampaign = urlParams.get('utm_campaign');
+
+      // Use stored UTM parameters if available, otherwise use current URL
+      const utmSource = utmParams?.utm_source || currentUtmSource;
+      const utmMedium = utmParams?.utm_medium || currentUtmMedium;
+      const utmCampaign = utmParams?.utm_campaign || currentUtmCampaign;
+      const utmTerm = utmParams?.utm_term || urlParams.get('utm_term');
+      const utmContent = utmParams?.utm_content || urlParams.get('utm_content');
 
       // Only track if we have UTM parameters
       const hasUTMParams = Boolean(utmSource || utmMedium || utmCampaign);
@@ -213,8 +236,8 @@ export const useGoogleAnalytics = () => {
           utm_source: utmSource || 'none',
           utm_medium: utmMedium || 'none',
           utm_campaign: utmCampaign || 'none',
-          utm_term: urlParams.get('utm_term') || 'none',
-          utm_content: urlParams.get('utm_content') || 'none',
+          utm_term: utmTerm || 'none',
+          utm_content: utmContent || 'none',
           page_url: window.location.href,
         };
 
@@ -224,10 +247,11 @@ export const useGoogleAnalytics = () => {
           eventParams.session_id_custom = sessionId;
         }
 
+        console.log('Tracking UTM parameters event:', eventParams);
         window.gtag('event', 'utm_parameters_detected', eventParams);
       }
     }
-  }, [getSessionId]);
+  }, [getSessionId, getUTMParameters]);
 
   const trackVideoPlay = useCallback((currentTime: number) => {
     trackEvent('video_play', {

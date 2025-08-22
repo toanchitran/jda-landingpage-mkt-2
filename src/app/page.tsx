@@ -551,6 +551,10 @@ export default function Home() {
   // Track page view and UTM parameters on component mount - only on client
   useEffect(() => {
     if (mounted) {
+      console.log('Page mounted, checking UTM parameters...');
+      console.log('Current URL:', window.location.href);
+      console.log('URL search params:', window.location.search);
+      
       // Store UTM parameters for session persistence
       storeUTMParameters();
       trackPageView('JD Alchemy - Digital PR Specialists', window.location.pathname);
