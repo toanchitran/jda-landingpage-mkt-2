@@ -6,15 +6,15 @@ declare global {
   interface Window {
     dataLayer: unknown[];
     gtag: (...args: unknown[]) => void;
-    GA_SESSION_ID?: string;
+    CUSTOM_SESSION_ID?: string;
   }
 }
 
 export const useGoogleAnalytics = () => {
-  // Helper function to get session ID
+  // Helper function to get custom session ID
   const getSessionId = useCallback(() => {
-    if (typeof window !== 'undefined' && window.GA_SESSION_ID) {
-      return window.GA_SESSION_ID;
+    if (typeof window !== 'undefined' && window.CUSTOM_SESSION_ID) {
+      return window.CUSTOM_SESSION_ID;
     }
     return null;
   }, []);

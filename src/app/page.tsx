@@ -546,7 +546,7 @@ export default function Home() {
   // Track page view and UTM parameters on component mount - only on client
   useEffect(() => {
     if (mounted) {
-      trackPageView('JD Alchemy - Digital PR Specialists', window.location.pathname);
+      trackPageView('Fundraising Flywheel - Digital PR Specialists', window.location.pathname);
       trackUTMParameters();
     }
   }, [trackPageView, trackUTMParameters, mounted]);
