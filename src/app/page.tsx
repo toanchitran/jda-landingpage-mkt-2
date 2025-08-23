@@ -543,13 +543,13 @@ export default function Home() {
     trackUTMParameters,
   } = useGoogleAnalytics();
 
-  // Track page view and UTM parameters on component mount - only on client
+  // Track additional UTM parameters on component mount - only on client
+  // (Initial page view with UTM attribution is handled in layout.tsx)
   useEffect(() => {
     if (mounted) {
-      trackPageView('Fundraising Flywheel - Digital PR Specialists', window.location.pathname);
       trackUTMParameters();
     }
-  }, [trackPageView, trackUTMParameters, mounted]);
+  }, [trackUTMParameters, mounted]);
 
   const handleBookCall = (location: string = 'hero_section') => {
     trackBookCallClick(location);

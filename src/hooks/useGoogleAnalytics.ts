@@ -108,21 +108,13 @@ export const useGoogleAnalytics = () => {
     });
   }, [trackEvent]);
 
-  // Send page_view explicitly (so your custom param is on it)
+  // Send page_view explicitly with custom session ID (only for subsequent page views)
   const trackPageView = useCallback((pageTitle: string, pagePath: string) => {
     if (typeof window !== 'undefined' && window.gtag) {
-      // Get UTM parameters from URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const utmSource = urlParams.get('utm_source');
-      const utmMedium = urlParams.get('utm_medium');
-      const utmCampaign = urlParams.get('utm_campaign');
-      const utmTerm = urlParams.get('utm_term');
-      const utmContent = urlParams.get('utm_content');
-
       // Get session ID
       const sessionId = getSessionId();
 
-      // Create event parameters
+      // Create event parameters (initial page_view with UTM is handled at GA4 config level)
       const eventParams: Record<string, unknown> = {
         page_title: pageTitle,
         page_location: pagePath,
@@ -130,13 +122,7 @@ export const useGoogleAnalytics = () => {
         debug_mode: true,
       };
 
-      // Add UTM parameters if they exist
-      if (utmSource) eventParams.utm_source = utmSource;
-      if (utmMedium) eventParams.utm_medium = utmMedium;
-      if (utmCampaign) eventParams.utm_campaign = utmCampaign;
-      if (utmTerm) eventParams.utm_term = utmTerm;
-      if (utmContent) eventParams.utm_content = utmContent;
-
+      console.log('Sending additional page_view event with session ID:', eventParams);
       window.gtag('event', 'page_view', eventParams);
     }
   }, [getSessionId]);
@@ -152,6 +138,8 @@ export const useGoogleAnalytics = () => {
     });
   }, [trackEvent]);
 
+  // UTM parameters are now handled at GA4 config level in layout.tsx
+  // This function is kept for additional UTM event tracking if needed
   const trackUTMParameters = useCallback(() => {
     if (typeof window !== 'undefined' && window.gtag) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -162,10 +150,16 @@ export const useGoogleAnalytics = () => {
       // Only track if we have UTM parameters
       const hasUTMParams = Boolean(utmSource || utmMedium || utmCampaign);
       if (hasUTMParams) {
+        console.log('Additional UTM tracking event:', {
+          utm_source: utmSource,
+          utm_medium: utmMedium,
+          utm_campaign: utmCampaign
+        });
+        
         const eventParams: Record<string, unknown> = {
           event_category: 'traffic_source',
-          event_label: 'utm_tracking',
-          utm_source: utmSource || 'none',
+          event_label: 'utm_tracking_additional',
+          utm_source: utmSource || 'direct',
           utm_medium: utmMedium || 'none',
           utm_campaign: utmCampaign || 'none',
           utm_term: urlParams.get('utm_term') || 'none',
@@ -179,7 +173,7 @@ export const useGoogleAnalytics = () => {
           eventParams.session_id_custom = sessionId;
         }
 
-        window.gtag('event', 'utm_parameters_detected', eventParams);
+        window.gtag('event', 'utm_additional_tracking', eventParams);
       }
     }
   }, [getSessionId]);

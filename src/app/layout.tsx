@@ -58,7 +58,11 @@ export default function RootLayout({
               const utmContent = urlParams.get('utm_content');
               
               // Configure GA4 with UTM parameters for proper attribution
-              const configParams = {};
+              const configParams = {
+                send_page_view: false, // Prevent automatic page view to control UTM attribution
+                allow_google_signals: false, // Prevent GA4 from overriding UTM parameters
+              };
+              
               if (utmSource) configParams.campaign_source = utmSource;
               if (utmMedium) configParams.campaign_medium = utmMedium;
               if (utmCampaign) configParams.campaign_name = utmCampaign;
@@ -67,6 +71,26 @@ export default function RootLayout({
               
               console.log('GA4 Config with UTM:', configParams);
               gtag('config', 'G-16WV2WNMXF', configParams);
+              
+              // Send manual page_view with UTM parameters for proper attribution
+              if (utmSource || utmMedium || utmCampaign) {
+                console.log('Sending manual page_view with UTM attribution');
+                gtag('event', 'page_view', {
+                  page_title: document.title,
+                  page_location: window.location.href,
+                  campaign_source: utmSource || undefined,
+                  campaign_medium: utmMedium || undefined,
+                  campaign_name: utmCampaign || undefined,
+                  campaign_term: utmTerm || undefined,
+                  campaign_content: utmContent || undefined,
+                });
+              } else {
+                // Send normal page_view for direct traffic
+                gtag('event', 'page_view', {
+                  page_title: document.title,
+                  page_location: window.location.href,
+                });
+              }
             `,
           }}
         />
