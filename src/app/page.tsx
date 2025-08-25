@@ -1125,7 +1125,7 @@ export default function Home() {
                   poster="/cta_bg_thumbnail.jpg"
                   className="w-full h-full object-cover"
                 >
-                  <source src="/CTA_BG_video.mp4" type="video/mp4" />
+                  <source src="/CTA video.mp4" type="video/mp4" />
                 </video>
               </div>
             </div>
