@@ -537,17 +537,20 @@ export default function Home() {
       <section className="relative min-h-screen overflow-hidden" style={{backgroundColor: 'var(--primary-bg)'}}>
         {/* Background Image (replacing video for performance) */}
         <div className="absolute inset-0">
-          <Image
-            src="/hero_bg_thumbnail.jpg"
-            alt="Hero Background"
-            fill
-            className="object-cover"
-            priority
-            quality={85}
-          />
-          <div className="absolute inset-0" style={{backgroundColor: 'rgba(3, 3, 46, 0.3)'}}></div>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            webkit-playsinline="true"
+            poster="/hero_bg_thumbnail.jpg"
+            className="w-full h-full object-cover"
+            id="hero-background-video"
+            data-testid="hero-video"
+          >
+            <source src="/Hero_BG_video.mp4" type="video/mp4" />
+          </video>
         </div>
-        
         {/* Navigation */}
         <nav 
           className={`fixed top-0 left-0 right-0 z-50 padding-global py-2 sm:py-4 transition-all duration-300 ${
@@ -1113,14 +1116,17 @@ export default function Home() {
               </div>
               
               <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden">
-                <Image
-                  src="/cta_bg_thumbnail.jpg"
-                  alt="CTA Background"
-                  width={800}
-                  height={450}
+              <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  webkit-playsinline="true"
+                  poster="/cta_bg_thumbnail.jpg"
                   className="w-full h-full object-cover"
-                  quality={85}
-                />
+                >
+                  <source src="/CTA_BG_video.mp4" type="video/mp4" />
+                </video>
               </div>
             </div>
           </div>
