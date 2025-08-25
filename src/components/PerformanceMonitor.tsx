@@ -5,7 +5,13 @@ import { useEffect } from 'react';
 export default function PerformanceMonitor() {
   useEffect(() => {
     // Monitor Core Web Vitals
-    const reportWebVitals = (metric: any) => {
+    interface WebVitalMetric {
+      name: string;
+      value: number;
+      id: string;
+    }
+
+    const reportWebVitals = (metric: WebVitalMetric) => {
       // Log to console in development
       if (process.env.NODE_ENV === 'development') {
         console.log('Web Vital:', metric);
@@ -23,9 +29,9 @@ export default function PerformanceMonitor() {
     };
 
     // Dynamically import web-vitals to avoid bundle bloat
-    import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+    import('web-vitals').then(({ onCLS, onINP, onFCP, onLCP, onTTFB }) => {
       onCLS(reportWebVitals);
-      onFID(reportWebVitals);
+      onINP(reportWebVitals);
       onFCP(reportWebVitals);
       onLCP(reportWebVitals);
       onTTFB(reportWebVitals);
@@ -68,6 +74,6 @@ export default function PerformanceMonitor() {
 // Extend Window interface for TypeScript
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void;
+    gtag: (...args: unknown[]) => void;
   }
 }
