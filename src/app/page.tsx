@@ -4,8 +4,6 @@ import Image from "next/image";
 import { useEffect, useState, useRef, useMemo } from "react";
 // import ContactForm from "@/components/ContactForm";
 import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
-import PerformanceOptimizer from "@/components/PerformanceOptimizer";
-import PerformanceMonitor from "@/components/PerformanceMonitor";
 
 
 // Interactive Workflow Component
@@ -535,8 +533,6 @@ export default function Home() {
 
   return (
     <div className="font-sans text-primary-text">
-      <PerformanceOptimizer />
-      <PerformanceMonitor />
 
       <section className="relative min-h-screen overflow-hidden" style={{backgroundColor: 'var(--primary-bg)'}}>
         {/* Background Image (replacing video for performance) */}

@@ -161,7 +161,7 @@ export default function ContactForm({
     };
 
     loadSections();
-  }, [prefillName, prefillEmail, prefilledData, trackContactFormStart]);
+  }, [prefillName, prefillEmail, prefilledData]);
 
   // Show Calendly immediately if prefilledData is provided
   useEffect(() => {
@@ -461,7 +461,7 @@ export default function ContactForm({
       cancelled = true;
       window.removeEventListener('message', handleCalendlyMessage);
     };
-  }, [showCalendly, prefillName, prefillEmail, contactRecordId, getContactName, getContactEmail, prefilledData?.email, prefilledData?.name, trackCalendlyComplete]);
+  }, [showCalendly, prefillName, prefillEmail, contactRecordId, getContactName, getContactEmail, prefilledData?.email, prefilledData?.name]);
 
   const handleFieldFocus = useCallback((fieldId: string) => {
     trackFormFieldInteraction(fieldId, 'focus');
