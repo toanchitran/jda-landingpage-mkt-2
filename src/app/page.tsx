@@ -5,143 +5,6 @@ import { useEffect, useState, useRef, useMemo } from "react";
 // import ContactForm from "@/components/ContactForm";
 import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
 
-// Audio Player Component with Animation
-function AudioPlayer({ src }: { src: string }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  // const [currentTime, setCurrentTime] = useState(0);
-  // const [duration, setDuration] = useState(0);
-  const [waveHeights, setWaveHeights] = useState<number[]>([]);
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const animationRef = useRef<number | null>(null);
-  const { trackAudioPlay, trackAudioPause, trackAudioComplete } = useGoogleAnalytics();
-
-  // Prevent hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Initialize wave heights - only on client to prevent hydration mismatch
-  useEffect(() => {
-    if (mounted) {
-      const heights = Array.from({ length: 120 }, () => Math.random() * 30 + 20);
-      setWaveHeights(heights);
-    }
-  }, [mounted]);
-
-  // Animate waveform when playing
-  useEffect(() => {
-    if (isPlaying) {
-      const animate = () => {
-        setWaveHeights(prev => prev.map(() => Math.random() * 70 + 20));
-        animationRef.current = requestAnimationFrame(animate);
-      };
-      animationRef.current = requestAnimationFrame(animate);
-    } else {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    }
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [isPlaying]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    // const updateTime = () => setCurrentTime(audio.currentTime);
-    // const updateDuration = () => setDuration(audio.duration);
-    const handleEnded = () => {
-      setIsPlaying(false);
-      trackAudioComplete(audio.duration, src);
-    };
-
-    // audio.addEventListener('timeupdate', updateTime);
-    // audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('ended', handleEnded);
-
-    return () => {
-      // audio.removeEventListener('timeupdate', updateTime);
-      // audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('ended', handleEnded);
-    };
-  }, [trackAudioComplete, src]);
-
-  const togglePlayPause = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isPlaying) {
-      audio.pause();
-      trackAudioPause(audio.currentTime, audio.duration, src);
-    } else {
-      audio.play();
-      trackAudioPlay(audio.currentTime, src);
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  // const formatTime = (time: number) => {
-  //   const minutes = Math.floor(time / 60);
-  //   const seconds = Math.floor(time % 60);
-  //   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  // };
-
-  // const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
-
-  return (
-    <div className="w-full rounded-2xl p-8 bg-transparent">
-      <audio ref={audioRef} src={src} />
-      
-      {/* Waveform with Play Button Overlay */}
-      <div className="relative w-full h-32 flex items-center justify-center">
-        {/* Full Width Waveform */}
-        <div className="absolute inset-0 flex items-end justify-stretch">
-          {waveHeights.map((height, i) => (
-            <div
-              key={i}
-              className="rounded-t transition-all duration-75"
-              style={{
-                backgroundColor: '#c0a876',
-                height: `${height}%`,
-                opacity: isPlaying ? 1 : 0.7,
-                width: `${100 / waveHeights.length}%`,
-                marginRight: i < waveHeights.length - 1 ? '1px' : '0',
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* Play/Pause Button Overlay */}
-        <div className="relative z-10">
-          <button
-            onClick={togglePlayPause}
-            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-            style={{backgroundColor: '#6b624b', color: '#ffffff'}}
-          >
-            {isPlaying ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="6" y="4" width="4" height="16" rx="1"/>
-                <rect x="14" y="4" width="4" height="16" rx="1"/>
-              </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
 
 // Interactive Workflow Component
 function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) => void }) {
@@ -152,19 +15,19 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
       title: 'You Provide the Raw Material',
       description: 'The easy part. You share your vision, key milestones, and unique industry insights - the core data we need to begin your narrative audit.',
       imageText: 'You Provide the Raw Material',
-      image:'/You Provide the Raw Material-v2.jpg'
+      image:'/You_Provide_Raw_Material_optimized.jpg'
     },
     refine: {
       title: 'We Forge Your Narrative',
       description: 'We provide the expert framework and guidance to help you forge your own investor-grade narrative, aligning every word with your fundraising goals.',
       imageText: 'We Forge Your Narrative',
-      image:'/We Forge Your Narrative-v2.jpg'
+      image:'/We_Forge_Your_Narrative_optimized.jpg'
     },
     tailor: {
       title: 'You Command the Conversation',
       description: 'With a clear strategic roadmap, you can now deploy your PR activities with purpose and precision.',
       imageText: 'You Command the Conversation',
-      image:'/You Command the Conversation-v2.jpg'
+      image:'/You_Command_Conversation_optimized.jpg'
     },
     // amplify: {
     //   title: 'Amplify',
@@ -195,10 +58,11 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
             <Image
               src={features[activeFeature as keyof typeof features].image}
               alt={features[activeFeature as keyof typeof features].imageText}
-              width={800}
-              height={450}
-              className="w-full h-full object-cover"
-              unoptimized={true}
+                                width={800}
+                  height={450}
+                  className="w-full h-full object-cover"
+                  quality={85}
+                  loading="lazy"
             />
           </div>
         </div>
@@ -246,7 +110,8 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
                   width={600}
                   height={340}
                   className="w-full h-full object-cover"
-                  unoptimized={true}
+                  quality={85}
+                  loading="lazy"
                 />
               </div>
             </div>
@@ -539,7 +404,6 @@ export default function Home() {
     trackBookCallClick,
     trackSiteDeckClick,
     trackLogoClick,
-    trackPageView,
     trackUTMParameters,
   } = useGoogleAnalytics();
 
@@ -671,22 +535,17 @@ export default function Home() {
     <div className="font-sans text-primary-text">
 
       <section className="relative min-h-screen overflow-hidden" style={{backgroundColor: 'var(--primary-bg)'}}>
-        {/* Background Video */}
+        {/* Background Image (replacing video for performance) */}
         <div className="absolute inset-0">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            webkit-playsinline="true"
-            preload="metadata"
-            className="w-full h-full object-cover"
-            id="hero-background-video"
-            data-testid="hero-video"
-          >
-            <source src="/Hero_BG_video.mp4" type="video/mp4" />
-          </video>
-          {/* <div className="absolute" style={{backgroundColor: 'var(--primary-bg)'}}></div> */}
+          <Image
+            src="/hero_bg_thumbnail.jpg"
+            alt="Hero Background"
+            fill
+            className="object-cover"
+            priority
+            quality={85}
+          />
+          <div className="absolute inset-0" style={{backgroundColor: 'rgba(3, 3, 46, 0.3)'}}></div>
         </div>
         
         {/* Navigation */}
@@ -828,7 +687,7 @@ export default function Home() {
                     loop
                     playsInline
                     webkit-playsinline="true"
-                    preload="metadata"
+                    preload="none"
                       />
                       
                       {/* Overlay Tags */}
@@ -885,7 +744,7 @@ export default function Home() {
                     loop
                     playsInline
                     webkit-playsinline="true"
-                    preload="metadata"
+                    preload="none"
                   />
                       
                       {/* Overlay Tags */}
@@ -1052,7 +911,7 @@ export default function Home() {
                         loop
                         playsInline
                         webkit-playsinline="true"
-                        preload="metadata"
+                        preload="none"
                         className="w-full h-full object-cover"
                       >
                         <source src={card.videoSrc} type="video/mp4" />
@@ -1085,15 +944,15 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center justify-center">
         <div className="absolute inset-0">
           <Image
-            src="/Lead_magnet_BG.jpeg"
+            src="/Lead_magnet_BG_optimized.jpg"
             alt="Lead Magnet Background"
             fill
             className="object-cover"
             priority
-            unoptimized={true}
+            quality={85}
           />
           
-          {/* <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.7)'}}></div> */}
+          <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.1)'}}></div>
         </div>
         
                 {/* Modal Card - Top Right */}
@@ -1112,7 +971,8 @@ export default function Home() {
                   width={800}
                   height={150}
                   className="rounded-lg w-full h-auto"
-                  unoptimized={true}
+                  quality={85}
+                  loading="lazy"
                 />
             </div>
             <button onClick={() => {
@@ -1147,7 +1007,8 @@ export default function Home() {
                 width={120}
                 height={40}
                 className="object-contain"
-                unoptimized={true}
+                quality={90}
+                loading="lazy"
               />
             </div>
             
@@ -1159,7 +1020,8 @@ export default function Home() {
                 width={120}
                 height={40}
                 className="object-contain"
-                unoptimized={true}
+                quality={90}
+                loading="lazy"
               />
             </div>
             
@@ -1171,7 +1033,8 @@ export default function Home() {
                 width={120}
                 height={40}
                 className="object-contain"
-                unoptimized={true}
+                quality={90}
+                loading="lazy"
               />
             </div>
             
@@ -1183,7 +1046,8 @@ export default function Home() {
                 width={120}
                 height={40}
                 className="object-contain"
-                unoptimized={true}
+                quality={90}
+                loading="lazy"
               />
             </div>
             
@@ -1195,7 +1059,8 @@ export default function Home() {
                 width={120}
                 height={40}
                 className="object-contain"
-                unoptimized={true}
+                quality={90}
+                loading="lazy"
               />
             </div>
             
@@ -1207,7 +1072,8 @@ export default function Home() {
                 width={120}
                 height={40}
                 className="object-contain"
-                unoptimized={true}
+                quality={90}
+                loading="lazy"
               />
             </div>
           </div>
@@ -1247,17 +1113,14 @@ export default function Home() {
               </div>
               
               <div className="aspect-video bg-card-accent-2 rounded-2xl flex items-center justify-center overflow-hidden">
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  webkit-playsinline="true"
-                  preload="metadata"
+                <Image
+                  src="/cta_bg_thumbnail.jpg"
+                  alt="CTA Background"
+                  width={800}
+                  height={450}
                   className="w-full h-full object-cover"
-                >
-                  <source src="/CTA video.mp4" type="video/mp4" />
-                </video>
+                  quality={85}
+                />
               </div>
             </div>
           </div>
