@@ -92,6 +92,56 @@ The site uses a responsive `padding-global` class with the following breakpoints
 - **Content max-width**: `max-w-4xl` (896px) for text content
 - **Modal max-width**: `max-w-3xl` (768px) for modals
 
+### Detailed Spacing Values Used in Page
+
+#### **Padding Values**
+- **Section Padding**:
+  - Vertical: `py-16` (4rem) mobile, `py-20` (5rem) desktop
+  - Navigation: `py-2` (0.5rem) mobile, `sm:py-4` (1rem) desktop
+  - Cards: `p-6` (1.5rem) mobile, `md:p-10` (2.5rem) desktop
+  - Testimonial cards: `p-6` (1.5rem)
+  - CTA section: `py-12` (3rem)
+  - Rounded sections: `p-4` (1rem)
+
+#### **Margin Values**
+- **Heading Margins**:
+  - Small headings: `mb-3` (0.75rem)
+  - Main headings: `mb-4` (1rem)
+  - Section descriptions: `mb-6` (1.5rem)
+  - Large sections: `mb-8` (2rem)
+  - Major section breaks: `mb-12` (3rem)
+  - Workflow features: `mb-12` (3rem)
+
+- **Content Margins**:
+  - Video containers: `mb-8` (2rem)
+  - Button containers: `mb-6` to `mb-8` (1.5-2rem)
+  - Feature items: `mb-2` (0.5rem)
+  - Carousel navigation: `mt-6 sm:mt-8` (1.5rem mobile, 2rem desktop)
+
+#### **Gap Values**
+- **Grid Gaps**:
+  - Mobile: `gap-6` (1.5rem)
+  - Large screens: `lg:gap-12` (3rem)
+  - Testimonials: `gap-6` (1.5rem)
+  - Button groups: `gap-3` (0.75rem)
+
+- **Flex Gaps**:
+  - Navigation: `space-x-2` (0.5rem) mobile, `sm:space-x-4` (1rem) desktop
+  - Carousel: `gap-1.5` (0.375rem)
+  - Marquee tags: `gap-2` (0.5rem)
+  - Carousel indicators: `space-x-2` (0.5rem)
+
+#### **Special Spacing**
+- **Hero Content**:
+  - Mobile: `padding-top: 5rem`, `padding-bottom: 2rem`
+  - Small screens: `padding-top: 4rem`, `padding-bottom: 1.5rem`
+  - Very small: `padding-top: 3.5rem`, `padding-bottom: 1rem`
+  - Landscape mobile: `padding-top: 3rem`, `padding-bottom: 0.75rem`
+
+- **iOS Safe Area**:
+  - Carousel section: `padding-bottom: 5rem` desktop, `4rem` mobile
+  - Hero content includes `env(safe-area-inset-bottom)`
+
 ### Component Spacing Patterns
 - **Heading margins**: `mb-4` (16px) standard, `mb-6` (24px) for larger gaps
 - **Paragraph margins**: `mb-6` (24px) standard, `mb-8` (32px) for sections
@@ -123,19 +173,25 @@ h1 {
 
 /* Hero heading */
 h1.is-hero {
-  font-size: 4rem;        /* 64px */
+  font-size: 2.56rem;     /* 41px mobile */
   line-height: 1.15;
   letter-spacing: -0.045em;
 }
 ```
 
-**Responsive H1 Classes:**
+**Hero Heading Responsive Sizes (.is-hero):**
+- Mobile: `2.56rem` (41px)
+- sm (640px+): `3.5rem` (56px)
+- md (768px+): `4rem` (64px)
+- lg (1024px+): `5.5rem` (88px)
+- xl (1280px+): `6rem` (96px)
+
+**Main Section Headings Responsive Classes:**
 - `text-3xl sm:text-4xl md:text-5xl lg:text-6xl`
-  - Mobile: 30px
-  - Small: 36px
-  - Medium: 48px
-  - Large: 60px
-  - XL: 72px
+  - Mobile: `1.875rem` (30px)
+  - Small: `2.25rem` (36px)
+  - Medium: `3rem` (48px)
+  - Large: `3.75rem` (60px)
 
 #### H2 - Section Headers
 ```css
@@ -150,11 +206,11 @@ h2 {
 
 **Responsive H2 Classes:**
 - `text-2xl sm:text-3xl md:text-4xl`
-  - Mobile: 24px
-  - Small: 30px
-  - Medium: 36px
+  - Mobile: `1.5rem` (24px)
+  - Small: `1.875rem` (30px)
+  - Medium: `2.25rem` (36px)
 
-#### H3 - Subsection Headers
+#### H3 - Subsection Headers (Team Names)
 ```css
 h3 {
   font-size: 24px;
@@ -165,8 +221,8 @@ h3 {
 }
 ```
 
-**Responsive H3 Classes:**
-- `text-2xl sm:text-3xl md:text-4xl`
+**Classes Used:**
+- `text-2xl font-bold` - Team member names (24px)
 
 #### H4 - Component Headers
 ```css
@@ -179,30 +235,38 @@ h4 {
 }
 ```
 
-**Classes:**
-- `text-xl font-bold` (20px)
-- `text-2xl font-bold` (24px)
+**Classes Used:**
+- `text-xl font-bold` - Feature titles (20px)
 
 ### Body Text Hierarchy
 
-#### Primary Body Text
-- `text-lg sm:text-xl md:text-2xl` - Hero descriptions
-  - Mobile: 18px
-  - Small: 20px
-  - Medium: 24px
+#### Primary Body Text (Hero Descriptions)
+- `text-lg md:text-2xl` - Hero section descriptions
+  - Mobile: `1.125rem` (18px)
+  - Medium: `1.5rem` (24px)
 
-#### Secondary Body Text
-- `text-sm sm:text-base` - Standard content
-  - Mobile: 14px
-  - Small: 16px
+#### Secondary Body Text (Section Descriptions)
+- `text-sm sm:text-base` - Carousel section descriptions
+  - Mobile: `0.875rem` (14px)
+  - Small: `1rem` (16px)
+
+#### Standard Body Text
+- `text-base` - Standard content (16px)
+- Card descriptions: `text-base` (16px)
+- Lead magnet description: Standard paragraph text
 
 #### Small Text
-- `text-sm` - Captions, labels (14px)
-- `text-xs` - Fine print (12px)
+- `text-sm` - Captions, labels, overlay tags (14px)
+- Podcast caption: `text-sm` (14px)
+- Overlay tags: `text-sm font-medium` (14px)
 
-### Navigation Typography
+#### Navigation Typography
 - Logo/Brand: `text-xl font-bold` (20px)
-- Navigation links: `font-semibold`
+- Navigation links: Standard button styling
+
+#### Button Typography
+- All buttons: `1rem` (16px) - from globals.css
+- Font weight: Standard button styling
 
 ---
 
@@ -242,6 +306,35 @@ xl: 1280px
 #### Content Width Adjustments
 - **Carousel cards**: `w-full sm:w-11/12 md:w-96 lg:w-[500px] xl:w-[500px]`
 - **Aspect ratios**: `aspect-[4/3]` for cards, `aspect-video` for media
+
+### Detailed Responsive Patterns Used
+
+#### **Layout Grid Changes**
+- **Team section**: `grid md:grid-cols-2 gap-12`
+- **Testimonials**: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6`
+- **Workflow**: `grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-12`
+- **CTA section**: `grid md:grid-cols-2 gap-12`
+
+#### **Visibility Changes**
+- **Desktop only**: `hidden md:block` (workflow desktop layout)
+- **Mobile only**: `md:hidden` (workflow mobile layout)
+- **Navigation**: `hidden sm:block` (About Us button)
+- **Carousel navigation**: `hidden md:flex` (desktop indicators)
+
+#### **Flex Direction Changes**
+- **Button groups**: `flex flex-col sm:flex-row gap-3`
+- **Content alignment**: `flex md:justify-center` (team member positioning)
+
+#### **Spacing Responsive Patterns**
+- **Section spacing**: `py-16 sm:py-20` (consistent across sections)
+- **Text spacing**: `mb-6 sm:mb-8` (hero text margins)
+- **Grid gaps**: `gap-6 lg:gap-12` (workflow section)
+- **Navigation spacing**: `space-x-2 sm:space-x-4` (button groups)
+
+#### **Width and Size Adjustments**
+- **Modal sizing**: `max-w-3xl md:min-w-[700px]` (lead magnet)
+- **Container sizing**: `md:min-w-[1000px]` (CTA section)
+- **Carousel cards**: Progressive sizing across breakpoints
 
 ---
 
@@ -460,35 +553,87 @@ useEffect(() => {
 
 ## 🎨 **Design Token Summary**
 
+### **Complete Spacing Scale Used**
 ```css
-/* Spacing Scale */
---space-xs: 0.25rem;    /* 4px */
---space-sm: 0.5rem;     /* 8px */
---space-md: 1rem;       /* 16px */
---space-lg: 1.5rem;     /* 24px */
---space-xl: 2rem;       /* 32px */
---space-2xl: 3rem;      /* 48px */
---space-3xl: 4rem;      /* 64px */
---space-4xl: 5rem;      /* 80px */
+/* Tailwind Spacing Values Used in Page */
+--space-0.5: 0.125rem;  /* 2px - h-0.5 divider */
+--space-1: 0.25rem;     /* 4px - h-1 accent bars */
+--space-1.5: 0.375rem;  /* 6px - gap-1.5 carousel */
+--space-2: 0.5rem;      /* 8px - gap-2, py-2, space-x-2 */
+--space-3: 0.75rem;     /* 12px - mb-3, gap-3, py-3 */
+--space-4: 1rem;        /* 16px - p-4, mb-4, py-4 */
+--space-6: 1.5rem;      /* 24px - p-6, mb-6, gap-6 */
+--space-8: 2rem;        /* 32px - mb-8, mt-8 */
+--space-10: 2.5rem;     /* 40px - p-10 desktop cards */
+--space-12: 3rem;       /* 48px - mb-12, py-12, gap-12 */
+--space-16: 4rem;       /* 64px - py-16 mobile sections */
+--space-20: 5rem;       /* 80px - py-20 desktop sections */
+```
 
-/* Border Radius */
---radius-sm: 0.25rem;   /* 4px */
---radius-md: 0.5rem;    /* 8px */
---radius-lg: 1rem;      /* 16px */
---radius-xl: 1.5rem;    /* 24px */
---radius-full: 9999px;  /* Fully rounded */
+### **Typography Scale Used**
+```css
+/* Font Sizes Actually Used in Page */
+--text-sm: 0.875rem;    /* 14px - captions, small text, overlay tags */
+--text-base: 1rem;      /* 16px - card descriptions, buttons, standard text */
+--text-lg: 1.125rem;    /* 18px - hero description mobile */
+--text-xl: 1.25rem;     /* 20px - feature titles, navigation logo */
+--text-2xl: 1.5rem;     /* 24px - team names, hero description desktop */
+--text-3xl: 1.875rem;   /* 30px - section headings mobile */
+--text-4xl: 2.25rem;    /* 36px - section headings small screens */
+--text-5xl: 3rem;       /* 48px - section headings medium screens */
+--text-6xl: 3.75rem;    /* 60px - section headings large screens */
 
-/* Typography Scale */
---text-xs: 0.75rem;     /* 12px */
---text-sm: 0.875rem;    /* 14px */
---text-base: 1rem;      /* 16px */
---text-lg: 1.125rem;    /* 18px */
---text-xl: 1.25rem;     /* 20px */
---text-2xl: 1.5rem;     /* 24px */
---text-3xl: 1.875rem;   /* 30px */
---text-4xl: 2.25rem;    /* 36px */
---text-5xl: 3rem;       /* 48px */
---text-6xl: 3.75rem;    /* 60px */
+/* Hero Heading Special Sizes */
+--hero-mobile: 2.56rem;  /* 41px - hero title mobile */
+--hero-sm: 3.5rem;      /* 56px - hero title small */
+--hero-md: 4rem;        /* 64px - hero title medium */
+--hero-lg: 5.5rem;      /* 88px - hero title large */
+--hero-xl: 6rem;        /* 96px - hero title extra large */
+```
+
+### **Border Radius Used**
+```css
+--radius-lg: 0.5rem;    /* 8px - rounded-lg */
+--radius-xl: 0.75rem;   /* 12px - rounded-xl */
+--radius-2xl: 1rem;     /* 16px - rounded-2xl cards */
+--radius-3xl: 1.5rem;   /* 24px - rounded-3xl modals */
+--radius-full: 9999px;  /* Fully rounded buttons, indicators */
+```
+
+### **Grid & Layout Values**
+```css
+/* Grid Columns */
+--grid-1: 1;            /* grid-cols-1 mobile */
+--grid-2: 2;            /* md:grid-cols-2 */
+--grid-3: 3;            /* md:grid-cols-3 workflow */
+--grid-8: 8;            /* lg:grid-cols-8 testimonials */
+
+/* Max Widths */
+--max-w-3xl: 48rem;     /* 768px - modals */
+--max-w-4xl: 56rem;     /* 896px - text content */
+--max-w-6xl: 72rem;     /* 1152px - main containers */
+
+/* Specific Widths */
+--w-96: 24rem;          /* 384px - carousel cards medium */
+--w-500: 31.25rem;      /* 500px - carousel cards large */
+--min-w-700: 43.75rem;  /* 700px - modal minimum */
+--min-w-1000: 62.5rem;  /* 1000px - CTA section */
+```
+
+### **Animation Values**
+```css
+/* Transition Durations */
+--duration-200: 200ms;   /* button hover transitions */
+--duration-300: 300ms;   /* standard transitions */
+--duration-700: 700ms;   /* carousel transitions */
+
+/* Animation Durations */
+--marquee-duration: 30s; /* marquee animations */
+
+/* Transform Values */
+--scale-95: 0.95;       /* inactive carousel cards */
+--scale-105: 1.05;      /* hover effects */
+--translate-y-1: -0.25rem; /* -4px button hover */
 ```
 
 ---

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import RB2BLoader from "@/components/RB2BLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -122,23 +123,7 @@ export default function RootLayout({
           }}
         />
         
-        {/* REB2B Tracking Script */}
-        <Script
-          id="reb2b-tracking"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              !function(key) {
-                if (window.reb2b) return;
-                window.reb2b = {loaded: true};
-                var s = document.createElement("script");
-                s.async = true;
-                s.src = "https://ddwl4m2hdecbv.cloudfront.net/b/" + key + "/" + key + ".js.gz";
-                document.getElementsByTagName("script")[0].parentNode.insertBefore(s, document.getElementsByTagName("script")[0]);
-              }("LNKLDHPVZ2OJ");
-            `,
-          }}
-        />
+        {/* RB2B Tracking via client loader */}
 
         {/* Hotjar Tracking Code */}
         <Script
@@ -161,6 +146,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <RB2BLoader />
         {children}
       </body>
     </html>
