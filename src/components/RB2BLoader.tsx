@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
-const RB2B_KEY = 'LNKLDHPVZ2OJ';
+const RB2B_KEY = 'W6Z57HQ8E7OX';
 
 export default function RB2BLoader() {
   const pathname = usePathname();
