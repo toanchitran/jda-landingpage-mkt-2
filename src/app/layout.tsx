@@ -73,25 +73,28 @@ export default function RootLayout({
               console.log('GA4 Config with UTM:', configParams);
               gtag('config', 'G-16WV2WNMXF', configParams);
               
-              // Send manual page_view with UTM parameters for proper attribution
-              if (utmSource || utmMedium || utmCampaign) {
-                console.log('Sending manual page_view with UTM attribution');
-                gtag('event', 'page_view', {
-                  page_title: document.title,
-                  page_location: window.location.href,
-                  campaign_source: utmSource || undefined,
-                  campaign_medium: utmMedium || undefined,
-                  campaign_name: utmCampaign || undefined,
-                  campaign_term: utmTerm || undefined,
-                  campaign_content: utmContent || undefined,
-                });
-              } else {
-                // Send normal page_view for direct traffic
-                gtag('event', 'page_view', {
-                  page_title: document.title,
-                  page_location: window.location.href,
-                });
-              }
+              // Wait for GA4 to initialize and send session_start before manual page_view
+              setTimeout(() => {
+                // Send manual page_view with UTM parameters for proper attribution
+                if (utmSource || utmMedium || utmCampaign) {
+                  console.log('Sending manual page_view with UTM attribution');
+                  gtag('event', 'page_view', {
+                    page_title: document.title,
+                    page_location: window.location.href,
+                    campaign_source: utmSource || undefined,
+                    campaign_medium: utmMedium || undefined,
+                    campaign_name: utmCampaign || undefined,
+                    campaign_term: utmTerm || undefined,
+                    campaign_content: utmContent || undefined,
+                  });
+                } else {
+                  // Send normal page_view for direct traffic
+                  gtag('event', 'page_view', {
+                    page_title: document.title,
+                    page_location: window.location.href,
+                  });
+                }
+              }, 100); // Small delay to ensure session_start fires first
             `,
           }}
         />
