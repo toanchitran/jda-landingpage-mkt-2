@@ -9,8 +9,9 @@ import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
 function BookACallContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [videoCompleted, setVideoCompleted] = useState(false);
   const [showQualificationSection, setShowQualificationSection] = useState(false);
+  const [videoMinimized, setVideoMinimized] = useState(false);
+  const [hasReached10Seconds, setHasReached10Seconds] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { 
     trackVideoStart, 
@@ -36,7 +37,6 @@ function BookACallContent() {
     // If we have booking parameters, show the booking section immediately
     if (hasBookingParams) {
       setShowQualificationSection(true);
-      setVideoCompleted(true);
       trackLeadQualificationShow();
       
       // Auto scroll to booking section after a short delay
@@ -49,8 +49,9 @@ function BookACallContent() {
           });
         }
       }, 500);
-    } else if (videoCompleted && !showQualificationSection) {
+    } else if (hasReached10Seconds && !showQualificationSection) {
       setShowQualificationSection(true);
+      setVideoMinimized(true);
       trackLeadQualificationShow();
       
       // Auto scroll to qualification section after a short delay
@@ -64,7 +65,7 @@ function BookACallContent() {
         }
       }, 500); // 500ms delay to ensure the section has rendered
     }
-  }, [videoCompleted, showQualificationSection, trackLeadQualificationShow, hasBookingParams]);
+  }, [hasReached10Seconds, showQualificationSection, trackLeadQualificationShow, hasBookingParams]);
 
   const handleVideoPlay = () => {
     if (videoRef.current) {
@@ -77,6 +78,11 @@ function BookACallContent() {
     if (videoRef.current) {
       const currentTime = videoRef.current.currentTime;
       const duration = videoRef.current.duration;
+      
+      // Check if video has reached 10 seconds
+      if (currentTime >= 10 && !hasReached10Seconds) {
+        setHasReached10Seconds(true);
+      }
       
       // Track video progress with custom play time metric
       trackVideoProgress(currentTime, duration, 'book_call_discovery_video');
@@ -110,7 +116,6 @@ function BookACallContent() {
       
       // Track video end with custom play time metric
       trackVideoEnd(duration, 'book_call_discovery_video');
-      setVideoCompleted(true);
     }
   };
 
@@ -184,41 +189,104 @@ function BookACallContent() {
           {/* Video Section - Only show if no booking parameters */}
           {!hasBookingParams && (
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6">Watch This Quick Video</h2>
-                <p className="text-lg mb-8" style={{color: 'var(--medium-grey)'}}>
-                  To book your discovery call: 1) Watch this video to completion for pop fill-out form 2) Fill out your information<br/>3) Schedule your call
-                </p>
-              </div>
+              {!videoMinimized && (
+                <>
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-6">Watch This Quick Video</h2>
+                    <p className="text-lg mb-8" style={{color: 'var(--medium-grey)'}}>
+                      To book your discovery call: 1) Watch this video 2) Fill out your information<br/>3) Schedule your call
+                    </p>
+                  </div>
 
-              <div className="rounded-xl overflow-hidden bg-[#1a1a2e] aspect-video mb-8">
-                <video
-                  ref={videoRef}
-                  className="w-full h-full object-cover"
-                  onPlay={handleVideoPlay}
-                  onTimeUpdate={handleVideoTimeUpdate}
-                  onPause={handleVideoPause}
-                  onEnded={handleVideoEnded}
-                  controls
-                  controlsList="nodownload nofullscreen noremoteplayback"
-                  style={{
-                    '--webkit-media-controls-timeline': 'none',
-                    '--webkit-media-controls-current-time-display': 'none',
-                    '--webkit-media-controls-time-remaining-display': 'none'
-                  } as React.CSSProperties}
-                >
-                  <source src="/optimized_brandbeam.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
+                  <div className="rounded-xl overflow-hidden bg-[#1a1a2e] aspect-video mb-8">
+                    <video
+                      ref={videoRef}
+                      className="w-full h-full object-cover"
+                      onPlay={handleVideoPlay}
+                      onTimeUpdate={handleVideoTimeUpdate}
+                      onPause={handleVideoPause}
+                      onEnded={handleVideoEnded}
+                      controls
+                      autoPlay
+                      muted
+                      playsInline
+                      controlsList="nodownload nofullscreen noremoteplayback"
+                      style={{
+                        '--webkit-media-controls-timeline': 'none',
+                        '--webkit-media-controls-current-time-display': 'none',
+                        '--webkit-media-controls-time-remaining-display': 'none'
+                      } as React.CSSProperties}
+                    >
+                      <source src="/optimized_brandbeam.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
 
-              <div className="text-center">
-                <p className="text-secondary-text-80 text-sm">📹 Video Explanation - 3 minutes that could change your business forever</p>
-              </div>
+                  <div className="text-center">
+                    <p className="text-secondary-text-80 text-sm">📹 Video Explanation - 3 minutes that could change your business forever</p>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
       </section>
+
+      {/* Minimized Video Player - YouTube style */}
+      {videoMinimized && !hasBookingParams && (
+        <div className="fixed bottom-4 right-4 z-50 w-80 h-48 bg-black rounded-lg shadow-2xl overflow-hidden">
+          <div className="relative w-full h-full">
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              onPlay={handleVideoPlay}
+              onTimeUpdate={handleVideoTimeUpdate}
+              onPause={handleVideoPause}
+              onEnded={handleVideoEnded}
+              controls
+              autoPlay
+              muted
+              playsInline
+              controlsList="nodownload nofullscreen noremoteplayback"
+              style={{
+                '--webkit-media-controls-timeline': 'none',
+                '--webkit-media-controls-current-time-display': 'none',
+                '--webkit-media-controls-time-remaining-display': 'none'
+              } as React.CSSProperties}
+            >
+              <source src="/optimized_brandbeam.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            
+            {/* Expand button */}
+            <button
+              onClick={() => setVideoMinimized(false)}
+              className="absolute top-2 right-2 bg-black bg-opacity-50 text-white p-1 rounded hover:bg-opacity-75 transition-all"
+              title="Expand video"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+            </button>
+            
+            {/* Close button */}
+            <button
+              onClick={() => {
+                if (videoRef.current) {
+                  videoRef.current.pause();
+                }
+                setVideoMinimized(false);
+              }}
+              className="absolute top-2 left-2 bg-black bg-opacity-50 text-white p-1 rounded hover:bg-opacity-75 transition-all"
+              title="Close video"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Lead Qualification Section - Only show after video completion or if booking parameters exist */}
       {showQualificationSection && (
