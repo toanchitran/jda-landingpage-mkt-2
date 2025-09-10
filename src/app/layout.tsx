@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fundraising Flywheel - PR Specialists for Investor Relations",
-  description: "Transform your company's narrative and attract the funding you deserve with our digital PR specialists. Maya and Alex work 24/7 to build your authority and connect with investors.",
+  title: "Fundraising Flywheel - Strategic Narrative Consultants for Investor Engagement",
+  description: "Triple your investor engagement with a compelling strategic narrative. Jay and David help founders shape their company's story to attract funding and make insights scalable.",
   icons: {
     icon: '/favicon.ico',
   },
