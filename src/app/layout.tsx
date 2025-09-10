@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
   },
+  verification: {
+    google: 'eLwXDpfk7q64q5bwX9mGFyUVtdlgKF_Ug33iF7G8Dfk',
+  },
 };
 
 export const viewport = {
