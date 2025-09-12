@@ -579,7 +579,7 @@ export default function Home() {
               </button>
             </div>
             <div className="flex space-x-2 sm:space-x-4">
-              <button 
+              {/* <button 
                 onClick={() => {
                   trackLogoClick();
                   window.open('https://jdalchemy.com', '_blank');
@@ -587,7 +587,7 @@ export default function Home() {
                 className="button relative z-10 hidden sm:block"
               >
                 About Us
-              </button>
+              </button> */}
               <button 
                 onClick={() => {
                   trackSiteDeckClick();
