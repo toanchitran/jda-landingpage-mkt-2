@@ -701,12 +701,12 @@ export default function ContactForm({
     
     setErrors({});
     
-    // Check for hard stops
-    if (currentSection.id === 'founder_availability' && formData.founderAvailability !== 'Yes') {
-      setMessage('This consultation requires founder participation. Please reapply when available.');
-      setStatus('error');
-      return;
-    }
+    // // Check for hard stops
+    // if (currentSection.id === 'founder_availability' && formData.founderAvailability !== 'Yes') {
+    //   setMessage('This consultation requires founder participation. Please reapply when available.');
+    //   setStatus('error');
+    //   return;
+    // }
     
     if (currentSection.id === 'commercial_terms' && formData.termsAcceptance !== 'Yes, I accept') {
       setMessage('Thanks—this engagement requires acceptance of terms.');
