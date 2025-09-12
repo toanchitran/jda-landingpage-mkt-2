@@ -88,12 +88,7 @@
           "label": "The Founder/CEO can join a 60-minute discovery call within 7 days.",
           "type": "radio",
           "required": true,
-          "options": ["Yes", "No"],
-          "validation": {
-            "type": "required_value",
-            "requiredValue": "Yes",
-            "errorMessage": "This consultation requires founder participation. Please reapply when available."
-          }
+          "options": ["Yes", "No"]
         }
       ]
     },
