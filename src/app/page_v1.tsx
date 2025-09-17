@@ -605,76 +605,15 @@ export default function Home() {
         <div className="hero-container">
           <div className="hero-content">
             <h1 className="is-hero font-bold mb-4 leading-tight">
-            Be the hot deal<br/>not the hard sell
+              Triple Your<br/>Investor Engagement Without Becoming a Content Slave
             </h1>
             {/* <div className="w-80 h-0.5 bg-accent-elements mb-6"></div> */}
             <p className="text-lg md:text-2xl leading-relaxed mb-6 sm:mb-8" style={{color: 'var(--light-grey)'}}>
-            Show inevitability, not hope. Your opener lands, your one-pager travels, your calendar fills.
+            Attract the funding you deserve by shaping your company&apos;s narrative, and make your insights scalable.
             </p>
-            <button onClick={handleBookCallHero} className="button relative z-10 mb-8">
+            <button onClick={handleBookCallHero} className="button relative z-10">
               Book a call
             </button>
-            
-            {/* Trusted By Logos */}
-            <div className="mt-12 relative z-10 w-full">
-              {/* <p className="text-sm mb-4 text-center" style={{color: 'var(--light-grey)'}}>Trusted by</p> */}
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-4 w-full">
-                <div className="flex items-center justify-center h-[54px]">
-                  <Image
-                    src="/logos/logo_digicon.png"
-                    alt="Digicon"
-                    width={160}
-                    height={54}
-                    className="h-[54px] w-auto object-contain max-w-full"
-                  />
-                </div>
-                <div className="flex items-center justify-center h-[54px]">
-                  <Image
-                    src="/logos/logo_maco.png"
-                    alt="Maco"
-                    width={160}
-                    height={54}
-                    className="h-[54px] w-auto object-contain max-w-full"
-                  />
-                </div>
-                <div className="flex items-center justify-center h-[54px]">
-                  <Image
-                    src="/logos/logo_kavecon.png"
-                    alt="Kavecon"
-                    width={160}
-                    height={54}
-                    className="h-[54px] w-auto object-contain max-w-full"
-                  />
-                </div>
-                <div className="flex items-center justify-center h-[54px]">
-                  <Image
-                    src="/logos/logo_superworks.png"
-                    alt="Superworks"
-                    width={160}
-                    height={54}
-                    className="h-[54px] w-auto object-contain max-w-full"
-                  />
-                </div>
-                <div className="flex items-center justify-center h-[54px]">
-                  <Image
-                    src="/logos/logo_custom_village.png"
-                    alt="Custom Village"
-                    width={160}
-                    height={54}
-                    className="h-[54px] w-auto object-contain max-w-full"
-                  />
-                </div>
-                <div className="flex items-center justify-center h-[54px]">
-                  <Image
-                    src="/logos/logo_dreamcense.png"
-                    alt="Dreamcense"
-                    width={160}
-                    height={54}
-                    className="h-[54px] w-auto object-contain max-w-full"
-                  />
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -684,6 +623,19 @@ export default function Home() {
           className="py-16 sm:py-20 padding-global"
           style={{backgroundColor: 'var(--secondary-bg)', backgroundImage: 'url(/Podcast_Audio_BG.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}
         >
+          {/* <div className="absolute inset-0"> */}
+            {/* <Image
+              src="/Podcast_Audio_BG.png"
+              alt="Podcast Audio Background"
+              fill
+              className="object-cover"
+              priority
+              unoptimized={true}
+            /> */}
+            
+            {/* <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.7)'}}></div> */}
+          {/* </div> */}
+          
           
           <div className="max-w-6xl mx-auto relative z-10">
             <div className="text-center mb-6 sm:mb-8">
@@ -710,54 +662,6 @@ export default function Home() {
               </div>
               <p className="text-center text-gray-600 text-sm mt-2">Watch our podcast</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Lead Magnet Section - Deep Purple */}
-      <section className="relative min-h-screen flex items-center justify-center">
-        <div className="absolute inset-0">
-          <Image
-            src="/Lead_magnet_BG_optimized.jpg"
-            alt="Lead Magnet Background"
-            fill
-            className="object-cover"
-            priority
-            quality={85}
-          />
-          
-          <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.1)'}}></div>
-        </div>
-        
-                {/* Modal Card - Top Right */}
-                 <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global md:min-w-[700px]">
-                     <div className="rounded-3xl shadow-2xl bg-white border border-gray-200 pt-8 pb-8 padding-global">
-                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black my-2">
-              Does Your Pitch Deck Tell a Story Worth Funding?
-            </h2>
-            <p className="leading-relaxed text-left my-2" style={{color: 'var(--deep-grey)'}}>
-            This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
-            </p>
-            <div className="z-10 rounded-lg my-6">
-                              <Image
-                  src="/Lead_Magnet_Teaser.png"
-                  alt="Lead Magnet Preview"
-                  width={800}
-                  height={150}
-                  className="rounded-lg w-full h-auto"
-                  quality={85}
-                  loading="lazy"
-                />
-            </div>
-            <button onClick={() => {
-              trackSiteDeckClick();
-              window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
-                         }} className="button_dark my-2">
-              Analyze My Deck Now
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </button>
           </div>
         </div>
       </section>
@@ -798,6 +702,15 @@ export default function Home() {
                           </div>
                         </div>
                         
+                        {/* Bottom Tag */}
+                        {/* <div className="absolute top-16 left-4">
+                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center">
+                            <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                            </svg>
+                            Autopilot activated
+                          </div>
+                        </div> */}
                       </div>
                   
 
@@ -845,6 +758,16 @@ export default function Home() {
                           David Yi, Investment Strategist
                           </div>
                         </div>
+                        
+                        {/* Bottom Tag */}
+                        {/* <div className="absolute top-16 left-4">
+                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center">
+                            <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                            </svg>
+                            Active
+                          </div>
+                        </div> */}
                       </div>
                   
 
@@ -870,7 +793,7 @@ export default function Home() {
         </div>
       </section>
 
-      
+
 
       {/*  The Funded Future You Can Build - Deep Blue */}
       <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--secondary-bg)'}}>
@@ -1020,7 +943,53 @@ export default function Home() {
         </div>
       </section>
 
-      
+      {/* Lead Magnet Section - Deep Purple */}
+      <section className="relative min-h-screen flex items-center justify-center">
+        <div className="absolute inset-0">
+          <Image
+            src="/Lead_magnet_BG_optimized.jpg"
+            alt="Lead Magnet Background"
+            fill
+            className="object-cover"
+            priority
+            quality={85}
+          />
+          
+          <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.1)'}}></div>
+        </div>
+        
+                {/* Modal Card - Top Right */}
+                 <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global md:min-w-[700px]">
+                     <div className="rounded-3xl shadow-2xl bg-white border border-gray-200 pt-8 pb-8 padding-global">
+                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black my-2">
+              Does Your Pitch Deck Tell a Story Worth Funding?
+            </h2>
+            <p className="leading-relaxed text-left my-2" style={{color: 'var(--deep-grey)'}}>
+            This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
+            </p>
+            <div className="z-10 rounded-lg my-6">
+                              <Image
+                  src="/Lead_Magnet_Teaser.png"
+                  alt="Lead Magnet Preview"
+                  width={800}
+                  height={150}
+                  className="rounded-lg w-full h-auto"
+                  quality={85}
+                  loading="lazy"
+                />
+            </div>
+            <button onClick={() => {
+              trackSiteDeckClick();
+              window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
+                         }} className="button_dark my-2">
+              Analyze My Deck Now
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
 
 
 
