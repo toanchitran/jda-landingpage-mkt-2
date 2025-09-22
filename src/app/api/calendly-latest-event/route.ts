@@ -37,7 +37,7 @@ export async function GET(request: Request) {
     // Build URL with invitee_email parameter if provided
     let url = `https://api.calendly.com/scheduled_events?user=${encodeURIComponent(
       userUri
-    )}&sort=${encodeURIComponent('start_time:asc')}&count=1`;
+    )}&sort=${encodeURIComponent('start_time:desc')}&count=1`;
     
     if (inviteeEmail) {
       url += `&invitee_email=${encodeURIComponent(inviteeEmail)}`;
