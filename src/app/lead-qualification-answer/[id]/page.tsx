@@ -524,7 +524,7 @@ export default async function LeadQualificationAnswerPage({
                     <p className="text-gray-600 text-xs sm:text-sm mb-4">
                       Our comprehensive analysis of your company&apos;s investment readiness and strategic positioning.
                     </p>
-                    <div className="prose prose-sm max-w-none prose-headings:text-black prose-p:text-gray-700 prose-strong:text-black prose-li:text-gray-700">
+                    <div className="prose prose-sm max-w-none prose-headings:text-black prose-p:text-black prose-strong:text-black prose-li:text-black">
                       <div 
                         className="markdown-content"
                         dangerouslySetInnerHTML={{ 
