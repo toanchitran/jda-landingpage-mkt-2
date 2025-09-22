@@ -19,7 +19,7 @@
 .markdown-content h4 { font-size: 1rem !important; }
 
 .markdown-content p {
-  color: #4B5563 !important;
+  color: #000000 !important;
   margin-bottom: 0.75rem !important;
   line-height: 1.6 !important;
 }
@@ -31,6 +31,7 @@
 
 .markdown-content em {
   font-style: italic !important;
+  color: #000000 !important;
 }
 
 .markdown-content ul,
@@ -40,7 +41,7 @@
 }
 
 .markdown-content li {
-  color: #4B5563 !important;
+  color: #000000 !important;
   margin-bottom: 0.25rem !important;
 }
 
@@ -55,11 +56,23 @@
   border: 1px solid #D1D5DB !important;
   padding: 0.5rem !important;
   text-align: left !important;
+  color: #000000 !important;
 }
 
 .markdown-content th {
   background-color: #F3F4F6 !important;
   font-weight: 600 !important;
+  color: #000000 !important;
+}
+
+/* Override any prose styles that might be interfering */
+.prose .markdown-content * {
+  color: #000000 !important;
+}
+
+/* Specifically target table content */
+.markdown-content table * {
+  color: #000000 !important;
 }
 
 body {
