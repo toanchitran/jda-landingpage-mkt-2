@@ -248,6 +248,7 @@ export async function GET(
       meetingLink: fields['Meeting link'] || null,
       aiScreeningScore: fields['AI screening score'] || null,
       aiScreeningDetail: fields['AI screening detail'] || null,
+      investorReadinessReport: fields['Investor readiness report'] || null,
       sections: sectionsData.sections,
       sectionAnswers,
       submittedAt: fields['Created'] || new Date().toISOString(),
@@ -258,7 +259,9 @@ export async function GET(
       hasName: !!contactData.fullName,
       hasEmail: !!contactData.email,
       sectionsCount: contactData.sections.length,
-      sectionAnswersKeys: Object.keys(contactData.sectionAnswers)
+      sectionAnswersKeys: Object.keys(contactData.sectionAnswers),
+      hasInvestorReadinessReport: !!contactData.investorReadinessReport,
+      investorReadinessReportLength: contactData.investorReadinessReport?.length || 0
     });
 
     return NextResponse.json(contactData);

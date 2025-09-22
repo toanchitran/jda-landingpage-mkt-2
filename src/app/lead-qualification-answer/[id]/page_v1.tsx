@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { marked } from 'marked';
 
 interface Question {
   id: string;
@@ -40,7 +39,6 @@ interface ContactData {
   meetingLink: string | null;
   aiScreeningScore: string | null;
   aiScreeningDetail: string | null;
-  investorReadinessReport: string | null;
   sections: Section[];
   sectionAnswers: Record<string, SectionAnswer>;
   submittedAt: string;
@@ -48,31 +46,22 @@ interface ContactData {
 
 async function getContactData(id: string): Promise<ContactData | null> {
   try {
-    // For server-side rendering, construct the proper URL
-    let baseUrl: string;
+    // For server-side rendering in production, construct the proper URL
+    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     
-    // In development mode, always use localhost
-    if (process.env.NODE_ENV === 'development') {
+    if (!baseUrl) {
+      // Try to determine the base URL from environment
+      const host = process.env.VERCEL_URL || process.env.HOST || 'localhost';
       const port = process.env.PORT || '3000';
-      baseUrl = `http://localhost:${port}`;
-    } else {
-      // In production, use the environment variable or construct from available info
-      baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+      const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
       
-      if (!baseUrl) {
-        // Try to determine the base URL from environment
-        const host = process.env.VERCEL_URL || process.env.HOST || 'localhost';
-        const port = process.env.PORT || '3000';
-        const protocol = 'https'; // Always use HTTPS in production
-        
-        if (host.includes('localhost') || host.includes('127.0.0.1')) {
-          baseUrl = `http://${host}:${port}`;
-        } else if (host.includes(':')) {
-          // Host already includes port
-          baseUrl = `${protocol}://${host}`;
-        } else {
-          baseUrl = `${protocol}://${host}:${port}`;
-        }
+      if (host.includes('localhost') || host.includes('127.0.0.1')) {
+        baseUrl = `http://${host}:${port}`;
+      } else if (host.includes(':')) {
+        // Host already includes port
+        baseUrl = `${protocol}://${host}`;
+      } else {
+        baseUrl = `${protocol}://${host}:${port}`;
       }
     }
     
@@ -131,73 +120,6 @@ function formatAnswer(answer: string | string[] | undefined, question: Question)
   }
   
   return String(answer);
-}
-
-function convertMarkdownToHtml(markdown: string): string {
-  if (!markdown) return '';
-  
-  // First, clean up escaped characters that might be in the data
-  const cleanMarkdown = markdown
-    .replace(/\\\\/g, '')  // Remove escaped backslashes
-    .replace(/\\n/g, '\n') // Convert escaped newlines to actual newlines
-    .replace(/\\t/g, '\t') // Convert escaped tabs to actual tabs
-    .replace(/\\"/g, '"')  // Convert escaped quotes
-    .replace(/\\'/g, "'"); // Convert escaped single quotes
-  
-  // Configure marked options
-  marked.setOptions({
-    breaks: true,        // Convert \n to <br>
-    gfm: true        // Enable GitHub Flavored Markdown
-  });
-  
-  // Convert markdown to HTML using marked
-  let html = marked(cleanMarkdown) as string;
-  
-  // If marked didn't convert basic formatting, force convert it
-  if (html.includes('**') || html.includes('*')) {
-    html = html
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>');
-  }
-  
-  // Apply Tailwind CSS classes and ensure black text
-  html = html
-    // Headers
-    .replace(/<h1>/g, '<h1 class="text-2xl font-bold text-black mb-4 mt-6">')
-    .replace(/<h2>/g, '<h2 class="text-xl font-bold text-black mb-3 mt-6">')
-    .replace(/<h3>/g, '<h3 class="text-lg font-semibold text-black mb-2 mt-4">')
-    .replace(/<h4>/g, '<h4 class="text-base font-semibold text-black mb-2 mt-4">')
-    .replace(/<h5>/g, '<h5 class="text-sm font-semibold text-black mb-2 mt-3">')
-    .replace(/<h6>/g, '<h6 class="text-xs font-semibold text-black mb-2 mt-3">')
-    
-    // Paragraphs - make text black instead of gray
-    .replace(/<p>/g, '<p class="mb-3 text-black">')
-    
-    // Lists - make text black
-    .replace(/<ul>/g, '<ul class="list-disc ml-6 mb-4 space-y-1">')
-    .replace(/<ol>/g, '<ol class="list-decimal ml-6 mb-4 space-y-1">')
-    .replace(/<li>/g, '<li class="text-black">')
-    
-    // Tables - ensure black text
-    .replace(/<table>/g, '<table class="w-full border-collapse border border-gray-300 mb-4">')
-    .replace(/<th>/g, '<th class="border border-gray-300 px-4 py-2 bg-gray-100 text-black font-semibold text-left">')
-    .replace(/<td>/g, '<td class="border border-gray-300 px-4 py-2 text-black">')
-    
-    // Links
-    .replace(/<a href="/g, '<a class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer" href="')
-    
-    // Code blocks
-    .replace(/<pre><code>/g, '<pre class="bg-gray-100 p-4 rounded border text-sm overflow-x-auto mt-3 mb-3"><code class="text-black">')
-    .replace(/<code>/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-black">')
-    
-    // Strong and em - ensure black text
-    .replace(/<strong>/g, '<strong class="font-semibold text-black">')
-    .replace(/<em>/g, '<em class="italic text-black">')
-    
-    // Blockquotes - make text black
-    .replace(/<blockquote>/g, '<blockquote class="border-l-4 border-gray-300 pl-4 italic text-black my-4">');
-  
-  return html;
 }
 
 export default async function LeadQualificationAnswerPage({ 
@@ -296,14 +218,9 @@ export default async function LeadQualificationAnswerPage({
               {contactData.aiScreeningDetail && (
                 <div className="bg-blue-50 rounded-lg p-4 sm:p-6">
                   <h4 className="text-base sm:text-lg font-semibold text-black mb-2 sm:mb-3">Detailed Analysis</h4>
-                  <div className="prose prose-sm max-w-none prose-headings:text-black prose-p:text-black prose-strong:text-black prose-li:text-black">
-                    <div 
-                      className="markdown-content"
-                      dangerouslySetInnerHTML={{ 
-                        __html: convertMarkdownToHtml(contactData.aiScreeningDetail) 
-                      }}
-                    />
-                  </div>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line text-sm sm:text-base">
+                    {contactData.aiScreeningDetail}
+                  </p>
                 </div>
               )}
             </div>
@@ -498,40 +415,6 @@ export default async function LeadQualificationAnswerPage({
                         </a>
                       </div>
                     )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Investor Readiness Report Section */}
-          {contactData.investorReadinessReport && (
-            <div className="mb-8 sm:mb-10">
-              <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-black border-b border-gray-200 pb-2">
-                Investor Readiness Report
-              </h2>
-              <div className="bg-indigo-50 rounded-lg p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row items-start gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-grow">
-                    <h3 className="text-base sm:text-lg font-semibold text-black mb-2">Strategic Assessment Report</h3>
-                    <p className="text-gray-600 text-xs sm:text-sm mb-4">
-                      Our comprehensive analysis of your company&apos;s investment readiness and strategic positioning.
-                    </p>
-                    <div className="prose prose-sm max-w-none prose-headings:text-black prose-p:text-gray-700 prose-strong:text-black prose-li:text-gray-700">
-                      <div 
-                        className="markdown-content"
-                        dangerouslySetInnerHTML={{ 
-                          __html: convertMarkdownToHtml(contactData.investorReadinessReport) 
-                        }}
-                      />
-                    </div>
                   </div>
                 </div>
               </div>
