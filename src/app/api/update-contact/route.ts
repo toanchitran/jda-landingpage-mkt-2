@@ -7,13 +7,14 @@ const AIRTABLE_TABLE_ID = 'tblP52B81ccH8jICa';
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { recordId, pitchDeckUrl, joinLink, calendlyEventScheduledTime, pitchDeckAnalysisReportLink } = body;
+    const { recordId, pitchDeckUrl, joinLink, calendlyEventScheduledTime, pitchDeckAnalysisReportLink, investorReadinessReport } = body;
 
     console.log('=== UPDATE CONTACT API ===');
     console.log('Record ID:', recordId);
     console.log('Pitch Deck URL:', pitchDeckUrl);
     console.log('Join Link:', joinLink);
     console.log('Pitch Deck Analysis Report Link:', pitchDeckAnalysisReportLink);
+    console.log('Investor Readiness Report:', investorReadinessReport);
     console.log('Base ID:', AIRTABLE_BASE_ID);
     console.log('Table ID:', AIRTABLE_TABLE_ID);
     console.log('Full request body:', JSON.stringify(body, null, 2));
@@ -24,7 +25,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // At least one field must be provided
-    if (!pitchDeckUrl && !joinLink && !calendlyEventScheduledTime && !pitchDeckAnalysisReportLink) {
+    if (!pitchDeckUrl && !joinLink && !calendlyEventScheduledTime && !pitchDeckAnalysisReportLink && !investorReadinessReport) {
       console.error('No updatable fields provided');
       return NextResponse.json({ error: 'No fields provided to update' }, { status: 400 });
     }
@@ -64,6 +65,11 @@ export async function PATCH(request: NextRequest) {
       // Try the exact field name we expect
       updateFields["Pitch Deck Analysis Report Link"] = pitchDeckAnalysisReportLink;
       console.log('Field name used:', "Pitch Deck Analysis Report Link");
+    }
+    if (investorReadinessReport) {
+      console.log('Adding investor readiness report to update fields:', investorReadinessReport.substring(0, 100) + '...');
+      updateFields["Investor readiness report"] = investorReadinessReport;
+      console.log('Field name used:', "Investor readiness report");
     }
 
     const updateData = { fields: updateFields };

@@ -481,89 +481,43 @@ export default function ContactForm({
     }
   }, [trackFormFieldInteraction, errors]);
 
-  // Function to analyze pitch deck files after contact record is created
-  const analyzePitchDeckFiles = useCallback(async (recordId: string) => {
+  // Function to trigger server-side pitch deck analysis after contact record is created
+  const triggerPitchDeckAnalysis = useCallback(async (recordId: string) => {
     if (pitchDeckFiles.length === 0) {
       console.log('No pitch deck files to analyze');
       return;
     }
 
-    console.log(`Starting analysis for ${pitchDeckFiles.length} pitch deck files...`);
+    console.log(`Triggering server-side analysis for ${pitchDeckFiles.length} pitch deck files...`);
     
     for (const pitchDeckFile of pitchDeckFiles) {
       try {
-        console.log('Analyzing pitch deck:', pitchDeckFile.file.name);
+        console.log('Sending pitch deck for server-side analysis:', pitchDeckFile.file.name);
         console.log('File size:', pitchDeckFile.file.size, 'bytes');
         console.log('File type:', pitchDeckFile.file.type);
         
         const formData = new FormData();
         formData.append('pitchDeckFile', pitchDeckFile.file);
+        formData.append('recordId', recordId);
 
-        console.log('Sending request to analysis API via proxy...');
-        console.log('Proxy API URL:', '/api/analyze-pitch-deck');
+        console.log('Triggering server-side analysis...');
         
         const response = await fetch('/api/analyze-pitch-deck', {
           method: 'POST',
           body: formData,
         });
 
-        console.log('Analysis API response status:', response.status);
-        console.log('Analysis API response headers:', Object.fromEntries(response.headers.entries()));
-
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('Analysis API error response:', errorText);
-          console.error('Response headers:', Object.fromEntries(response.headers.entries()));
-          throw new Error(`Analysis API returned ${response.status}: ${errorText}`);
+          console.error('Failed to trigger server-side analysis:', response.status, errorText);
+          throw new Error(`Analysis trigger failed: ${response.status}: ${errorText}`);
         }
 
         const result = await response.json();
-        console.log('=== FULL PITCH DECK ANALYSIS RESULT ===');
-        console.log(JSON.stringify(result, null, 2));
-
-        if (result.success && result.reportLink) {
-          console.log('=== PITCH DECK ANALYSIS SUCCESS ===');
-          console.log('Report Link:', result.reportLink);
-          console.log('Record ID:', recordId);
-          console.log('About to update Airtable...');
-          
-          // Update Airtable with the analysis report link
-          const updateResponse = await fetch('/api/update-contact', {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              recordId: recordId,
-              pitchDeckAnalysisReportLink: result.reportLink,
-            }),
-          });
-
-          console.log('Update response status:', updateResponse.status);
-          const updateResponseText = await updateResponse.text();
-          console.log('Update response body:', updateResponseText);
-
-          if (updateResponse.ok) {
-            console.log('✅ Successfully updated Airtable with pitch deck analysis report link');
-          } else {
-            console.error('❌ Failed to update Airtable with analysis report link');
-            console.error('Response status:', updateResponse.status);
-            console.error('Response body:', updateResponseText);
-          }
-        } else {
-          console.log('❌ Analysis failed or no report link received');
-          console.log('Result:', result);
-        }
+        console.log('✅ Server-side analysis triggered successfully:', result.message);
+        
       } catch (error) {
-        if (error instanceof Error) {
-          if (error.name === 'AbortError') {
-            console.error(`Pitch deck analysis timed out for ${pitchDeckFile.file.name} (60 seconds)`);
-          } else {
-            console.error(`Pitch deck analysis failed for ${pitchDeckFile.file.name}:`, error.message);
-          }
-        } else {
-          console.error(`Pitch deck analysis failed for ${pitchDeckFile.file.name}:`, error);
-        }
+        console.error(`Failed to trigger analysis for ${pitchDeckFile.file.name}:`, error);
         // Continue with other files even if one fails
       }
     }
@@ -823,9 +777,9 @@ export default function ContactForm({
         // Track contact form completion
         trackContactFormComplete();
         
-        // Start pitch deck analysis in background (don't await to avoid blocking UI)
-        analyzePitchDeckFiles(result.id).catch(error => {
-          console.error('Background pitch deck analysis failed:', error);
+        // Trigger server-side pitch deck analysis (don't await to avoid blocking UI)
+        triggerPitchDeckAnalysis(result.id).catch(error => {
+          console.error('Failed to trigger server-side pitch deck analysis:', error);
         });
         
         // Trigger n8n webhook with the record ID
