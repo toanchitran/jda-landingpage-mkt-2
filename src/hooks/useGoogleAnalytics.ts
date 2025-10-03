@@ -19,6 +19,18 @@ export const useGoogleAnalytics = () => {
     return null;
   }, []);
 
+  // Helper function to get record_id from localStorage
+  const getRecordId = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('record_id');
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }, []);
+
   const trackEvent = useCallback((eventName: string, parameters: Record<string, unknown> = {}) => {
     if (typeof window !== 'undefined' && window.gtag) {
       // Add session ID to all events if available
@@ -27,9 +39,22 @@ export const useGoogleAnalytics = () => {
         parameters.session_id_custom = sessionId;
       }
       
+      // Check if current URL has utm_medium parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasUtmMedium = urlParams.has('utm_medium');
+      
+      // If no utm_medium in URL, add stored record_id as utm_medium and utm_source as revisit
+      if (!hasUtmMedium) {
+        const recordId = getRecordId();
+        if (recordId) {
+          parameters.campaign_medium = recordId;
+          parameters.campaign_source = 'revisit';
+        }
+      }
+      
       window.gtag('event', eventName, parameters);
     }
-  }, [getSessionId]);
+  }, [getSessionId, getRecordId]);
 
   const trackBookCallClick = useCallback((location: string) => {
     trackEvent('book_call_click', {
@@ -143,9 +168,18 @@ export const useGoogleAnalytics = () => {
   const trackUTMParameters = useCallback(() => {
     if (typeof window !== 'undefined' && window.gtag) {
       const urlParams = new URLSearchParams(window.location.search);
-      const utmSource = urlParams.get('utm_source');
-      const utmMedium = urlParams.get('utm_medium');
+      let utmSource = urlParams.get('utm_source');
+      let utmMedium = urlParams.get('utm_medium');
       const utmCampaign = urlParams.get('utm_campaign');
+
+      // If no utm_medium in URL, use stored record_id
+      if (!utmMedium) {
+        const recordId = getRecordId();
+        if (recordId) {
+          utmMedium = recordId;
+          utmSource = utmSource || 'revisit';
+        }
+      }
 
       // Only track if we have UTM parameters
       const hasUTMParams = Boolean(utmSource || utmMedium || utmCampaign);
@@ -176,7 +210,7 @@ export const useGoogleAnalytics = () => {
         window.gtag('event', 'utm_additional_tracking', eventParams);
       }
     }
-  }, [getSessionId]);
+  }, [getSessionId, getRecordId]);
 
   const trackVideoPlay = useCallback((currentTime: number) => {
     trackEvent('video_play', {
@@ -358,6 +392,7 @@ export const useGoogleAnalytics = () => {
   return {
     trackEvent,
     getSessionId,
+    getRecordId,
     trackBookCallClick,
     trackSiteDeckClick,
     trackLogoClick,

@@ -55,11 +55,35 @@ export default function RootLayout({
               
               // Get UTM parameters from URL
               const urlParams = new URLSearchParams(window.location.search);
-              const utmSource = urlParams.get('utm_source');
-              const utmMedium = urlParams.get('utm_medium');
+              let utmSource = urlParams.get('utm_source');
+              let utmMedium = urlParams.get('utm_medium');
               const utmCampaign = urlParams.get('utm_campaign');
               const utmTerm = urlParams.get('utm_term');
               const utmContent = urlParams.get('utm_content');
+              
+              // Check if utm_medium contains "rec" and save to localStorage as record_id
+              if (utmMedium && utmMedium.includes('rec')) {
+                try {
+                  localStorage.setItem('record_id', utmMedium);
+                  console.log('Saved record_id to localStorage:', utmMedium);
+                } catch (e) {
+                  console.error('Failed to save record_id:', e);
+                }
+              }
+              
+              // If no utm_medium in URL, check localStorage for record_id
+              if (!utmMedium) {
+                try {
+                  const storedRecordId = localStorage.getItem('record_id');
+                  if (storedRecordId) {
+                    utmMedium = storedRecordId;
+                    utmSource = 'revisit';
+                    console.log('Using stored record_id as utm_medium:', utmMedium);
+                  }
+                } catch (e) {
+                  console.error('Failed to retrieve record_id:', e);
+                }
+              }
               
               // Configure GA4 with UTM parameters for proper attribution
               const configParams = {
