@@ -39,9 +39,10 @@ export const useGoogleAnalytics = () => {
         parameters.session_id_custom = sessionId;
       }
       
-      // Check if current URL has utm_medium parameter
+      // Check if current URL has utm_medium parameter (check both search and hash)
       const urlParams = new URLSearchParams(window.location.search);
-      const hasUtmMedium = urlParams.has('utm_medium');
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const hasUtmMedium = urlParams.has('utm_medium') || hashParams.has('utm_medium');
       
       // If no utm_medium in URL, add stored record_id as utm_medium and utm_source as revisit
       if (!hasUtmMedium) {
@@ -168,9 +169,12 @@ export const useGoogleAnalytics = () => {
   const trackUTMParameters = useCallback(() => {
     if (typeof window !== 'undefined' && window.gtag) {
       const urlParams = new URLSearchParams(window.location.search);
-      let utmSource = urlParams.get('utm_source');
-      let utmMedium = urlParams.get('utm_medium');
-      const utmCampaign = urlParams.get('utm_campaign');
+      // Also check hash fragment for UTM parameters
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      
+      let utmSource = urlParams.get('utm_source') || hashParams.get('utm_source');
+      let utmMedium = urlParams.get('utm_medium') || hashParams.get('utm_medium');
+      const utmCampaign = urlParams.get('utm_campaign') || hashParams.get('utm_campaign');
 
       // If no utm_medium in URL, use stored record_id
       if (!utmMedium) {

@@ -53,35 +53,52 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               
-              // Get UTM parameters from URL
+              // Get UTM parameters from URL (check both search and hash)
               const urlParams = new URLSearchParams(window.location.search);
-              let utmSource = urlParams.get('utm_source');
-              let utmMedium = urlParams.get('utm_medium');
-              const utmCampaign = urlParams.get('utm_campaign');
-              const utmTerm = urlParams.get('utm_term');
-              const utmContent = urlParams.get('utm_content');
+              // Also check hash fragment (e.g., #&utm_medium=xxx)
+              const hashParams = new URLSearchParams(window.location.hash.substring(1));
+              
+              let utmSource = urlParams.get('utm_source') || hashParams.get('utm_source');
+              let utmMedium = urlParams.get('utm_medium') || hashParams.get('utm_medium');
+              const utmCampaign = urlParams.get('utm_campaign') || hashParams.get('utm_campaign');
+              const utmTerm = urlParams.get('utm_term') || hashParams.get('utm_term');
+              const utmContent = urlParams.get('utm_content') || hashParams.get('utm_content');
+              
+              console.log('🔍 Current URL:', window.location.href);
+              console.log('🔍 Search params:', window.location.search);
+              console.log('🔍 Hash params:', window.location.hash);
+              console.log('🔍 UTM Medium from URL:', utmMedium);
               
               // Check if utm_medium contains "rec" and save to localStorage as record_id
-              if (utmMedium && utmMedium.includes('rec')) {
-                try {
-                  localStorage.setItem('record_id', utmMedium);
-                  console.log('Saved record_id to localStorage:', utmMedium);
-                } catch (e) {
-                  console.error('Failed to save record_id:', e);
+              if (utmMedium) {
+                console.log('🔍 Checking if utm_medium contains "rec":', utmMedium.includes('rec'));
+                if (utmMedium.includes('rec')) {
+                  try {
+                    localStorage.setItem('record_id', utmMedium);
+                    console.log('✅ Saved record_id to localStorage:', utmMedium);
+                    console.log('✅ Verify - reading back:', localStorage.getItem('record_id'));
+                  } catch (e) {
+                    console.error('❌ Failed to save record_id:', e);
+                  }
                 }
+              } else {
+                console.log('🔍 No utm_medium in URL');
               }
               
               // If no utm_medium in URL, check localStorage for record_id
               if (!utmMedium) {
                 try {
                   const storedRecordId = localStorage.getItem('record_id');
+                  console.log('🔍 Checking localStorage for record_id:', storedRecordId);
                   if (storedRecordId) {
                     utmMedium = storedRecordId;
                     utmSource = 'revisit';
-                    console.log('Using stored record_id as utm_medium:', utmMedium);
+                    console.log('✅ Using stored record_id as utm_medium:', utmMedium);
+                  } else {
+                    console.log('🔍 No record_id found in localStorage');
                   }
                 } catch (e) {
-                  console.error('Failed to retrieve record_id:', e);
+                  console.error('❌ Failed to retrieve record_id:', e);
                 }
               }
               
@@ -91,36 +108,43 @@ export default function RootLayout({
                 allow_google_signals: false, // Prevent GA4 from overriding UTM parameters
               };
               
-              if (utmSource) configParams.campaign_source = utmSource;
-              if (utmMedium) configParams.campaign_medium = utmMedium;
-              if (utmCampaign) configParams.campaign_name = utmCampaign;
-              if (utmTerm) configParams.campaign_term = utmTerm;
-              if (utmContent) configParams.campaign_content = utmContent;
-              
-              console.log('GA4 Config with UTM:', configParams);
+              console.log('GA4 Config params:', configParams);
               gtag('config', 'G-16WV2WNMXF', configParams);
+              
+              // Use gtag('set') to properly set campaign parameters for GA4 attribution
+              if (utmSource || utmMedium || utmCampaign) {
+                const campaignParams = {};
+                if (utmSource) campaignParams.campaign_source = utmSource;
+                if (utmMedium) campaignParams.campaign_medium = utmMedium;
+                if (utmCampaign) campaignParams.campaign_name = utmCampaign;
+                if (utmTerm) campaignParams.campaign_term = utmTerm;
+                if (utmContent) campaignParams.campaign_content = utmContent;
+                
+                console.log('Setting campaign parameters via gtag set:', campaignParams);
+                gtag('set', campaignParams);
+              }
               
               // Wait for GA4 to initialize and send session_start before manual page_view
               setTimeout(() => {
-                // Send manual page_view with UTM parameters for proper attribution
+                // Send manual page_view - campaign params are already set via gtag('set')
+                const pageViewParams = {
+                  page_title: document.title,
+                  page_location: window.location.href,
+                };
+                
+                // Add campaign parameters to page_view event for immediate attribution
                 if (utmSource || utmMedium || utmCampaign) {
                   console.log('Sending manual page_view with UTM attribution');
-                  gtag('event', 'page_view', {
-                    page_title: document.title,
-                    page_location: window.location.href,
-                    campaign_source: utmSource || undefined,
-                    campaign_medium: utmMedium || undefined,
-                    campaign_name: utmCampaign || undefined,
-                    campaign_term: utmTerm || undefined,
-                    campaign_content: utmContent || undefined,
-                  });
+                  if (utmSource) pageViewParams.campaign_source = utmSource;
+                  if (utmMedium) pageViewParams.campaign_medium = utmMedium;
+                  if (utmCampaign) pageViewParams.campaign_name = utmCampaign;
+                  if (utmTerm) pageViewParams.campaign_term = utmTerm;
+                  if (utmContent) pageViewParams.campaign_content = utmContent;
                 } else {
-                  // Send normal page_view for direct traffic
-                  gtag('event', 'page_view', {
-                    page_title: document.title,
-                    page_location: window.location.href,
-                  });
+                  console.log('Sending manual page_view without UTM (direct traffic)');
                 }
+                
+                gtag('event', 'page_view', pageViewParams);
               }, 100); // Small delay to ensure session_start fires first
             `,
           }}
