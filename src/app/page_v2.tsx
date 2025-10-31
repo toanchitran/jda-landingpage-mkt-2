@@ -8,26 +8,26 @@ import { useGoogleAnalytics } from "@/hooks/useGoogleAnalytics";
 
 // Interactive Workflow Component
 function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) => void }) {
-  const [activeFeature, setActiveFeature] = useState('submission');
+  const [activeFeature, setActiveFeature] = useState('share');
 
   const features = {
-    submission: {
-      title: 'Step 1: Data Submission',
-      description: 'Submit your pitch deck, financials, and key documents containing your origin story, market insights, traction metrics, and go-to-market strategy. We extract the narrative core, strategic insights, and proof points that matter to investors.',
-      imageText: 'Data Submission',
-      image:'/Data_Submission.png'
+    share: {
+      title: 'You Provide the Raw Material',
+      description: 'The easy part. You share your vision, key milestones, and unique industry insights - the core data we need to begin your narrative audit.',
+      imageText: 'You Provide the Raw Material',
+      image:'/You_Provide_Raw_Material_optimized.jpg'
     },
-    validation: {
-      title: 'Step 2: Validation Gateway',
-      description:"Review and validate the structured facts we've extracted. This critical step exposes strategic unknowns and identifies gaps in your fundraising story.",
-      imageText: 'Validation Gateway',
-      image:'/Validation_Gateway.png'
+    refine: {
+      title: 'We Forge Your Narrative',
+      description: 'We provide the expert framework and guidance to help you forge your own investor-grade narrative, aligning every word with your fundraising goals.',
+      imageText: 'We Forge Your Narrative',
+      image:'/We_Forge_Your_Narrative_optimized.jpg'
     },
-    report: {
-      title: 'Step 3: Readiness Report',
-      description: 'Receive your comprehensive diagnostic report with readiness scoring, structured fact base, and detailed analysis of strategic gaps. Know exactly where you stand and what to prioritize.',
-      imageText: 'Readiness Report',
-      image:'/Readiness_Report.png'
+    tailor: {
+      title: 'You Command the Conversation',
+      description: 'With a clear strategic roadmap, you can now deploy your PR activities with purpose and precision.',
+      imageText: 'You Command the Conversation',
+      image:'/You_Command_Conversation_optimized.jpg'
     },
     // amplify: {
     //   title: 'Amplify',
@@ -38,18 +38,16 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
   };
 
   return (
-    <div className="text-primary-text" style={{backgroundColor: 'var(--primary-bg)'}} id="workflow_section" data-scroll-section>
-      <div className="max-w-6xl mx-auto padding-global">
-        <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Your 3-Step Plan to Get Your Story Investor-Ready</h1>
-          <p className="max-w-4xl mx-auto mb-6 text-sm sm:text-base" style={{color: 'var(--medium-grey)'}}>Stop guessing and start engineering, the next step is to build your foundation</p>
+    <div className="text-primary-text rounded-3xl" style={{backgroundColor: 'var(--primary-bg)'}}>
+      <div className="mb-8 padding-global text-left items-center justify-center">
+        <h2 className="text-4xl sm:text-4xl md:text-5xl mb-3 pt-6">Your Simple 3-Step Plan to a Compelling Story</h2>
+        <p className="mb-6" style={{color: 'var(--medium-grey)'}}> Stop scrambling for content and start commanding investor attention.</p>
         <button 
           onClick={() => onBookCall('workflow_section')}
           className="button"
         >
           Book a call
         </button>
-        </div>
       </div>
       
       {/* Desktop Layout - Grid with Product UI Screenshot */}
@@ -62,7 +60,7 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
               alt={features[activeFeature as keyof typeof features].imageText}
                                 width={800}
                   height={450}
-                  className="w-full h-full object-fill"
+                  className="w-full h-full object-cover"
                   quality={85}
                   loading="lazy"
             />
@@ -133,117 +131,33 @@ function InteractiveWorkflow({ onBookCall }: { onBookCall: (location?: string) =
   );
 }
 
-// Testimonials Carousel Component
-interface Testimonial {
-  quote: string;
-  author: string;
-}
-
-interface TestimonialsCarouselProps {
-  testimonials?: Testimonial[];
-}
-
-function TestimonialsCarousel({ testimonials }: TestimonialsCarouselProps) {
-  const items: Testimonial[] = testimonials || [
-    {
-      quote:
-        'The feedback was quite helpful. We are aware of areas where we can make adjustments and be better prepared.',
-      author: 'Olushola Oyeranmi',
-    },
-    {
-      quote:
-        'The most valuable advice to me is about how it is helping me to properly write the PROBLEM AND SOLUTION. Also, the "Investor Psychology Insights" is highly useful, it helps me to prepare the whole story well, knowing in advance how an investor would see the idea before pitching or submitting the deck for investment.',
-      author: 'Mahamud Abdul-Rahman',
-    },
-    {
-      quote:
-        'It was helpful. I definitely resonate with the specifics of the output, and I am working on my story even better as part of the deck and the early site, etc.',
-      author: 'Michael H.',
-    },
-    {
-      quote:
-        "I also cross-checked results via Gemini and ChatGPT, and the result from your tool is more specific to what has actually been bothering me. I'll keep using the tool as we fine-tune things. That's always been the plan, and it's been genuinely helpful.",
-      author: 'Marc Tubelleja',
-    },
-    {
-      quote:
-        'Pretty amazing! Will incorporate it into the deck for my next pitch! Particularly the below suggestions: Transform vision statement, Strengthen founder story, Reframe competition slide, Validate competitive moat, Create demonstration sequence, Build founder expertise narrative.',
-      author: 'Giang L.',
-    },
-  ];
-
-  const [index, setIndex] = useState(0);
-
-  // Auto-scroll every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((current) => (current + 1) % items.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [items.length]);
-
-  return (
-    <section className="py-20" style={{ backgroundColor: 'var(--secondary-bg)' }}>
-      <div className="max-w-5xl mx-auto px-6">
-        <h2 className="text-3xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-10">What Founders Are Saying</h2>
-        <div className="relative">
-          <div className="overflow-hidden rounded-2xl">
-            <div
-              className="flex transition-transform duration-500"
-              style={{ transform: `translateX(-${index * 100}%)` }}
-            >
-              {items.map((t, idx) => (
-                <div key={idx} className="w-full flex-shrink-0 p-8 bg-white/5 rounded-2xl border border-yellow-400">
-                  <p className="text-lg text-gray-200 leading-relaxed">&quot;{t.quote}&quot;</p>
-                  <div className="mt-4 font-semibold text-yellow-400">- {t.author}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="mt-6 flex justify-center gap-2">
-            {items.map((_, i) => (
-              <button
-                key={i}
-                aria-label={`Go to slide ${i + 1}`}
-                onClick={() => setIndex(i)}
-                className={`h-2 rounded-full transition-all ${index === i ? 'w-6 bg-yellow-400' : 'w-2 bg-gray-600'}`}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(2); // Start with 3rd card (index 2)
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   
   // Podcast video tracking
-  // const podcastVideoRef = useRef<HTMLVideoElement>(null);
-  // const { trackAudioPlay, trackAudioPause, trackAudioComplete } = useGoogleAnalytics();
+  const podcastVideoRef = useRef<HTMLVideoElement>(null);
+  const { trackAudioPlay, trackAudioPause, trackAudioComplete } = useGoogleAnalytics();
 
   // Podcast video event handlers
-  // const handlePodcastVideoPlay = () => {
-  //   if (podcastVideoRef.current) {
-  //     trackAudioPlay(podcastVideoRef.current.currentTime, '/Jay-David-Podcast.mp4');
-  //   }
-  // };
+  const handlePodcastVideoPlay = () => {
+    if (podcastVideoRef.current) {
+      trackAudioPlay(podcastVideoRef.current.currentTime, '/Jay-David-Podcast.mp4');
+    }
+  };
 
-  // const handlePodcastVideoPause = () => {
-  //   if (podcastVideoRef.current) {
-  //     trackAudioPause(podcastVideoRef.current.currentTime, podcastVideoRef.current.duration, '/Jay-David-Podcast.mp4');
-  //   }
-  // };
+  const handlePodcastVideoPause = () => {
+    if (podcastVideoRef.current) {
+      trackAudioPause(podcastVideoRef.current.currentTime, podcastVideoRef.current.duration, '/Jay-David-Podcast.mp4');
+    }
+  };
 
-  // const handlePodcastVideoEnded = () => {
-  //   if (podcastVideoRef.current) {
-  //     trackAudioComplete(podcastVideoRef.current.duration, '/Jay-David-Podcast.mp4');
-  //   }
-  // };
+  const handlePodcastVideoEnded = () => {
+    if (podcastVideoRef.current) {
+      trackAudioComplete(podcastVideoRef.current.duration, '/Jay-David-Podcast.mp4');
+    }
+  };
 
   // Immediate iOS detection - runs synchronously to prevent layout shift
   if (typeof window !== 'undefined' && !document.body.classList.contains('ios-device')) {
@@ -488,6 +402,7 @@ export default function Home() {
   // Google Analytics tracking
   const {
     trackBookCallClick,
+    trackSiteDeckClick,
     trackLogoClick,
     trackUTMParameters,
   } = useGoogleAnalytics();
@@ -500,20 +415,12 @@ export default function Home() {
     }
   }, [trackUTMParameters, mounted]);
 
-  const handleBookCall = (location: string = 'workflow_section') => {
+  const handleBookCall = (location: string = 'hero_section') => {
     trackBookCallClick(location);
     window.location.href = '/book-a-call';
   };
 
-  const handleAccessFundraisingStoryButton= (location: string = 'hero_section') => {
-    trackBookCallClick(location);
-    const workflowSection = document.getElementById('workflow_section');
-    if (workflowSection) {
-      workflowSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  const handleBookCallHero = () => handleAccessFundraisingStoryButton('hero_section');
+  const handleBookCallHero = () => handleBookCall('hero_section');
   const handleBookCallWorkflow = () => handleBookCall('workflow_section');
   const handleBookCallCarousel = () => handleBookCall('carousel_section');
   const handleBookCallConsider = () => handleBookCall('consider_section');
@@ -625,7 +532,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="font-sans text-primary-text" style={{backgroundColor: 'var(--primary-bg)'}}>
+    <div className="font-sans text-primary-text">
 
       <section className="relative min-h-screen overflow-hidden" style={{backgroundColor: 'var(--primary-bg)'}}>
         {/* Background Image (replacing video for performance) */}
@@ -671,8 +578,8 @@ export default function Home() {
                 />
               </button>
             </div>
-            {/* <div className="flex space-x-2 sm:space-x-4">
-              <button 
+            <div className="flex space-x-2 sm:space-x-4">
+              {/* <button 
                 onClick={() => {
                   trackLogoClick();
                   window.open('https://jdalchemy.com', '_blank');
@@ -680,7 +587,7 @@ export default function Home() {
                 className="button relative z-10 hidden sm:block"
               >
                 About Us
-              </button>
+              </button> */}
               <button 
                 onClick={() => {
                   trackSiteDeckClick();
@@ -690,7 +597,7 @@ export default function Home() {
               >
                 Free Assessment
               </button>
-            </div> */}
+            </div>
           </div>
         </nav>
 
@@ -702,10 +609,10 @@ export default function Home() {
             </h1>
             {/* <div className="w-80 h-0.5 bg-accent-elements mb-6"></div> */}
             <p className="text-lg md:text-2xl leading-relaxed mb-6 sm:mb-8" style={{color: 'var(--light-grey)'}}>
-            The structured narrative system that turns founder insights into investor conviction.
+            Show inevitability, not hope. Your opener lands, your one-pager travels, your calendar fills.
             </p>
             <button onClick={handleBookCallHero} className="button relative z-10 mb-8">
-             Assess Your Fundraising Story
+              Book a call
             </button>
             
             {/* Trusted By Logos */}
@@ -773,7 +680,7 @@ export default function Home() {
       </section>
 
              {/*  Is Your Genius Getting Lost in the Noise - Fullscreen with Podcast Background */}
-        {/* <section 
+        <section 
           className="py-16 sm:py-20 padding-global"
           style={{backgroundColor: 'var(--secondary-bg)', backgroundImage: 'url(/Podcast_Audio_BG.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}
         >
@@ -805,7 +712,165 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section> */}
+      </section>
+
+      {/* Lead Magnet Section - Deep Purple */}
+      <section className="relative min-h-screen flex items-center justify-center">
+        <div className="absolute inset-0">
+          <Image
+            src="/Lead_magnet_BG_optimized.jpg"
+            alt="Lead Magnet Background"
+            fill
+            className="object-cover"
+            priority
+            quality={85}
+          />
+          
+          <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.1)'}}></div>
+        </div>
+        
+                {/* Modal Card - Top Right */}
+                 <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global md:min-w-[700px]">
+                     <div className="rounded-3xl shadow-2xl bg-white border border-gray-200 pt-8 pb-8 padding-global">
+                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black my-2">
+              Does Your Pitch Deck Tell a Story Worth Funding?
+            </h2>
+            <p className="leading-relaxed text-left my-2" style={{color: 'var(--deep-grey)'}}>
+            This isn&apos;t a simple scorecard - it&apos;s a forensic analysis that uncovers your hidden narrative strengths and the precise leverage points that create investor conviction. We&apos;ll show you exactly how your story&apos;s coherence, problem sophistication, and vision magnetism are performing, giving you a clear roadmap to a funded narrative.
+            </p>
+            <div className="z-10 rounded-lg my-6">
+                              <Image
+                  src="/Lead_Magnet_Teaser.png"
+                  alt="Lead Magnet Preview"
+                  width={800}
+                  height={150}
+                  className="rounded-lg w-full h-auto"
+                  quality={85}
+                  loading="lazy"
+                />
+            </div>
+            <button onClick={() => {
+              trackSiteDeckClick();
+              window.open('https://deckanalysis.fundraisingflywheel.io/', '_blank');
+                         }} className="button_dark my-2">
+              Analyze My Deck Now
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet Your Digital PR Team Section - Deep Blue */}
+      <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--primary-bg)'}}>
+        <div className="max-w-6xl mx-auto padding-global">
+          <div className="text-center mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Where Founder Insight Becomes Investor Magnetism</h1>
+            <p className="max-w-4xl mx-auto" style={{color: 'var(--medium-grey)'}}>
+            You&apos;ve built something remarkable, but investor trust isn&apos;t automatic. The story behind your work feels invisible, and generic advice falls flat. What you need isn&apos;t another AI tool or agency; it&apos;s a partner who can decode your journey, uncover your real narrative, and tune it for the capital markets you want to win.  
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-stretch">
+            {/* JayJin - Narrative Architect */}
+            <div className="bg-transparent rounded-2xl flex flex-col">
+              {/* Agent Image with Overlay */}
+              <div className="flex mb-8 w-full">
+                                 <div className="relative w-full rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
+                  <video
+                    src="/Jay.mp4"
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    webkit-playsinline="true"
+                    preload="none"
+                      />
+                      
+                      {/* Overlay Tags */}
+                      <div className="absolute inset-0">
+                        {/* Top Tag */}
+                        <div className="absolute top-4 left-4">
+                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
+                          Jay Jin, Influence Architect
+                          </div>
+                        </div>
+                        
+                      </div>
+                  
+
+                </div>
+              </div>
+              
+              <div className="flex-grow">
+                <h3 className="text-2xl font-bold mb-3 text-white">Jay Jin, Influence Architect</h3>
+                <p className="mb-6 leading-relaxed" style={{color: 'var(--medium-grey)'}}>
+                Jay is your social influence architect. He helps you identify and engineer the authentic story that investors need to hear, turning your lived experience into a capital-attracting force. His expertise leads to a powerful, actionable 90-Day Investment PR Plan that makes you more attractive and influential.
+                </p>
+              </div>
+              <a 
+                href="https://www.linkedin.com/in/jay-jin-60071238/" 
+                target="_blank" 
+                rel="noopener"
+                className="text-white font-semibold hover:text-gray-200 transition-colors mt-auto"
+              >
+                Meet Jay →
+              </a>
+            </div>
+            
+            {/* David Yi, Investment Strategist */}
+            <div className="bg-transparent rounded-2xl flex flex-col">
+              {/* Agent Image with Overlay */}
+              <div className="flex md:justify-center mb-8">
+                                 <div className="relative w-full rounded-lg overflow-hidden shadow-sm" style={{aspectRatio: '3/4'}}>
+                
+                  <video
+                    src="/David.mp4"
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    webkit-playsinline="true"
+                    preload="none"
+                  />
+                      
+                      {/* Overlay Tags */}
+                      <div className="absolute inset-0">
+                        {/* Top Tag */}
+                        <div className="absolute top-4 left-4">
+                          <div className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
+                          David Yi, Investment Strategist
+                          </div>
+                        </div>
+                      </div>
+                  
+
+                </div>
+              </div>
+              
+                            <div className="flex-grow">
+                <h3 className="text-2xl font-bold mb-3 text-white">David Yi, Investment Strategist</h3>
+                <p className="mb-6 leading-relaxed" style={{color: 'var(--medium-grey)'}}>
+                David is your cross-border investment strategist. He provides the critical lens of an investor, ensuring every piece of your story is calibrated with discernment to attract the right conversations and secure funding.
+                </p>
+              </div>
+              <a 
+                href="https://www.linkedin.com/in/thedavidyi/" 
+                target="_blank" 
+                rel="noopener"
+                className="text-white font-semibold hover:text-gray-200 transition-colors mt-auto"
+              >
+                Meet David →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
 
       {/*  The Funded Future You Can Build - Deep Blue */}
       <section className="py-16 sm:py-20" style={{backgroundColor: 'var(--secondary-bg)'}}>
@@ -865,102 +930,189 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Influence Architecture Section - Deep Purple */}
-      <section className="relative pt-16 pb-16 sm:pt-20 sm:pb-20 flex items-center justify-center">
-        <div className="absolute inset-0">
-          <Image
-            src="/Lead_magnet_BG_optimized.jpg"
-            alt="Lead Magnet Background"
-            fill
-            className="object-cover"
-            priority
-            quality={85}
-          />
           
-          <div className="absolute inset-0" style={{backgroundColor: 'rgba(9, 9, 62, 0.1)'}}></div>
-        </div>
-        
-                {/* Modal Card - Top Right */}
-                 <div className="relative z-10 w-full max-w-3xl mx-auto md:ml-auto md:mr-0 padding-global md:min-w-[700px] my-12 md:my-16">
-                     <div className="rounded-3xl shadow-2xl bg-white border border-gray-200 pt-8 pb-8 padding-global">
-                         {/* Badge */}
-                         <div className="inline-block mb-4">
-                           <span className="px-4 py-2 rounded-full text-sm font-semibold" style={{backgroundColor: 'var(--accent-elements)', color: 'white'}}>
-                             It&apos;s Not Storytelling
-                           </span>
-                         </div>
-                         
-                         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-6 leading-tight">
-                           It&apos;s <span style={{color: 'var(--accent-elements)'}}>Influence Architecture</span>
-                         </h2>
-                         
-                         {/* Core Difference */}
-                         <div className="mb-6 p-4 rounded-lg" style={{backgroundColor: 'rgba(var(--accent-elements-rgb, 79, 70, 229), 0.05)'}}>
-                           <p className="leading-relaxed text-left" style={{color: 'var(--deep-grey)'}}>
-                             <strong>Storytelling is an episodic event</strong> — you perfect a deck and hope it lands. <strong>Influence Architecture is a system.</strong>
-                           </p>
-                         </div>
-                         
-                         {/* Key Capabilities */}
-                         <div className="space-y-4 mb-6">
-                           <div className="flex items-start gap-3">
-                             <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-1" style={{backgroundColor: 'var(--accent-elements)'}}>
-                               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                               </svg>
-                             </div>
-                             <p className="leading-relaxed text-left flex-1" style={{color: 'var(--deep-grey)'}}>
-                               Engineer a <strong>cohesive narrative from market evidence</strong> — not guesswork.
-                             </p>
-                           </div>
-                           
-                           <div className="flex items-start gap-3">
-                             <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-1" style={{backgroundColor: 'var(--accent-elements)'}}>
-                               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                               </svg>
-                             </div>
-                             <p className="leading-relaxed text-left flex-1" style={{color: 'var(--deep-grey)'}}>
-                               Build an <strong>ecosystem of content and conversations</strong> that pre-sells your vision before you even walk into the room.
-                             </p>
-                           </div>
-                           
-                           <div className="flex items-start gap-3">
-                             <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-1" style={{backgroundColor: 'var(--accent-elements)'}}>
-                               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                               </svg>
-                             </div>
-                             <p className="leading-relaxed text-left flex-1" style={{color: 'var(--deep-grey)'}}>
-                               Transform fundraising from <strong>high-stakes, reactive meetings</strong> into a <strong>continuous, data-driven discipline.</strong>
-                             </p>
-                           </div>
-                         </div>
-                         
-                         {/* Bottom CTA */}
-                         <div className="pt-4 border-t" style={{borderColor: 'var(--dividers-borders)'}}>
-                           <p className="text-base mb-2" style={{color: 'var(--deep-grey)'}}>
-                             Knowing this framework puts you ahead of 99% of founders. But the real challenge—and the real reward—is in the execution.
-                           </p>
-                           <p className="text-lg font-semibold text-black">
-                             If you&apos;re ready to stop guessing and start engineering, the next step is to build your foundation.
-                           </p>
-                         </div>
-             
+          {/* Interactive Workflow */}
+          <div className="padding-global">
+            <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
           </div>
         </div>
       </section>
-      {/* Interactive Workflow Section */}
-      <section className="pt-16 sm:pt-20" style={{backgroundColor: 'var(--primary-bg)'}}>
-        <InteractiveWorkflow onBookCall={handleBookCallWorkflow} />
+
+            {/* Carousel Section */}
+            <section className="pt-16 sm:pt-20 carousel-section-ios-fix" style={{backgroundColor: 'var(--primary-bg)'}}>
+        {/* Header Content - Centered */}
+        <div className="max-w-6xl mx-auto padding-global">
+          <div className="text-center mb-8 sm:mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">The Unfair Advantage of <br/>a Strategic Story</h1>
+            <p className="max-w-4xl mx-auto mb-6 text-sm sm:text-base" style={{color: 'var(--medium-grey)'}}>
+            In a crowded market, your story is your most powerful asset. It&apos;s the key to building credibility and earning the trust of investors. It&apos;s not just about what you say, but how you say it—and when. 
+            </p>
+            <button
+              onClick={handleBookCallCarousel}
+              className="button"
+            >
+              Book a call
+            </button>
+          </div>
+        </div>
+
+        {/* Carousel Container - Full Width */}
+        <div 
+          className="relative overflow-hidden w-full mx-auto padding-global"
+          style={{ maxWidth: '1600px' }}
+          onMouseEnter={() => setIsCarouselHovered(true)}
+          onMouseLeave={() => setIsCarouselHovered(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+            <div
+              className="flex gap-1.5 transition-transform duration-700 ease-in-out"
+              style={{ 
+                transform: isMobile 
+                  ? `translateX(-${currentSlide * 100}%)` 
+                  : `translateX(calc(50% - (${cardWidth}px / 2) - ${currentSlide} * (${cardWidth}px + ${gapSize}px)))`
+              }}
+            >
+              {carouselCards.map((card, index) => (
+                <div 
+                  key={card.key}
+                  ref={index === 0 ? cardRef : undefined}
+                  className={`aspect-[4/3] flex-shrink-0 w-full sm:w-11/12 md:w-96 lg:w-[500px] xl:w-[500px] cursor-pointer transition-all duration-300 hover:scale-105 ${
+                    currentSlide === index ? 'opacity-100 scale-100' : 'opacity-60 scale-95'
+                  }`}
+                  onClick={() => handleCardClick(index)}
+                >
+                  <div className="p-6 md:p-10 rounded-2xl">
+                    <div className="aspect-[4/3] rounded-xl mb-6 flex items-center justify-center overflow-hidden" style={{backgroundColor: '#f5f5f5'}}>
+                      <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        webkit-playsinline="true"
+                        preload="none"
+                        className="w-full h-full object-cover"
+                      >
+                        <source src={card.videoSrc} type="video/mp4" />
+                      </video>
+                    </div>
+                    <p className="text-base font-bold mb-2 text-left" style={{color: '#ffffff'}}>{card.title}</p>
+                    <p className="text-base text-left leading-relaxed" style={{color: 'var(--medium-grey)'}}>
+                      {card.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Carousel Navigation - Hidden on mobile */}
+            <div className="hidden md:flex justify-center mt-6 sm:mt-8 space-x-2">
+              {[...Array(totalSlides).keys()].map((index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-colors"
+                  style={{backgroundColor: index === currentSlide ? 'var(--accent-elements)' : 'var(--dividers-borders)'}}
+                ></button>
+              ))}
+            </div>
+        </div>
       </section>
 
-      {/* Testimonials Section */}
-      <TestimonialsCarousel />
       
+
+
+
+      {/* Testimonials Section - Deep Blue */}
+      <section className="py-16 sm:py-20" style={{backgroundColor: '#03032e'}}>
+        <div className="w-full">
+          <div className="text-center padding-global">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 text-primary-text">Trusted by Smart Founders</h1>
+          </div>
+          
+                    {/* Masonry Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-6 padding-global py-16">
+            {/* Top Left Card - Logo Only */}
+            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: 'var(--kavecon)', height: '250px'}}>
+              <Image
+                src="/Logo (3).png"
+                alt="Kavecon Logo"
+                width={120}
+                height={40}
+                className="object-contain"
+                quality={90}
+                loading="lazy"
+              />
+            </div>
+            
+            {/* Top Center Card - Logo Only */}
+            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
+              <Image
+                src="/Logo (4).png"
+                alt="Superworks Logo"
+                width={120}
+                height={40}
+                className="object-contain"
+                quality={90}
+                loading="lazy"
+              />
+            </div>
+            
+            {/* Top Right Card - Logo Only */}
+            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: 'var(--digicon)', height: '250px'}}>
+              <Image
+                src="/Logo (1).png"
+                alt="Digicon Logo"
+                width={120}
+                height={40}
+                className="object-contain"
+                quality={90}
+                loading="lazy"
+              />
+            </div>
+            
+            {/* Bottom Left Card - Logo Only */}
+            <div className="rounded-2xl p-6 lg:col-span-4 relative flex items-center justify-center" style={{backgroundColor: 'var(--custom-village)', height: '250px'}}>
+              <Image
+                src="/Logo (5).png"
+                alt="Custom Village Logo"
+                width={120}
+                height={40}
+                className="object-contain"
+                quality={90}
+                loading="lazy"
+              />
+            </div>
+            
+            {/* Bottom Center Card - Logo Only */}
+                <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: '#ffffff', height: '250px'}}>
+              <Image
+                src="/Logo (6).png"
+                alt="Dreamcense Logo"
+                width={120}
+                height={40}
+                className="object-contain"
+                quality={90}
+                loading="lazy"
+              />
+            </div>
+            
+            {/* Bottom Right Card - Logo Only */}
+            <div className="rounded-2xl p-6 lg:col-span-2 relative flex items-center justify-center" style={{backgroundColor: 'var(--maco)', height: '250px'}}>
+              <Image
+                src="/Logo (2).png"
+                alt="Maco Logo"
+                width={120}
+                height={40}
+                className="object-contain"
+                quality={90}
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Bottom CTA Section - Deep Purple */}
       <section className="relative min-h-screen flex items-center justify-center py-16 sm:py-20">
@@ -977,9 +1129,9 @@ export default function Home() {
           <div className="rounded-3xl py-12 padding-global bg-white backdrop-blur-md border border-white shadow-2xl" >
             <div className="grid md:grid-cols-2 gap-12 items-center" >
               <div>
-                <h1 className="text-2xl sm:text-xl md:text-3xl lg:text-4xl my-2 text-black">15-Minute Diagnostic Review and Activation</h1>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl my-2 text-black"> By Application Only</h1>
                 <p className="leading-relaxed my-2" style={{color: 'var(--deep-grey)'}}>
-                On this brief call, we&apos;ll review the gaps in your current narrative and activate your full Investor Readiness Diagnostic—the first step in building your architecture.
+                Our highly personalized approach means we partner with a select group of founders each month. We&apos;re not a content factory - we&apos;re your strategic partner in building a funded future.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 my-2">
                   <button 
@@ -990,7 +1142,7 @@ export default function Home() {
                   </button>
                 </div>
                 <p className="text-sm my-2 italic" style={{color: 'var(--deep-grey)'}}>
-                Stop guessing and start engineering, the next step is to build your foundation.
+                  Only a handful of spots available this month. No commitment, just a conversation.
                 </p>
               </div>
               
