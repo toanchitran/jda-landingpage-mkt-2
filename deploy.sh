@@ -56,12 +56,12 @@ module.exports = {
     env: {
       NODE_ENV: 'production',
       PORT: 3015,
-      HOST: '158.247.207.5',
-      NEXT_PUBLIC_BASE_URL: 'http://45.77.249.188:3015',
-    },,
-    error_file: '/root/jda-landingpage-mkt-1/logs/err.log',
-    out_file: '/root/jda-landingpage-mkt-1/logs/out.log',
-    log_file: '/root/jda-landingpage-mkt-1/logs/combined.log',
+      HOST: '45.77.249.188',
+      NEXT_PUBLIC_BASE_URL: 'http://45.77.249.188:3015'
+    },
+    error_file: '/root/jda-landingpage-mkt-2/logs/err.log',
+    out_file: '/root/jda-landingpage-mkt-2/logs/out.log',
+    log_file: '/root/jda-landingpage-mkt-2/logs/combined.log',
     time: true
   }]
 };
