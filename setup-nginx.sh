@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Setup nginx configuration for Fundraising Flywheel Landing Page
+# This script sets up HTTP (port 80) first. HTTPS certificates can be added later.
 
 echo "🔧 Setting up nginx configuration..."
 
@@ -9,6 +10,7 @@ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.ba
 
 # Create new nginx configuration
 sudo tee /etc/nginx/sites-available/fundraisingflywheel > /dev/null << 'EOF'
+# HTTP server block (HTTPS can be added later with SSL certificates)
 server {
     listen 80;
     server_name fundraisingflywheel.io www.fundraisingflywheel.io;
@@ -24,7 +26,7 @@ server {
     gzip on;
     gzip_vary on;
     gzip_min_length 1024;
-    gzip_proxied expired no-cache no-store private must-revalidate auth;
+    gzip_proxied expired no-cache no-store private auth;
     gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript;
 
     # Proxy to Next.js app
