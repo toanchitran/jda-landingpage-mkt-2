@@ -65,6 +65,12 @@ sudo ln -sf /etc/nginx/sites-available/fundraisingflywheel /etc/nginx/sites-enab
 # Remove default site
 sudo rm -f /etc/nginx/sites-enabled/default
 
+# Remove any other conflicting site configurations that might have SSL
+# This ensures only our HTTP configuration is active
+echo "🧹 Cleaning up any conflicting SSL configurations..."
+sudo rm -f /etc/nginx/sites-enabled/*-ssl
+sudo rm -f /etc/nginx/sites-enabled/default-ssl
+
 # Test nginx configuration
 echo "🧪 Testing nginx configuration..."
 sudo nginx -t
@@ -79,4 +85,10 @@ else
     exit 1
 fi
 
-echo "✅ nginx setup completed!" 
+echo "✅ nginx setup completed!"
+echo ""
+echo "📝 Next steps:"
+echo "   1. Test HTTP access: http://fundraisingflywheel.io"
+echo "   2. Once HTTP works, set up SSL certificate with:"
+echo "      sudo certbot --nginx -d fundraisingflywheel.io -d www.fundraisingflywheel.io"
+echo "   3. Certbot will automatically configure HTTPS for you" 
