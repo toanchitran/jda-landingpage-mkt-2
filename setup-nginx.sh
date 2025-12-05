@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Setup nginx configuration for JD Alchemy Landing Page
+# Setup nginx configuration for Fundraising Flywheel Landing Page
 
 echo "🔧 Setting up nginx configuration..."
 
@@ -8,10 +8,10 @@ echo "🔧 Setting up nginx configuration..."
 sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.backup
 
 # Create new nginx configuration
-sudo tee /etc/nginx/sites-available/jda-landingpage-mkt1 > /dev/null << 'EOF'
+sudo tee /etc/nginx/sites-available/fundraisingflywheel > /dev/null << 'EOF'
 server {
     listen 80;
-    server_name _;  # This will match any domain
+    server_name fundraisingflywheel.io www.fundraisingflywheel.io;
 
     # Security headers
     add_header X-Frame-Options "SAMEORIGIN" always;
@@ -29,7 +29,7 @@ server {
 
     # Proxy to Next.js app
     location / {
-        proxy_pass http://localhost:3013;
+        proxy_pass http://localhost:3015;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -43,7 +43,7 @@ server {
 
     # Static files caching
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|mp4|webp)$ {
-        proxy_pass http://localhost:3013;
+        proxy_pass http://localhost:3015;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
@@ -58,7 +58,7 @@ server {
 EOF
 
 # Enable the new site
-sudo ln -sf /etc/nginx/sites-available/jda-landingpage-mkt1 /etc/nginx/sites-enabled/
+sudo ln -sf /etc/nginx/sites-available/fundraisingflywheel /etc/nginx/sites-enabled/
 
 # Remove default site
 sudo rm -f /etc/nginx/sites-enabled/default

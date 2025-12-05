@@ -31,18 +31,6 @@ if ! command -v nginx &> /dev/null; then
 fi
 
 # Create directory if it doesn't exist
-echo "📁 Setting up project directory..."
-sudo mkdir -p /root/jda-landingpage-mkt-1
-cd /root/jda-landingpage-mkt-1
-
-# Clone or pull the repository
-if [ -d ".git" ]; then
-    echo "🔄 Pulling latest changes from GitHub..."
-    git pull origin main
-else
-    echo "📥 Cloning repository from GitHub..."
-    git clone https://github.com/brandbeam-ai/jda-landingpage-mkt-1.git .
-fi
 
 # Install dependencies
 echo "📦 Installing dependencies..."
@@ -57,18 +45,20 @@ echo "⚙️ Creating PM2 configuration..."
 cat > ecosystem.config.js << 'EOF'
 module.exports = {
   apps: [{
-    name: 'jda-landingpage-mkt1',
+    name: 'jda-landingpage-mkt-2',
     script: 'npm',
     args: 'start',
-    cwd: '/root/jda-landingpage-mkt1',
+    cwd: '/root/jda-landingpage-mkt-2',
     instances: 1,
     autorestart: true,
     watch: false,
     max_memory_restart: '1G',
     env: {
       NODE_ENV: 'production',
-      PORT: 3013
-    },
+      PORT: 3015,
+      HOST: '158.247.207.5',
+      NEXT_PUBLIC_BASE_URL: 'http://45.77.249.188:3015',
+    },,
     error_file: '/root/jda-landingpage-mkt-1/logs/err.log',
     out_file: '/root/jda-landingpage-mkt-1/logs/out.log',
     log_file: '/root/jda-landingpage-mkt-1/logs/combined.log',
