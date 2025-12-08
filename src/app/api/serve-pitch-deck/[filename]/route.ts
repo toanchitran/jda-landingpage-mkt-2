@@ -14,8 +14,8 @@ export async function GET(
       return NextResponse.json({ error: 'Filename is required' }, { status: 400 });
     }
 
-    // Construct the file path
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'pitch-decks');
+    // Construct the file path - reading from private directory
+    const uploadsDir = path.join(process.cwd(), 'uploads', 'pitch-decks');
     const filePath = path.join(uploadsDir, filename);
 
     // Security check - ensure the file is within the uploads directory
@@ -37,6 +37,14 @@ export async function GET(
     
     if (ext === '.pdf') {
       contentType = 'application/pdf';
+    } else if (ext === '.doc') {
+      contentType = 'application/msword';
+    } else if (ext === '.docx') {
+      contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    } else if (ext === '.ppt') {
+      contentType = 'application/vnd.ms-powerpoint';
+    } else if (ext === '.pptx') {
+      contentType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
     } else if (ext === '.png') {
       contentType = 'image/png';
     } else if (ext === '.jpg' || ext === '.jpeg') {
