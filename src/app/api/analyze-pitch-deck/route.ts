@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import path from 'path';
 
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const AIRTABLE_BASE_ID = 'app0YMWSt1LtrGu7S';
@@ -82,6 +83,26 @@ export async function POST(request: NextRequest) {
       console.error('No recordId received in proxy API');
       return NextResponse.json({ error: 'No recordId received' }, { status: 400 });
     }
+
+    // SECURITY: Validate File Type & Extension
+    const allowedMimeTypes = [
+      'application/pdf', 
+      'application/msword', 
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    ];
+    if (!allowedMimeTypes.includes(file.type)) {
+      return NextResponse.json({ error: 'Invalid file type. Only PDF, DOC, DOCX, PPT, PPTX are allowed.' }, { status: 400 });
+    }
+
+    const originalName = file.name || 'unknown';
+    const ext = path.extname(originalName).toLowerCase();
+    const allowedExtensions = ['.pdf', '.doc', '.docx', '.ppt', '.pptx'];
+    if (!allowedExtensions.includes(ext)) {
+       return NextResponse.json({ error: 'Invalid file extension.' }, { status: 400 });
+    }
+
 
     console.log('File received:', file.name);
     console.log('File size:', file.size, 'bytes');

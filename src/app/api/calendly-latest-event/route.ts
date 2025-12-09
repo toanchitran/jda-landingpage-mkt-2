@@ -24,8 +24,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const inviteeEmail = searchParams.get('invitee_email');
 
-    const token = "eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzU0NjQzMDkzLCJqdGkiOiI1MTY4YjBiNS05YmI1LTQ4YzctOTg5Yi0wNGNiMWJkMWEzZTgiLCJ1c2VyX3V1aWQiOiI0MmQzNTNjMC0zZjEwLTRiMjAtYjc0Zi0xYWM0NDJmMjlmOTYifQ.pWLAZgFEtv9R9HAxicRb-wNESpgnQDNyQPpBDKX5bBO_Lrxm98WQq_897ZCCjRoo_t6wyw-AKs5ss0FJHh7FyQ"
-    const userUri ="https://api.calendly.com/users/42d353c0-3f10-4b20-b74f-1ac442f29f96"
+    const token = process.env.CALENDLY_PERSONAL_ACCESS_TOKEN;
+    const userUri = process.env.CALENDLY_USER_URI;
 
     if (!token || !userUri) {
       return NextResponse.json(
@@ -73,5 +73,3 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Failed to fetch Calendly latest event', details: err instanceof Error ? err.message : String(err) }, { status: 500 });
   }
 }
-
-
