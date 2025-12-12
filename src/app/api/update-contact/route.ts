@@ -24,6 +24,12 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Record ID is required' }, { status: 400 });
     }
 
+    // Validate Record ID format
+    if (!/^rec[a-zA-Z0-9]+$/.test(recordId)) {
+      console.error('Invalid recordId format:', recordId);
+      return NextResponse.json({ error: 'Invalid recordId format' }, { status: 400 });
+    }
+
     // At least one field must be provided
     if (!pitchDeckUrl && !joinLink && !calendlyEventScheduledTime && !pitchDeckAnalysisReportLink && !investorReadinessReport) {
       console.error('No updatable fields provided');

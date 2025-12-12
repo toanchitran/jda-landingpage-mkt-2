@@ -49,10 +49,19 @@ fi
 
 # Create initial HTTP-only configuration for Certbot verification
 cat > /etc/nginx/sites-available/${DOMAIN} << EOF
+# Rate Limiting Zones (Top level of http block)
+limit_req_zone \$binary_remote_addr zone=general:10m rate=5r/s;
+limit_req_zone \$binary_remote_addr zone=api:10m rate=30r/m;
+limit_conn_zone \$binary_remote_addr zone=conn_limit:10m;
+
 server {
     listen 80;
     listen [::]:80;
     server_name ${DOMAIN} www.${DOMAIN};
+    
+    # Disable server tokens (version disclosure)
+    server_tokens off;
+    merge_slashes on;
 
     # Logging
     access_log /var/log/nginx/${DOMAIN}.access.log;
@@ -62,21 +71,51 @@ server {
     client_max_body_size 50M;
 
     # Security headers
+    # HSTS (Strict-Transport-Security)
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    
+    # CSP (Content-Security-Policy) - allowing 'unsafe-inline' for styles (Next.js req) and scripts (if needed, but restricted)
+    # Note: Next.js often requires 'unsafe-inline' for styles. 'unsafe-eval' might be needed for dev, but try to avoid in prod.
+    # Adjusted to allow images/fonts from self and data.
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://static.hotjar.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.hotjar.com wss://*.hotjar.com https://api.calendly.com; frame-src 'self' https://calendly.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'" always;
+
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "no-referrer-when-downgrade" always;
-    add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()" always;
+    add_header X-Permitted-Cross-Domain-Policies "none" always;
+    add_header Cross-Origin-Embedder-Policy "unsafe-none" always; # Changed from require-corp to avoid breaking external resources
+    add_header Cross-Origin-Opener-Policy "same-origin" always;
+    add_header Cross-Origin-Resource-Policy "same-origin" always;
 
-    # Gzip compression
+    # Gzip compression - BREACH mitigation (disable for dynamic content)
     gzip on;
     gzip_vary on;
-    gzip_min_length 1024;
+    # Only compress static assets, not dynamic HTML
+    gzip_types text/css text/javascript application/javascript application/json image/svg+xml;
     gzip_proxied expired no-cache no-store private auth;
-    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript;
+
+    # Block sensitive files
+    location ~* \.(env|git|svn|htaccess|htpasswd|ini|log|sh|sql|bak|backup|swp|conf)$ {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    # Block hidden files
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
 
     # Proxy settings for Next.js
     location / {
+        # Rate Limiting
+        limit_req zone=general burst=10 nodelay;
+        limit_conn conn_limit 10;
+
         proxy_pass http://localhost:${APP_PORT};
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -87,21 +126,22 @@ server {
         proxy_set_header X-Forwarded-Proto \$scheme;
         proxy_cache_bypass \$http_upgrade;
         
-        # Chunked encoding support (fixes ERR_INCOMPLETE_CHUNKED_ENCODING)
+        # Chunked encoding support
         proxy_buffering off;
         proxy_request_buffering off;
         chunked_transfer_encoding on;
         
-        # Timeouts (increased for large responses)
+        # Timeouts
         proxy_connect_timeout 300s;
         proxy_send_timeout 300s;
         proxy_read_timeout 300s;
     }
 
-    # Cache static files
+    # Cache static files (Reduced expiry to 30d)
     location /_next/static {
         proxy_pass http://localhost:${APP_PORT};
         proxy_cache_valid 200 60m;
+        expires 30d;
         add_header Cache-Control "public, immutable";
     }
 
@@ -114,16 +154,17 @@ server {
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
 
-    # Static files caching
+    # General Static files caching
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|mp4|webp)$ {
         proxy_pass http://localhost:${APP_PORT};
-        expires 1y;
+        expires 30d;
         add_header Cache-Control "public, immutable";
     }
 
     # Health check endpoint
     location /health {
         access_log off;
+        limit_req zone=api burst=5 nodelay;
         return 200 "healthy\n";
         add_header Content-Type text/plain;
     }

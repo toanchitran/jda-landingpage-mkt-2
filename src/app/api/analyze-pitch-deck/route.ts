@@ -84,6 +84,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No recordId received' }, { status: 400 });
     }
 
+    // Validate Record ID format (Airtable IDs start with 'rec' and are alphanumeric)
+    if (!/^rec[a-zA-Z0-9]+$/.test(recordId)) {
+      console.error('Invalid recordId format');
+      return NextResponse.json({ error: 'Invalid recordId format' }, { status: 400 });
+    }
+
     // SECURITY: Validate File Type & Extension
     const allowedMimeTypes = [
       'application/pdf', 

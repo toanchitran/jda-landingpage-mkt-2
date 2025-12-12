@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marked } from 'marked';
+import sanitizeHtml from 'sanitize-html';
 
 interface Question {
   id: string;
@@ -153,6 +154,15 @@ function convertMarkdownToHtml(markdown: string): string {
   // Convert markdown to HTML using marked
   let html = marked(cleanMarkdown) as string;
   
+  // Sanitize the HTML before applying custom styling
+  html = sanitizeHtml(html, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'h1', 'h2' ]),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      // Allow specific attributes if needed, e.g., for links
+    }
+  });
+
   // If marked didn't convert basic formatting, force convert it
   if (html.includes('**') || html.includes('*')) {
     html = html
