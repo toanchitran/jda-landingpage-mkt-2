@@ -48,6 +48,8 @@ interface ContactData {
 }
 
 async function getContactData(id: string): Promise<ContactData | null> {
+  let apiUrl = ''; // Declare outside try-catch for error logging
+  
   try {
     // For server-side rendering, construct the proper URL
     let baseUrl: string;
@@ -86,7 +88,7 @@ async function getContactData(id: string): Promise<ContactData | null> {
       constructedBaseUrl: baseUrl
     });
     
-    const apiUrl = `${baseUrl}/api/lead-qualification/${id}`;
+    apiUrl = `${baseUrl}/api/lead-qualification/${id}`;
     console.log('Fetching contact data from:', apiUrl);
     
     const response = await fetch(apiUrl, {
@@ -117,7 +119,7 @@ async function getContactData(id: string): Promise<ContactData | null> {
     return data;
   } catch (error) {
     console.error('Error fetching contact data:', error);
-    console.error('Failed to fetch from URL:', apiUrl);
+    console.error('Failed to fetch from URL:', apiUrl || '(URL construction failed)');
     console.error('Record ID attempted:', id);
     return null;
   }
