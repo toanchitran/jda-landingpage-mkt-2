@@ -117,9 +117,29 @@ export async function GET(
     const fields = record.fields;
     
     console.log('Record ID:', id);
-    console.log('Record fields:', Object.keys(fields));
+    console.log('Record fields (all available):', Object.keys(fields));
     console.log('Name field:', fields['Name']);
     console.log('Email field:', fields['Email']);
+    
+    // Helper functions for case-insensitive field matching (Airtable field names are case-sensitive)
+    const getNameField = () => fields['Name'] || fields['name'] || fields['NAME'] || '';
+    const getEmailField = () => fields['Email'] || fields['email'] || fields['EMAIL'] || '';
+    
+    const nameField = getNameField();
+    const emailField = getEmailField();
+    
+    if (nameField) console.log('Found Name field (case-insensitive):', nameField);
+    if (emailField) console.log('Found Email field (case-insensitive):', emailField);
+    
+    // Log all field names for debugging field name mismatches
+    console.log('All available field names:', Object.keys(fields).join(', '));
+
+    // Note: We removed the strict validation that required Name OR Email
+    // This allows records to be displayed even if some fields are missing
+    // The record exists in Airtable, so we should show it with available data
+    if (!nameField && !emailField) {
+      console.warn('Record exists but missing Name and Email fields. Still returning record with available data.');
+    }
 
     // Load sections from the JSON file
     let sectionsData: SectionsData = { sections: [] };
@@ -225,19 +245,10 @@ export async function GET(
       }
     };
 
-    // Check if we have basic required data
-    if (!fields['Name'] && !fields['Email']) {
-      console.warn('Record missing basic contact information');
-      return NextResponse.json(
-        { error: 'Record found but missing essential data' },
-        { status: 404 }
-      );
-    }
-
     const contactData = {
       id: record.id,
-      fullName: fields['Name'] || '',
-      email: fields['Email'] || '',
+      fullName: getNameField(),
+      email: getEmailField(),
       linkedinProfile: fields['Linkedin Profile'] || '',
       companyWebsite: fields['Company Website'] || '',
       applicantRole: fields['Applicant role'] || '',

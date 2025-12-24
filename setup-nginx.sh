@@ -77,7 +77,8 @@ server {
     # CSP (Content-Security-Policy) - allowing 'unsafe-inline' for styles (Next.js req) and scripts (if needed, but restricted)
     # Note: Next.js often requires 'unsafe-inline' for styles. 'unsafe-eval' might be needed for dev, but try to avoid in prod.
     # Adjusted to allow images/fonts from self and data.
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://static.hotjar.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.hotjar.com wss://*.hotjar.com https://api.calendly.com; frame-src 'self' https://calendly.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'" always;
+    # Added https://*.cloudfront.net for Hotjar and other CDN-hosted scripts
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://static.hotjar.com https://*.cloudfront.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.hotjar.com wss://*.hotjar.com https://api.calendly.com; frame-src 'self' https://calendly.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'" always;
 
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-XSS-Protection "1; mode=block" always;

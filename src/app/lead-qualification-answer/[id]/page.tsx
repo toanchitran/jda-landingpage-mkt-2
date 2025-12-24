@@ -94,12 +94,31 @@ async function getContactData(id: string): Promise<ContactData | null> {
     });
     
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('API Error Details:', {
+        status: response.status,
+        statusText: response.statusText,
+        url: apiUrl,
+        errorBody: errorText,
+        recordId: id
+      });
+      
+      // If it's a 404, the record might not exist OR might have validation issues
+      // Log this for debugging
+      if (response.status === 404) {
+        console.error('Record not found or failed validation. Check if record exists in Airtable with ID:', id);
+      }
+      
       return null;
     }
     
-    return await response.json();
+    const data = await response.json();
+    console.log('Successfully fetched contact data for ID:', id);
+    return data;
   } catch (error) {
     console.error('Error fetching contact data:', error);
+    console.error('Failed to fetch from URL:', apiUrl);
+    console.error('Record ID attempted:', id);
     return null;
   }
 }
