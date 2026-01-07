@@ -185,3 +185,4 @@ echo "👉 Use 'su - $NEW_USER' to switch to the app user."
 echo "👉 Check logs with 'pm2 logs'"
 
 
+
